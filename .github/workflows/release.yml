@@ -32,6 +32,10 @@ jobs:
           if not re.fullmatch(r"v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", tag):
               raise SystemExit("Expected stable semantic tag vMAJOR.MINOR.PATCH")
           PY
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ffmpeg
       - name: Test package
         run: |
           uv sync --locked --group dev
