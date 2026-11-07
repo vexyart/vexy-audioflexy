@@ -52,9 +52,8 @@ resolve source redistribution rights.
 
 ## Future release
 
-An actual release is outside this implementation goal and requires separate
-publication authorization and published-artifact verification. No commit, push or
-package publication is claimed by local validation.
+The initial implementation excluded publication. The subsequently authorized
+1.0.0 release status and remaining PyPI verification are recorded below.
 
 ## Tool namespace rename
 
@@ -77,4 +76,5 @@ No storage migration, model download, native rebuild or publication is needed.
 
 - [x] Add and verify chained build/install/GitHub release/PyPI scripts.
 - [x] Verify stable tag configuration and semver-tag GitHub release workflow; actual tagged version is checked before publication.
-- [ ] Complete privacy audit, commit, tag v1.0.0, push and verify publication.
+- [x] Complete privacy audit, commit, tag v1.0.0, push and verify GitHub release.
+- [ ] Publish the preserved 1.0.0 assets to PyPI and verify hashes and installation.

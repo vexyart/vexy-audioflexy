@@ -17,12 +17,13 @@ this_file: TODO.md
 - [x] Obtain scoped independent rereview of the final batch/provider correction wave.
 - [x] Refresh public artifacts and retain unchanged-code test, strict-docs and offline CLI evidence.
 
-Publication is a future separately authorized activity, outside this implementation
-goal. No package has been published.
+The initial implementation excluded publication. The subsequently authorized
+1.0.0 release status is recorded below; PyPI publication remains pending.
 
 - [x] Rename public namespaces to asr/fx/tts and update all current consumers.
 - [x] Verify namespace artifacts, regression suites and independent review.
 
 - [x] Add and verify chained build/install/GitHub release/PyPI scripts.
 - [x] Verify stable tag configuration and semver-tag GitHub release workflow; actual tagged version is checked before publication.
-- [ ] Complete privacy audit, commit, tag v1.0.0, push and verify publication.
+- [x] Complete privacy audit, commit, tag v1.0.0, push and verify GitHub release.
+- [ ] Publish the preserved 1.0.0 assets to PyPI and verify hashes and installation.

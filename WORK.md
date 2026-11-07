@@ -146,3 +146,22 @@ Shell syntax, shellcheck, actionlint, lock check and strict docs pass. Two fresh
 builds from the same selected tree produce identical wheel/sdist bytes. Actual
 tag metadata, installation, GitHub run and PyPI publication remain the release
 owner's next steps; development-build checks do not prove remote acceptance.
+
+## Version 1.0.0 release status
+
+Commit fa700ce and immutable tag v1.0.0 are pushed. The public tree and stable
+wheel/sdist privacy audit passed; three private-derived comments/docstrings were
+redacted with originals preserved privately. All 255 installed resources match.
+The Linux release run passed 522 tests and strict docs and created GitHub assets
+byte-identical to local tagged builds. The workflow now also supports rebuilding
+an existing tag and explicitly installs FFmpeg for the full acceptance suite.
+
+GitHub release: https://github.com/vexyart/vexy-audioflexy/releases/tag/v1.0.0
+CI: https://github.com/vexyart/vexy-audioflexy/actions/runs/42414796783
+
+The complete publish -> release -> install -> build chain ran. PyPI rejected
+the first wheel with HTTP 429, "Too many new projects created". No retry was
+made; project and version endpoints still returned 404. Exact release assets
+and hashes are preserved for resumption after the external limit is resolved.
+PyPI publication and installation from PyPI remain incomplete. No model jobs
+or model/storage changes were performed for this release.
