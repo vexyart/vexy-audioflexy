@@ -91,3 +91,5 @@ honest and reject them at the existing release wheel/sdist metadata gate.
 - [x] Implement version generation, tagging and clean stable release guards.
 - [x] Cover automatic tagging, tagged reuse, tagging failures and dirty/development rejection with focused script tests.
 - [x] Verify actual isolated tagged wheel/sdist and installed version parity, full regression suite and independent review.
+
+- [x] Provide YAML structured CLI output and --json with source and installed-wheel verification.

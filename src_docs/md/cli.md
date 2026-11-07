@@ -18,6 +18,20 @@ vafx tools list asr
 from Git history and semantic version tags. Editable installs may need rebuilding
 after a tag changes. Model commands are described in [Models](models.md).
 
+## Command output
+
+Structured results use YAML by default. Request a complete JSON document with
+`--json` before or after the command, before Fire's standalone `--`:
+
+```sh
+vafx models list
+vafx models list --json
+vafx tools list asr --json
+```
+
+Version and path results remain plain text unless `--json` is selected. Tool
+execution preserves child arguments and output, including a child's `--json`.
+
 ## Run packaged tools
 
 Namespaces are `asr`, `fx`, and `tts`. Listings distinguish `runnable`

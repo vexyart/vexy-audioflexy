@@ -1390,6 +1390,7 @@ source = { editable = "." }
 dependencies = [
     { name = "fire" },
     { name = "platformdirs" },
+    { name = "pyyaml" },
     { name = "tomli-w" },
 ]
 
@@ -1411,6 +1412,7 @@ dev = [
 requires-dist = [
     { name = "fire", specifier = ">=0.7" },
     { name = "platformdirs", specifier = ">=4" },
+    { name = "pyyaml", specifier = ">=6" },
     { name = "tomli-w", specifier = ">=1.2.0" },
 ]
 

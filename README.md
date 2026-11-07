@@ -54,7 +54,14 @@ vafx models --models_dir=/absolute/path/to/models config
 vafx models configure /absolute/path/to/models
 vafx models discover
 vafx models list
+vafx models list --json
 ```
+
+Structured command results use readable YAML by default. Add `--json` before or
+after the command (before Fire's standalone `--`) for a complete JSON document.
+This also applies to `models config`, `models discover` and `tools list`.
+Version and path results remain plain text unless `--json` is selected. Flags
+after a tool execution command are passed unchanged to that tool.
 
 `configure` writes `config.toml`; registration uses `models.toml` in the app data
 directory. Discovery reads LM Studio, Hugging Face and configured local stores

@@ -5,6 +5,7 @@ this_file: DEPENDENCIES.md
 # Dependencies
 
 - `fire`: explicit Python command composition for `vafx`.
+- `PyYAML`: readable YAML output for structured CLI command results.
 - `platformdirs`: portable configuration and data directories for model settings.
 - `tomli-w`: write portable model settings and registry TOML.
 - `hatchling`: wheel and source distribution builds.

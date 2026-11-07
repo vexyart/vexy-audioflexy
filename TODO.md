@@ -31,3 +31,5 @@ The initial implementation excluded publication. The subsequently authorized
 - [x] Use uvx gitnextver before automatic stable release/publish and ignore the hatch-vcs generated __version__.py.
 - [x] Test automatic release tagging, tagged resume and failure guards.
 - [x] Verify release repair with real isolated artifacts, installed version, full regression suite and independent review.
+
+- [x] Provide YAML structured CLI output and --json with source and installed-wheel verification.

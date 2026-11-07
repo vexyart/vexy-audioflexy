@@ -205,3 +205,24 @@ whitespace checks pass. Regenerated tracked development documentation and search
 index reflect the new release contract. Final independent diff review passed
 with no blocking findings; no placeholders, skipped tests or private data were
 introduced. No live release or PyPI publication is claimed by this repair pass.
+
+## Readable CLI output
+
+Baseline: 532 tests and the synthetic example passed. A new process-level test
+reproduced the previous output problem: a one-record model list parsed as a
+mapping rather than the complete list. The shared Fire serializer now emits
+structured results as YAML, retaining insertion order and Unicode; `--json`
+selects a complete JSON document. Scalar version/path output remains plain text
+unless JSON is requested. Python API results are unchanged.
+
+Leading output flags are handled before raw tool dispatch; discovery-command
+flags are handled before Fire parsing. Child options, including `--json`, and
+Fire's standalone `--` control arguments retain their existing meaning. Root and
+model help remain available. PyYAML is now an explicit runtime dependency rather
+than an accidental development dependency. Its safe dumper and Fire's serializer
+callback were checked against official documentation and in an isolated proof.
+
+Full regression: 551 tests and the synthetic example pass, including nested
+metadata, Unicode, YAML-sensitive strings, empty registries, JSON scalar output,
+help and real child argument forwarding. CLI Ruff check, lock consistency and
+diff whitespace checks pass. Installed-wheel and separate review results follow.

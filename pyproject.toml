@@ -14,6 +14,7 @@ license-files = ["LICENSE"]
 dependencies = [
     "fire>=0.7",
     "platformdirs>=4",
+    "pyyaml>=6",
     "tomli-w>=1.2.0",
 ]
 

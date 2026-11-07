@@ -297,6 +297,17 @@
     <ul class="md-nav__list" data-md-component="toc">
       
         <li class="md-nav__item">
+  <a href="#command-output" class="md-nav__link">
+    <span class="md-ellipsis">
+
+        Command output
+
+    </span>
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
   <a href="#run-packaged-tools" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -407,6 +418,17 @@
     <ul class="md-nav__list" data-md-component="toc">
       
         <li class="md-nav__item">
+  <a href="#command-output" class="md-nav__link">
+    <span class="md-ellipsis">
+
+        Command output
+
+    </span>
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
   <a href="#run-packaged-tools" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -455,6 +477,15 @@ vafx<span class="w"> </span>tools<span class="w"> </span>list<span class="w"> </
 <p><code>version</code> prints the installed distribution version, derived by Hatch/hatch-vcs
 from Git history and semantic version tags. Editable installs may need rebuilding
 after a tag changes. Model commands are described in <a href="../models/">Models</a>.</p>
+<h2 id="command-output">Command output</h2>
+<p>Structured results use YAML by default. Request a complete JSON document with
+<code>--json</code> before or after the command, before Fire's standalone <code>--</code>:</p>
+<div class="highlight"><pre><span></span><code>vafx<span class="w"> </span>models<span class="w"> </span>list
+vafx<span class="w"> </span>models<span class="w"> </span>list<span class="w"> </span>--json
+vafx<span class="w"> </span>tools<span class="w"> </span>list<span class="w"> </span>asr<span class="w"> </span>--json
+</code></pre></div>
+<p>Version and path results remain plain text unless <code>--json</code> is selected. Tool
+execution preserves child arguments and output, including a child's <code>--json</code>.</p>
 <h2 id="run-packaged-tools">Run packaged tools</h2>
 <p>Namespaces are <code>asr</code>, <code>fx</code>, and <code>tts</code>. Listings distinguish <code>runnable</code>
 Python scripts from <code>helper</code>, <code>needs-metadata</code>, <code>shell-script</code>, and <code>native-source</code>

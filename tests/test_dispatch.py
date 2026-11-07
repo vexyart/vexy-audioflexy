@@ -127,10 +127,12 @@ def test_run_rejects_missing_metadata_and_ambiguous_resources(resources):
 
 
 @pytest.mark.parametrize("args", [
-    ["--backend=cpu", "--lang=pl", "--output", "a b.wav", "001", "--lang=en"],
-    ["--", "--backend=cpu", "--lang=pl", "--output", "a b.wav", "001", "--lang=en"],
+    ["--backend=cpu", "--lang=pl", "--output", "a b.wav", "001", "--lang=en", "--json"],
+    ["--", "--backend=cpu", "--lang=pl", "--output", "a b.wav", "001", "--lang=en", "--json"],
 ])
-@pytest.mark.parametrize("route", [["tools", "run", "asr", "synthetic"], ["tools", "asr"]])
+@pytest.mark.parametrize("route", [["tools", "run", "asr", "synthetic"], ["tools", "asr"],
+                                   ["--json", "tools", "run", "asr", "synthetic"],
+                                   ["--json", "tools", "asr"]])
 def test_real_fire_cli_preserves_child_options(resources, tmp_path, route, args):
     """The actual composition root must route argv before Fire parses child flags."""
     import os
