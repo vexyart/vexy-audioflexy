@@ -1,0 +1,13 @@
+diff --git a/Tests/WeightParityTests/WeightParityTests.swift b/Tests/WeightParityTests/WeightParityTests.swift
+index 1532503..b20834a 100644
+--- a/Tests/WeightParityTests/WeightParityTests.swift
++++ b/Tests/WeightParityTests/WeightParityTests.swift
+@@ -30,7 +30,7 @@ final class WeightParityTests: XCTestCase {
+             
+             XCTAssertTrue(FileManager.default.fileExists(atPath: probesURL.path), "Parity probes missing")
+             
+-            let model = SEMamba(numBlocks: 30)
++            let model = SEMamba(numBlocks: 30, mode: ProcessInfo.processInfo.environment["SPEECHLENS_PARITY_STRICT"] == "1" ? .strict : .standard)
+             let modelWeights = try MLX.loadArrays(url: modelURL)
+             model.update(parameters: ModuleParameters.unflattened(modelWeights))
+             

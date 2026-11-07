@@ -1,0 +1,762 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Audio tools with isolated model runtimes">
+      
+      
+      
+      
+        <link rel="prev" href="../cli/">
+      
+      
+        <link rel="next" href="../development/">
+      
+      
+        
+      
+      
+      
+      
+        
+        
+        
+          <link rel="icon" href="../assets/images/favicon.png">
+        
+      
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-materialx-10.1.8">
+    
+    
+      
+        <title>Models - Audioflexy</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.314bbef5.min.css">
+      
+    
+    
+
+    
+
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+  
+  
+    <body dir="ltr" data-mx-topbar="glass">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="toc" type="checkbox" id="__toc" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <label class="md-overlay" for="__toc"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#model-configuration-and-discovery" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Audioflexy" class="md-header__button md-logo" aria-label="Audioflexy" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Audioflexy
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Models
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.25 2a8.25 8.25 0 0 1 6.34 13.53l5.69 5.69a.749.749 0 0 1-.326 1.275.75.75 0 0 1-.734-.215l-5.69-5.69A8.25 8.25 0 1 1 10.25 2M3.5 10.25a6.75 6.75 0 1 0 13.5 0 6.75 6.75 0 0 0-13.5 0"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.25 2a8.25 8.25 0 0 1 6.34 13.53l5.69 5.69a.749.749 0 0 1-.326 1.275.75.75 0 0 1-.734-.215l-5.69-5.69A8.25 8.25 0 1 1 10.25 2M3.5 10.25a6.75 6.75 0 1 0 13.5 0 6.75 6.75 0 0 0-13.5 0"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Audioflexy" class="md-nav__button md-logo" aria-label="Audioflexy" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Audioflexy
+  </label>
+  
+  <ul class="md-nav__list">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc">
+      
+        <li class="md-nav__item">
+  <a href="#provider-stores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provider stores
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-stores-and-runtime-roots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model stores and runtime roots
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bounded-native-evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bounded native evidence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transcribecpp-catalog-and-dedicated-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        transcribe.cpp catalog and dedicated roles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="transcribe.cpp catalog and dedicated roles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reproduce-the-qualified-phonon-conversion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproduce the qualified Phonon conversion
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development and releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc">
+      
+        <li class="md-nav__item">
+  <a href="#provider-stores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provider stores
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-stores-and-runtime-roots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model stores and runtime roots
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bounded-native-evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bounded native evidence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transcribecpp-catalog-and-dedicated-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        transcribe.cpp catalog and dedicated roles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="transcribe.cpp catalog and dedicated roles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reproduce-the-qualified-phonon-conversion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproduce the qualified Phonon conversion
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="model-configuration-and-discovery">Model configuration and discovery</h1>
+<p>The <code>models</code> CLI provides configuration, registry, and discovery operations:</p>
+<div class="highlight"><pre><span></span><code>vafx<span class="w"> </span>models<span class="w"> </span>config
+vafx<span class="w"> </span>models<span class="w"> </span>configure<span class="w"> </span>/absolute/model-store
+vafx<span class="w"> </span>models<span class="w"> </span>discover
+vafx<span class="w"> </span>models<span class="w"> </span>discover<span class="w"> </span>--save<span class="o">=</span>True
+vafx<span class="w"> </span>models<span class="w"> </span>list
+vafx<span class="w"> </span>models<span class="w"> </span>download_destination<span class="w"> </span>huggingface
+vafx<span class="w"> </span>models<span class="w"> </span>download_destination<span class="w"> </span>lmstudio
+</code></pre></div>
+<p>Replace <code>/absolute/model-store</code> with your own absolute directory. <code>configure</code>
+saves the setting; <code>discover</code> only reads locations unless <code>--save=True</code> is given.
+<code>list</code> includes registered locations whose files are now missing. Discovery and
+registration do not download weights or establish model compatibility.</p>
+<p>An invocation-only override precedes the subcommand:</p>
+<div class="highlight"><pre><span></span><code>vafx<span class="w"> </span>models<span class="w"> </span>--models_dir<span class="o">=</span>/absolute/other-store<span class="w"> </span>config
+</code></pre></div>
+<p><code>config.toml</code> belongs in the platformdirs configuration directory for
+<code>vexy-audioflexy</code>. It accepts a user-supplied <code>models_dir</code> string. The registry,
+<code>models.toml</code>, belongs in the platformdirs data directory. Registry records contain
+<code>identity</code>, <code>provider</code>, and <code>path</code>. These files contain local paths and belong
+outside public artifacts.</p>
+<p>Model-folder precedence is an explicit override, then saved configuration, then
+the application's default data-directory models folder.</p>
+<h2 id="provider-stores">Provider stores</h2>
+<p>Hugging Face models should remain in their provider cache. Discovery respects
+<code>HF_HUB_CACHE</code>, its legacy equivalent <code>HUGGINGFACE_HUB_CACHE</code>, <code>HF_HOME</code>, and
+the platform cache environment. LMStudio discovery reads the home-directory
+<code>.lmstudio-home-pointer</code> file, with <code>.lmstudio</code> as its fallback home.</p>
+<p>Other model sources use the configured Audioflexy models folder. Selecting a
+download destination performs no download. Discovery records locations without
+loading weights; a discovered file or directory is not proof of runtime
+compatibility. Missing files, unsupported models, and untested engines must remain
+explicit in acceptance records.</p>
+<p>Audio.cpp audio and TTS preparation downloads each specification's repository,
+revision and file list into the Hugging Face cache, then creates native layout
+links and package markers. It preserves conflicting files unless <code>--force</code> is
+explicit. IndexTTS's checkpoint and CAMPPlus companion need a separate writable
+model view; preparation rejects provider snapshots, their aliases and conflicting
+views before creating any destination directories or links.</p>
+<h2 id="model-stores-and-runtime-roots">Model stores and runtime roots</h2>
+<p>The model CLI uses its explicit <code>--models_dir</code> override, then saved configuration,
+then the application data directory. Independently executed ASR helpers also
+support <code>VAFX_MODELS_DIR</code> before the saved setting. These are model-weight roots.
+Runtime-root conventions vary by namespace:</p>
+<table>
+<thead>
+<tr>
+<th>Namespace</th>
+<th>Runtime override</th>
+<th>Default runtime location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASR helpers using <code>_audioflexy_paths</code> and transcribe.cpp</td>
+<td><code>VAFX_RUNTIME_DIR</code></td>
+<td>Application cache directory, then <code>runtimes</code> and engine name</td>
+</tr>
+<tr>
+<td>Audio tools</td>
+<td><code>VAFX_AUDIO_RUNTIME_ROOT</code></td>
+<td>Application data directory, then <code>audio</code>; native checkouts usually live under <code>engines/</code></td>
+</tr>
+<tr>
+<td>Voice tools using <code>_paths</code></td>
+<td><code>VAFX_VOICE_ROOT</code></td>
+<td>Application data directory, then <code>voice</code> and engine name</td>
+</tr>
+</tbody>
+</table>
+<p>Audio tools separately support <code>VAFX_AUDIO_CACHE_ROOT</code>, defaulting to the
+application cache directory's <code>audio</code> child. Voice helper model requests use
+registered identities or <code>VAFX_MODELS_DIR</code>/saved model configuration rather than
+the voice runtime root. Setting a model store does not install or relocate a
+native runtime.</p>
+<p>Specific adapters may override the runtime with <code>TRANSCRIBECPP_ROOT</code>,
+<code>AUDIOCPP_ROOT</code>, or <code>AUDIOCPP_BIN</code>. The audio.cpp adapter separately accepts
+<code>AUDIOCPP_MODELS_ROOT</code> and <code>AUDIOCPP_SPECS_DIR</code>. Inspect each tool's help and
+requirements before running it; provider store discovery does not configure all
+engine-specific model formats.</p>
+<h2 id="bounded-native-evidence">Bounded native evidence</h2>
+<p>Synthetic nine-word native smoke checks passed for the exact requested Underdog
+Bark MLX 8-bit, Parakeet Ultra Q8_0 GGUF, and Nemotron 3.5 30B AD-Q5_0_XL decoder.
+Bark required explicit <code>model_type=parakeet</code>. Nemotron required a pinned
+SALM-capable native source build with <code>NEMO_SPEECH_BUILD_SPEECHLM=ON</code>, the exact
+decoder, and its pinned companion encoder; an earlier runtime failed recognizer
+dispatch. Each successful output matched all nine normalized reference words.</p>
+<p>These are private native-command acceptance results. They do not establish
+installed public-adapter acceptance for those three exact named targets,
+multilingual or long-recording quality, complete tool consolidation, or complete
+storage migration. Native commands, transcripts, logs, hashes, and machine paths
+remain in private evidence. A public adapter needs its own reproducible invocation
+and output checks against the installed package before its route is accepted.</p>
+<p>Later acceptance covered seven installed short profiles after consolidation:
+the three exact named targets, Silero VAD, VoxLingua language ID, Sortformer and
+the qualified local Phonon route. Each completed successfully with saved output
+and terminal process evidence. This separate tier does not broaden the earlier
+native results to other variants, languages, backends or long recordings.</p>
+<h2 id="transcribecpp-catalog-and-dedicated-roles">transcribe.cpp catalog and dedicated roles</h2>
+<p>The checked catalog at upstream commit
+<code>5700f127e38dd53c4735ea23ef743b4b538eacd4</code> covers all 77 upstream variants:
+73 ASR variants with published accessible artifacts, one qualified official-source
+local Phonon-2 F32 conversion, and three dedicated non-ASR roles. The catalog
+records 398 declared quantization artifacts. Published metadata is accessible for
+392 artifacts; the six declared artifacts in the official Phonon mirror remain
+unavailable. The converted F32 file is a locally produced derivative, not an
+official downloadable mirror artifact.</p>
+<p>Every accessible published artifact has an immutable provider revision, byte size,
+and published SHA256. Preparation checks both size and SHA256 before treating a
+cached file as ready; incorrect cached bytes are rejected without rewriting them.
+This exact catalog coverage does not imply inference acceptance for every model,
+quantization, backend, or upstream-declared capability. The ASR adapter exposes
+its offline transcript contract; catalog declarations of streaming, translation,
+or timestamps do not add those methods to that contract.</p>
+<p>Inventory and preparation commands:</p>
+<div class="highlight"><pre><span></span><code>vafx<span class="w"> </span>tools<span class="w"> </span>run<span class="w"> </span>asr<span class="w"> </span>asr-transcribecpp<span class="w"> </span>packages
+vafx<span class="w"> </span>tools<span class="w"> </span>run<span class="w"> </span>asr<span class="w"> </span>asr-transcribecpp<span class="w"> </span>roles
+vafx<span class="w"> </span>tools<span class="w"> </span>run<span class="w"> </span>asr<span class="w"> </span>asr-transcribecpp<span class="w"> </span>prep_role<span class="w"> </span>silero-vad-v6.2<span class="w"> </span>--quant<span class="o">=</span>F32
+</code></pre></div>
+<p>Set <code>TRANSCRIBECPP_ROOT</code> to a checkout built at the pinned commit before inference.
+The <code>role</code> method resamples audio to mono 16 kHz, runs the native role, and writes
+structured JSON rather than inventing an ASR transcript:</p>
+<div class="highlight"><pre><span></span><code>vafx<span class="w"> </span>tools<span class="w"> </span>run<span class="w"> </span>asr<span class="w"> </span>asr-transcribecpp<span class="w"> </span>role<span class="w"> </span>/absolute/synthetic.wav<span class="w"> </span>--package<span class="o">=</span>silero-vad-v6.2<span class="w"> </span>--quant<span class="o">=</span>F32<span class="w"> </span>--output<span class="o">=</span>/absolute/vad.json<span class="w"> </span>--backend<span class="o">=</span>cpu
+vafx<span class="w"> </span>tools<span class="w"> </span>run<span class="w"> </span>asr<span class="w"> </span>asr-transcribecpp<span class="w"> </span>role<span class="w"> </span>/absolute/synthetic.wav<span class="w"> </span>--package<span class="o">=</span>lang-id-voxlingua107-ecapa<span class="w"> </span>--quant<span class="o">=</span>Q8_0<span class="w"> </span>--output<span class="o">=</span>/absolute/langid.json<span class="w"> </span>--backend<span class="o">=</span>cpu
+vafx<span class="w"> </span>tools<span class="w"> </span>run<span class="w"> </span>asr<span class="w"> </span>asr-transcribecpp<span class="w"> </span>role<span class="w"> </span>/absolute/synthetic.wav<span class="w"> </span>--package<span class="o">=</span>diar_streaming_sortformer_4spk-v2.1<span class="w"> </span>--quant<span class="o">=</span>Q8_0<span class="w"> </span>--output<span class="o">=</span>/absolute/diarize.json<span class="w"> </span>--backend<span class="o">=</span>cpu
+</code></pre></div>
+<p>Use your own absolute input and output paths. VAD retains exact sample intervals;
+language ID retains ranked language codes, indices, probabilities and logits;
+Sortformer retains speaker turns and original native output. Language ID scores
+at most the first 30 seconds, recorded in the result. Sortformer uses 80 ms frames;
+normalized end times are clipped to the real audio duration while retaining native
+frame padding separately. Empty VAD and diarization results are valid. Malformed,
+nonfinite, or out-of-range native values are rejected before replacing output.</p>
+<p>Real public source-adapter invocations on one synthetic 2.67075-second fixture
+passed CPU checks for exact local Ultra Q8_0 and qualified Phonon F32 (nine
+normalized words each), Silero VAD F32 (one segment), VoxLingua107 Q8_0 (107 ranked
+candidates), and Sortformer Q8_0 (one turn). These are bounded route checks, not DER,
+all-language, streaming, all-artifact, or installed-wheel acceptance.</p>
+<h3 id="reproduce-the-qualified-phonon-conversion">Reproduce the qualified Phonon conversion</h3>
+<p>The official <code>handy-computer/phonon-2-gguf</code> mirror remains unavailable. The
+supported local route uses the official <code>FermionResearch/Phonon-2</code> packed source
+at revision <code>7e153e4054c0a10db6d47d6fff5c062d4c77c154</code>, converted by the pinned
+transcribe.cpp converter and its committed frozen environment. With that checkout
+as the working directory, replace the output placeholder with your chosen path:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>--frozen<span class="w"> </span>--project<span class="w"> </span>scripts/envs/parakeet-phonon<span class="w"> </span>scripts/convert-parakeet.py<span class="w"> </span>FermionResearch/Phonon-2<span class="w"> </span>/absolute/model-store/conversions/transcribecpp/phonon-2/phonon-2-F32.gguf<span class="w"> </span>--revision<span class="w"> </span>7e153e4054c0a10db6d47d6fff5c062d4c77c154
+</code></pre></div>
+<p>The source archive <code>phonon-2.bps.tar.zst</code> has SHA256
+<code>98125795b6dda72f5c6eee9ba33d19815df65dcb18b50a357bf9f73c9935309e</code>.
+The qualified F32 output is 2,508,435,648 bytes with SHA256
+<code>f2b1a5563f0a4a764ca40f4fb72da6d3a4d4ce5653e0f8fbcc874a6a81c5c10e</code>.
+The converter verifies the packed source and uses pinned tokenizer/config assets
+without downloading teacher weights. The public adapter additionally checks the
+converted file's exact hash, size, architecture and variant metadata:</p>
+<div class="highlight"><pre><span></span><code>vafx<span class="w"> </span>tools<span class="w"> </span>run<span class="w"> </span>asr<span class="w"> </span>asr-transcribecpp<span class="w"> </span>prep<span class="w"> </span>phonon-2<span class="w"> </span>--quant<span class="o">=</span>F32<span class="w"> </span>--local_model_path<span class="o">=</span>/absolute/model-store/conversions/transcribecpp/phonon-2/phonon-2-F32.gguf
+vafx<span class="w"> </span>tools<span class="w"> </span>run<span class="w"> </span>asr<span class="w"> </span>asr-transcribecpp<span class="w"> </span>transcribe<span class="w"> </span>/absolute/synthetic.wav<span class="w"> </span>--package<span class="o">=</span>phonon-2<span class="w"> </span>--quant<span class="o">=</span>F32<span class="w"> </span>--local_model_path<span class="o">=</span>/absolute/model-store/conversions/transcribecpp/phonon-2/phonon-2-F32.gguf<span class="w"> </span>--text_out<span class="o">=</span>/absolute/phonon.txt<span class="w"> </span>--backend<span class="o">=</span>cpu<span class="w"> </span>--threads<span class="o">=</span><span class="m">4</span>
+</code></pre></div>
+<p>Keep the derivative in your configured external model store. Other GGUF exports
+with the same model name are not interchangeable with this route. Other Phonon
+quantizations remain unavailable through the mirror and untested locally.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+          <div class="md-top" data-md-component="top" hidden>
+  <div class="md-top__center">
+    <button type="button" class="md-top__button md-top__button--main" data-md-action="top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+      <span>Back to top</span>
+    </button>
+    
+      
+      
+      <label class="md-top__button md-top__side md-top__side--nav" for="__drawer" >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-panel-left" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+      </label>
+    
+    
+      
+      
+      <label class="md-top__button md-top__side md-top__side--toc" for="__toc" >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-panel-right" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>
+      </label>
+    
+  </div>
+</div>
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://jaywhj.github.io/mkdocs-materialx/" target="_blank" rel="noopener">
+      MaterialX
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.fc193f93.min.js"></script>
+      
+    
+  </body>
+</html>

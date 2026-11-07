@@ -1,0 +1,30 @@
+{
+  "family": "hviske_asr",
+  "tasks": [
+    "asr"
+  ],
+  "languages": [
+    "auto"
+  ],
+  "package_defaults": {
+    "download": {
+      "kind": "huggingface_snapshot",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "revision": "main"
+    }
+  },
+  "packages": [
+    {
+      "id": "hviske_central_q8",
+      "display_name": "hviske_central_q8",
+      "format": "gguf",
+      "precision": "q8_0",
+      "target_directory": "Hviske-v5.3-GGUF",
+      "strip_prefix": "Hviske-v5.3-GGUF",
+      "files": [
+        "Hviske-v5.3-GGUF/hviske-v5.3-q8_0.gguf"
+      ]
+    }
+  ],
+  "this_file": "src/vexy_audioflexy/tools/asr/model_specs/hviske_asr_central.json"
+}

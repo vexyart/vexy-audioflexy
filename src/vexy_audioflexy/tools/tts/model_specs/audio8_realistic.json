@@ -1,0 +1,39 @@
+{
+  "family": "audio8_tts",
+  "tasks": [
+    "tts",
+    "clone"
+  ],
+  "languages": [
+    "auto"
+  ],
+  "package_defaults": {
+    "download": {
+      "kind": "huggingface_snapshot",
+      "repo": "audio-cpp/Audio8-TTS-Realistic-0.6b-GGUF",
+      "revision": "main"
+    }
+  },
+  "packages": [
+    {
+      "id": "audio8_tts_realistic_q8_0",
+      "display_name": "Audio8 TTS Realistic Q8_0",
+      "format": "gguf",
+      "precision": "q8_0",
+      "target_directory": "Audio8-TTS-Realistic-0.6b-GGUF",
+      "files": [
+        "audio8-tts-realistic-0.6b-q8_0.gguf"
+      ]
+    },
+    {
+      "id": "audio8_tts_realistic_bf16",
+      "display_name": "Audio8 TTS Realistic BF16",
+      "format": "gguf",
+      "precision": "bf16",
+      "target_directory": "Audio8-TTS-Realistic-0.6b-GGUF",
+      "files": [
+        "audio8-tts-realistic-0.6b-bf16.gguf"
+      ]
+    }
+  ]
+}

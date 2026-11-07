@@ -1,0 +1,103 @@
+diff --git a/Sources/MLXAudioSTT/MLXAudioSTT.swift b/Sources/MLXAudioSTT/MLXAudioSTT.swift
+index fba2b6c..df4936f 100644
+--- a/Sources/MLXAudioSTT/MLXAudioSTT.swift
++++ b/Sources/MLXAudioSTT/MLXAudioSTT.swift
+@@ -26,6 +26,11 @@ public enum STT {
+         hfToken: String? = nil,
+         cache: HubCache = .default
+     ) async throws -> any STTGenerationModel {
++        // Issue 201: exact pinned Audio8 export from a local snapshot.
++        var isDirectory: ObjCBool = false
++        if FileManager.default.fileExists(atPath: modelRepo, isDirectory: &isDirectory), isDirectory.boolValue {
++            return try await Audio8Model.fromDirectory(URL(fileURLWithPath: modelRepo))
++        }
+         guard let repoID = Repo.ID(rawValue: modelRepo) else {
+             throw STTModelError.invalidRepositoryID(modelRepo)
+         }
+diff --git a/Sources/MLXAudioSTT/Models/Audio8/Audio8Model.swift b/Sources/MLXAudioSTT/Models/Audio8/Audio8Model.swift
+index f65888a..816dfae 100644
+--- a/Sources/MLXAudioSTT/Models/Audio8/Audio8Model.swift
++++ b/Sources/MLXAudioSTT/Models/Audio8/Audio8Model.swift
+@@ -137,6 +137,17 @@ public final class Audio8Model: Module, STTGenerationModel {
+ 
+         decoder.precomputeAdaScales(tCond: buildTCond())
+ 
++        // Match Edge0's _initial_prompt_token_ids at frame_len=8, delay=2.
++        let languageToken = generationParameters.language == "zh" ? 151_667 : 151_668
++        let prompt = [config.bosTokenId, languageToken]
++            + Array(repeating: Audio8Model.streamingPadToken,
++                    count: leftPadTokens + delayTokens - 1)
++        let diagnostic = ProcessInfo.processInfo.environment["AUDIO8_DIAGNOSTIC_PREFIX"]
++        if let diagnostic {
++            try? MLX.save(array: mel, url: URL(fileURLWithPath: diagnostic + ".mel.npy"))
++            try? MLX.save(array: audioEmbeds, url: URL(fileURLWithPath: diagnostic + ".embeds.npy"))
++        }
++        var generated: [Int] = []
+         var out: [Int] = []
+         var cache: [VoxtralRealtimeDecoderKVCache?]? = nil
+         var next = config.bosTokenId
+@@ -155,8 +166,20 @@ public final class Audio8Model: Module, STTGenerationModel {
+ 
+             // Tied embeddings: the checkpoint ships no lm_head.
+             let logits = MLX.matmul(hidden[-1], decoder.embedTokens.weight.transposed(1, 0))
+-            next = logits.argMax().item(Int.self)
+-            if next == config.eosTokenId { break }
++            if step + 1 < prompt.count {
++                next = prompt[step + 1]
++                continue
++            }
++            if step == prompt.count - 1, let diagnostic {
++                try? MLX.save(array: logits, url: URL(fileURLWithPath: diagnostic + ".first-logits.npy"))
++            }
++            // Edge0's simulated-streaming decoder suppresses EOS: the audio
++            // clock and final right padding determine the end of transcription.
++            let vocabPositions = MLXArray(0..<config.textConfig.vocabSize)
++            let masked = MLX.which(vocabPositions .== config.eosTokenId,
++                                   MLXArray(-Float.infinity), logits)
++            next = masked.argMax().item(Int.self)
++            generated.append(next)
+ 
+             // The run-up is not speech and its tokens are not transcript. The
+             // model is fed `leftPadTokens` of silence before the first word so
+@@ -174,6 +197,9 @@ public final class Audio8Model: Module, STTGenerationModel {
+             out.append(next)
+         }
+ 
++        if let diagnostic, let data = try? JSONEncoder().encode(generated) {
++            try? data.write(to: URL(fileURLWithPath: diagnostic + ".tokens.json"))
++        }
+         let text = (try? tokenizer?.decode(tokens: out)) ?? nil
+         return STTOutput(text: text ?? "")
+     }
+diff --git a/Sources/Tools/mlx-audio-swift-stt/App.swift b/Sources/Tools/mlx-audio-swift-stt/App.swift
+index 7ff1ce7..38b9b31 100644
+--- a/Sources/Tools/mlx-audio-swift-stt/App.swift
++++ b/Sources/Tools/mlx-audio-swift-stt/App.swift
+@@ -341,7 +341,8 @@ enum App {
+             )
+         }
+ 
+-        try writeOutput(output, format: options.format, outputPathStem: options.outputPath!)
++        try writeOutput(output, format: options.format, outputPathStem: options.outputPath!,
++                        processingTime: CFAbsoluteTimeGetCurrent() - startTime)
+ 
+         if options.verbose {
+             let elapsed = CFAbsoluteTimeGetCurrent() - startTime
+@@ -470,7 +471,8 @@ enum App {
+     private static func writeOutput(
+         _ output: STTOutput,
+         format: OutputFormat,
+-        outputPathStem: String
++        outputPathStem: String,
++        processingTime: Double
+     ) throws {
+         let segments = extractSegments(output)
+ 
+@@ -515,6 +517,7 @@ enum App {
+                 "prompt_tps": output.promptTps,
+                 "generation_tps": output.generationTps,
+                 "total_time": output.totalTime,
++                "processing_time": processingTime,
+                 "peak_memory_usage": output.peakMemoryUsage,
+             ]
+             let data = try JSONSerialization.data(withJSONObject: jsonObject, options: [.prettyPrinted])

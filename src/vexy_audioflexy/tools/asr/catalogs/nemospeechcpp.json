@@ -1,0 +1,60 @@
+{
+  "this_file": "src/vexy_audioflexy/tools/asr/catalogs/nemospeechcpp.json",
+  "upstream_index": ".external/NeMo-Speech.cpp/models/index.json",
+  "models": [
+    {
+      "package": "nemotron-3.5",
+      "repo": "nvidia/nemotron-3.5-asr-streaming-0.6b",
+      "revision": "1c8deaecc64b91f034d73e08dd8b64625eb3395d",
+      "langs": [
+        "en",
+        "pl"
+      ],
+      "role": "asr",
+      "type": "file",
+      "filename": "nemotron-3.5-asr-streaming-0.6b.q8_0.gguf",
+      "size": 741548352,
+      "sha256": "a5c435f294eea8f88ce68dd27b8c3bfea7f777cb2fbba04fcd30eaa555f429ae"
+    },
+    {
+      "package": "nemotron-en",
+      "repo": "nvidia/nemotron-speech-streaming-en-0.6b",
+      "revision": "ebe59e5a817142986528bbbee5dba8db7b38ed50",
+      "langs": [
+        "en"
+      ],
+      "role": "asr",
+      "type": "file",
+      "filename": "nemotron-speech-streaming-en-0.6b.q8_0.gguf",
+      "size": 699872960,
+      "sha256": "d9a01898d2a611c8764e23a1c2f45e70bbd5a425dc4de93692ac951dd603812d"
+    },
+    {
+      "package": "parakeet-ctc",
+      "repo": "nvidia/parakeet-ctc-1.1b",
+      "revision": "20e63a0fed6aedba145b74b826dbd41df0941730",
+      "langs": [
+        "en"
+      ],
+      "role": "asr",
+      "type": "file",
+      "filename": "parakeet-ctc-1.1b.q8_0.gguf",
+      "size": 1178100960,
+      "sha256": "6584fc0fdacf1c220401ea4c3a1d5b44454b655c141cb8672178072c203d92b8"
+    },
+    {
+      "package": "parakeet-tdt",
+      "repo": "nvidia/parakeet-tdt-0.6b-v3",
+      "revision": "541d1f99c6b0c3cd0b11a95167540bb8edefd82b",
+      "langs": [
+        "en",
+        "pl"
+      ],
+      "role": "asr",
+      "type": "file",
+      "filename": "parakeet-tdt-0.6b-v3.q8_0.gguf",
+      "size": 713975456,
+      "sha256": "e3880d0aaaaf2c308ea2c35016b2b895c423eb3fda924c1b463d1c19b7f4d32e"
+    }
+  ]
+}

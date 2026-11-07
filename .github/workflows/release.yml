@@ -1,0 +1,68 @@
+# this_file: .github/workflows/release.yml
+name: Release
+on:
+  push:
+    tags: ["v*.*.*"]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          python-version: "3.12"
+      - name: Validate semantic release tag
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python - <<'PY'
+          import os, re
+          tag = os.environ["RELEASE_TAG"]
+          if not re.fullmatch(r"v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", tag):
+              raise SystemExit("Expected stable semantic tag vMAJOR.MINOR.PATCH")
+          PY
+      - name: Test package
+        run: |
+          uv sync --locked --group dev
+          uv run pytest
+      - name: Build distributions
+        env:
+          VAFX_RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          dist_dir=$(./build.sh)
+          echo "DIST_DIR=$dist_dir" >> "$GITHUB_ENV"
+      - name: Build documentation
+        run: uv run --no-project --with-requirements requirements-docs.txt properdocs build --strict -f src_docs/mkdocs.yml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: ${{ env.DIST_DIR }}/*
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: docs/
+          if-no-files-found: error
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            existing=$(mktemp -d)
+            for asset in "$DIST_DIR"/*.whl "$DIST_DIR"/*.tar.gz; do
+              name=$(basename "$asset")
+              if gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' | grep -Fxq "$name"; then
+                gh release download "$RELEASE_TAG" --pattern "$name" --dir "$existing"
+                cmp "$asset" "$existing/$name"
+              else
+                gh release upload "$RELEASE_TAG" "$asset"
+              fi
+            done
+          else
+            gh release create "$RELEASE_TAG" "$DIST_DIR"/*.whl "$DIST_DIR"/*.tar.gz --verify-tag --title "$RELEASE_TAG" --generate-notes
+          fi

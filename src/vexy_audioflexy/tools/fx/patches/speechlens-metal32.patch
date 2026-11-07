@@ -1,0 +1,12 @@
+diff --git a/Tools/build_mlx_metallib.sh b/Tools/build_mlx_metallib.sh
+index 415644a..dc3dde5 100755
+--- a/Tools/build_mlx_metallib.sh
++++ b/Tools/build_mlx_metallib.sh
+@@ -88,6 +88,7 @@ while IFS= read -r src; do
+   rel="${src#${metal_root}/}"
+   air="${tmp_dir}/${rel//\//_}.air"
+   xcrun -sdk macosx metal \
++    -std=metal3.2 \
+     -x metal \
+     -c "$src" \
+     -I "$metal_root" \

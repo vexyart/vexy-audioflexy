@@ -1,0 +1,68 @@
+diff --git a/tests/test-server.cpp b/tests/test-server.cpp
+index 96eb05b..df559f3 100644
+--- a/tests/test-server.cpp
++++ b/tests/test-server.cpp
+@@ -243,6 +243,7 @@ static bool mock_tool_result(const std::string & body, std::string & content) {
+ }
+ 
+ int main(int argc, char ** argv) {
++    std::string       audio_f32_out;
+     std::string       mode = "loopback";
+     std::string       echo = "off";
+     std::string       route;
+@@ -262,7 +263,9 @@ int main(int argc, char ** argv) {
+         const std::string arg       = argv[i];
+         const bool        has_value = i + 1 < argc;
+         Step              step;
+-        if (arg == "--mode" && has_value) {
++        if (arg == "--audio-f32-out" && has_value) {
++            audio_f32_out = argv[++i];
++        } else if (arg == "--mode" && has_value) {
+             mode = argv[++i];
+         } else if (arg == "--echo" && has_value) {
+             echo = argv[++i];
+@@ -501,6 +504,7 @@ int main(int argc, char ** argv) {
+ 
+     Speaker speaker;
+     size_t  audio_bytes = 0;
++    std::vector<float> received_pcm;
+     int     n_events    = 0;
+     bool    running     = true;
+ 
+@@ -535,6 +539,7 @@ int main(int argc, char ** argv) {
+                 const std::string  delta = rt_json_str(root, "delta");
+                 std::vector<float> pcm;
+                 rt_pcm16_to_float(rt_base64_decode(delta.c_str(), delta.size()), pcm);
++                received_pcm.insert(received_pcm.end(), pcm.begin(), pcm.end());
+                 std::lock_guard<std::mutex> lock(speaker.mutex);
+                 audio_bytes += delta.size();
+                 speaker.queue.insert(speaker.queue.end(), pcm.begin(), pcm.end());
+@@ -725,6 +730,21 @@ int main(int argc, char ** argv) {
+     running = false;
+     client.close();
+     reader.join();
++    bool capture_ok = true;
++    if (!audio_f32_out.empty()) {
++        FILE * output = fopen(audio_f32_out.c_str(), "wb");
++        if (!output) {
++            fprintf(stderr, "Cannot write received PCM to %s\n", audio_f32_out.c_str());
++            capture_ok = false;
++        } else {
++            const size_t written = fwrite(received_pcm.data(), sizeof(float), received_pcm.size(), output);
++            const int closed = fclose(output);
++            if (written != received_pcm.size() || closed != 0) {
++                fprintf(stderr, "Short write while saving received PCM\n");
++                capture_ok = false;
++            }
++        }
++    }
+     if (mock_thread.joinable()) {
+         mock.stop();
+         mock_thread.join();
+@@ -732,5 +752,5 @@ int main(int argc, char ** argv) {
+ 
+     const double audio_sec = (double) audio_bytes * 3.0 / 4.0 / 2.0 / SAMPLE_RATE_24K;
+     printf("[Client] %d events, %.2fs of audio received over %.2fs\n", n_events, audio_sec, timer.ms() / 1000.0);
+-    return 0;
++    return capture_ok ? 0 : 1;
+ }

@@ -1,0 +1,21 @@
+# this_file: src_docs/mkdocs.yml
+site_name: Audioflexy
+site_description: Audio tools with isolated model runtimes
+docs_dir: md
+site_dir: ../docs
+theme:
+  name: materialx
+  language: en
+  features:
+    - content.code.copy
+plugins:
+  - search
+markdown_extensions:
+  - admonition
+  - tables
+  - pymdownx.superfences
+nav:
+  - Overview: index.md
+  - CLI: cli.md
+  - Models: models.md
+  - Development and releases: development.md

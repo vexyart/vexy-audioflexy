@@ -1,0 +1,72 @@
+--- a/src/framework/assets/tensor_source.cpp
++++ b/src/framework/assets/tensor_source.cpp
+@@ -335,6 +335,23 @@
+     }
+     const int64_t cols = tensor.shape.last_dim();
+     const int64_t rows = tensor.shape.prefix_elements();
++    const int64_t elements = tensor.shape.num_elements();
++    const int64_t block = ggml_blck_size(tensor.type);
++    // shortcut: Q4 iOS VibeVoice transposed convolution weights only; use physical-shape metadata if generalized.
++    const bool vibevoice_conv = name.find("model.acoustic_tokenizer.decoder.upsample_layers.") == 0 &&
++        name.find(".convtr.convtr.weight") != std::string_view::npos && tensor.shape.rank == 3;
++    if (vibevoice_conv && cols % block != 0 && tensor.shape.at(0) % block == 0 && elements % block == 0 &&
++        tensor.bytes.size() == ggml_row_size(tensor.type, elements)) {
++        std::vector<float> physical(static_cast<size_t>(elements));
++        std::vector<float> values(static_cast<size_t>(elements));
++        traits->to_float(tensor.bytes.data(), physical.data(), elements);
++        const int64_t in = tensor.shape.at(0), out = tensor.shape.at(1), kernel = tensor.shape.at(2);
++        for (int64_t i = 0; i < in; ++i)
++            for (int64_t o = 0; o < out; ++o)
++                for (int64_t k = 0; k < kernel; ++k)
++                    values[static_cast<size_t>((i * out + o) * kernel + k)] = physical[static_cast<size_t>((o * kernel + k) * in + i)];
++        return values;
++    }
+     const size_t row_bytes = ggml_row_size(tensor.type, cols);
+     if (tensor.bytes.size() != static_cast<size_t>(rows) * row_bytes) {
+         throw std::runtime_error("quantized tensor byte size mismatch: " + std::string(name));
+--- a/tests/unittests/test_gguf_tensor_source.cpp
++++ b/tests/unittests/test_gguf_tensor_source.cpp
+@@ -732,6 +732,35 @@
+         mismatch_rejected = true;
+     }
+     test::require(mismatch_rejected, "folded backend upload must preserve shape validation");
++}
++
++void test_quantized_flat_physical_rows_with_logical_conv_shape() {
++    std::vector<float> input(256 * 2 * 3);
++    for (size_t i = 0; i < input.size(); ++i) input[i] = static_cast<float>(i % 31) / 31.0F;
++    engine::assets::TensorData tensor;
++    tensor.shape = engine::core::TensorShape::from_dims({256, 2, 3});
++    tensor.type = GGML_TYPE_Q4_K;
++    tensor.bytes.resize(6 * ggml_row_size(GGML_TYPE_Q4_K, 256));
++    const auto written = ggml_quantize_chunk(GGML_TYPE_Q4_K, input.data(), tensor.bytes.data(), 0, 6, 256, nullptr);
++    engine::test::require(written == tensor.bytes.size(), "quantized fixture size");
++    std::vector<float> physical(input.size()), expected(input.size());
++    ggml_get_type_traits(GGML_TYPE_Q4_K)->to_float(tensor.bytes.data(), physical.data(), static_cast<int64_t>(input.size()));
++    for (int64_t i = 0; i < 256; ++i)
++        for (int64_t o = 0; o < 2; ++o)
++            for (int64_t k = 0; k < 3; ++k)
++                expected[static_cast<size_t>((i * 2 + o) * 3 + k)] = physical[static_cast<size_t>((o * 3 + k) * 256 + i)];
++    const std::string name = "model.acoustic_tokenizer.decoder.upsample_layers.2.0.convtr.convtr.weight";
++    const auto actual = engine::assets::tensor_data_to_f32(name, tensor);
++    engine::test::require(actual == expected, "logical convolution shape must decode physical blocks in order");
++    bool other_name_rejected = false;
++    try { (void)engine::assets::tensor_data_to_f32("unrelated.weight", tensor); }
++    catch (const std::runtime_error &) { other_name_rejected = true; }
++    engine::test::require(other_name_rejected, "unrelated layouts must not use the VibeVoice shortcut");
++    tensor.bytes.pop_back();
++    bool rejected = false;
++    try { (void)engine::assets::tensor_data_to_f32(name, tensor); }
++    catch (const std::runtime_error &) { rejected = true; }
++    engine::test::require(rejected, "truncated quantized data must be rejected");
+ }
+ 
+ }  // namespace
+@@ -751,6 +780,7 @@
+         test_weight_adapter_conversion();
+         test_deferred_packed_weights();
+         test_weight_norm_folded_source_uses_direct_backend_upload();
++        test_quantized_flat_physical_rows_with_logical_conv_shape();
+     } catch (const std::exception & error) {
+         std::cerr << error.what() << '\n';
+         return 1;

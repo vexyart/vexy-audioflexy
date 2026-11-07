@@ -1,0 +1,41 @@
+{
+  "family": "parakeet_tdt",
+  "tasks": [
+    "asr"
+  ],
+  "languages": [
+    "en"
+  ],
+  "package_defaults": {
+    "download": {
+      "kind": "huggingface_snapshot",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "revision": "main"
+    }
+  },
+  "packages": [
+    {
+      "id": "phonon2_central_q8",
+      "display_name": "Phonon-2 mixed Q8 GGUF",
+      "format": "gguf",
+      "precision": "q8_0",
+      "target_directory": "Phonon-2-GGUF",
+      "strip_prefix": "Phonon-2-GGUF",
+      "files": [
+        "Phonon-2-GGUF/phonon-2-mixed-q8.gguf"
+      ]
+    },
+    {
+      "id": "phonon2_central_f16",
+      "display_name": "Phonon-2 mixed F16 GGUF",
+      "format": "gguf",
+      "precision": "f16",
+      "target_directory": "Phonon-2-GGUF",
+      "strip_prefix": "Phonon-2-GGUF",
+      "files": [
+        "Phonon-2-GGUF/phonon-2-mixed-f16.gguf"
+      ]
+    }
+  ],
+  "this_file": "src/vexy_audioflexy/tools/asr/model_specs/phonon2_central.json"
+}

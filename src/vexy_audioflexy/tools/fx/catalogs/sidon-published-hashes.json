@@ -1,0 +1,52 @@
+{
+  "files": [
+    {
+      "rfilename": ".gitattributes",
+      "lfs": {
+        "sha256": null
+      }
+    },
+    {
+      "rfilename": "README.md",
+      "lfs": {
+        "sha256": null
+      }
+    },
+    {
+      "rfilename": "sidon-ref-48k.wav",
+      "lfs": {
+        "sha256": "21eb579223880a96c078cc6a515c852988b9903d002103f627aee5ebd116a143"
+      }
+    },
+    {
+      "rfilename": "sidon-ref.gguf",
+      "lfs": {
+        "sha256": "a9abdf29ef61d2c439f41031a3ec645b0e9e328a2b271683cf26f596a64469ec"
+      }
+    },
+    {
+      "rfilename": "sidon-v0.1-f16.gguf",
+      "lfs": {
+        "sha256": "7e27282a09be71e2f37e87731a074b291a2cab0d3f1de4a8f8eb48421587e912"
+      }
+    },
+    {
+      "rfilename": "sidon-v0.1-q4_k.gguf",
+      "lfs": {
+        "sha256": "1bb2ab2c42a1050a69187ef20a705d2c68a310b5cc6ba0b5efdd79d9c8c7e71e"
+      }
+    },
+    {
+      "rfilename": "sidon-v0.1-q6_k.gguf",
+      "lfs": {
+        "sha256": "f48a0407760037fd8e9aa0ae4150135bcd92a30a684b5921e5fffc4b8d1b94de"
+      }
+    },
+    {
+      "rfilename": "sidon-v0.1-q8_0.gguf",
+      "lfs": {
+        "sha256": "8de6498eba9f1ee53371614cee2dcb8db8a7411cc5a43444cb912a456e023ade"
+      }
+    }
+  ]
+}

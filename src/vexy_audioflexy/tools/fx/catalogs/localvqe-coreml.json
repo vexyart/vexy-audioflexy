@@ -1,0 +1,53 @@
+{
+  "this_file": "catalogs/localvqe-coreml.json",
+  "repo": "FluidInference/localvqe-coreml",
+  "revision": "4205430781c240397073d6f7bf676fb4c732fc12",
+  "runtime_commit": "0b1f46289fe27d95b5e66ad8be46e64f5ee02ae7",
+  "binary_sha256": "d64f8928f54735413d791b301c1a02aeb7d5020fca2048f579db4259fd4abfc8",
+  "packages": {
+    "v13_16ms": {
+      "variant": "v1.3",
+      "chunk": "16ms",
+      "bundle": "localvqe-v1.3-4.8M-16ms.mlmodelc",
+      "files": {
+        "analytics/coremldata.bin": "b38b26719f7fdb1d37d0ea66e2a72c0cb2f111105b606636d733b958ea3d7892",
+        "coremldata.bin": "795709e1ad528f94a7d76226e0e408d1897ee0a6603d32fdfad9ffb5b668fd22",
+        "model.mil": "8dddf32c801cdb90329e43748a46e9321ef2b14c8d41d6515c541c81a43cbbf4",
+        "weights/weight.bin": "fc5f290cbfb497718d9d9568ee965c352bfe4663bab49b30a10e91f8fcfff826"
+      }
+    },
+    "v13_256ms": {
+      "variant": "v1.3",
+      "chunk": "256ms",
+      "bundle": "localvqe-v1.3-4.8M-256ms.mlmodelc",
+      "files": {
+        "analytics/coremldata.bin": "a0e97d957f54c9a144993bfbb9d3d8320def9de35a77844e20fbf0703fa461c6",
+        "coremldata.bin": "9ac719cbfbc018ce1f1168062ee1629b77bd86f4881567bca8668591817f402f",
+        "model.mil": "11da4803a13bcc357550904fcbfeb4a169b0c4b38e529787aeed8a9b233c528c",
+        "weights/weight.bin": "fc5f290cbfb497718d9d9568ee965c352bfe4663bab49b30a10e91f8fcfff826"
+      }
+    },
+    "v12_16ms": {
+      "variant": "v1.2",
+      "chunk": "16ms",
+      "bundle": "localvqe-v1.2-1.3M-16ms.mlmodelc",
+      "files": {
+        "analytics/coremldata.bin": "0e225fbf955fd44bf92d0e43f17c5e80ec21df2da2e83b0725e982479d2e015a",
+        "coremldata.bin": "8da3ff4db9396b06b3deff2ae1158502e4f88862660148842b03a2430a62bdef",
+        "model.mil": "af12ed04774f17e8c60e6d87315f7d33d3552018a47aa7b6f084360880373c0e",
+        "weights/weight.bin": "1da2eb2865195ca42bed2733d23b3442ec8797a02208f98369ba43eed38ee829"
+      }
+    },
+    "v12_256ms": {
+      "variant": "v1.2",
+      "chunk": "256ms",
+      "bundle": "localvqe-v1.2-1.3M-256ms.mlmodelc",
+      "files": {
+        "analytics/coremldata.bin": "a072da4f7410510920656c84f8339fff4f5fc70216f22aecea1642b4cc858fe6",
+        "coremldata.bin": "db6af400c5bd922a4e23e1e34157aa18ac959ee6b061a374cf628f7a3f1b8acf",
+        "model.mil": "5bc5a8f22d9ce2880ed2bf014edb9b5b5050f86d88e9e7fba346d145fbfbf56f",
+        "weights/weight.bin": "1da2eb2865195ca42bed2733d23b3442ec8797a02208f98369ba43eed38ee829"
+      }
+    }
+  }
+}

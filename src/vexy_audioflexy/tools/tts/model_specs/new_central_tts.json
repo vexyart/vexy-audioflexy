@@ -1,0 +1,30 @@
+{
+  "family": "kitten_tts2",
+  "tasks": [
+    "tts",
+    "clone"
+  ],
+  "languages": [
+    "auto"
+  ],
+  "package_defaults": {
+    "download": {
+      "kind": "huggingface_snapshot",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "revision": "main"
+    }
+  },
+  "packages": [
+    {
+      "id": "kitten_tts2_20261021_tq2_1",
+      "display_name": "KittenTTS2 20261021 TQ2_1",
+      "format": "gguf",
+      "precision": "tq2_1",
+      "target_directory": "KittenTTS2-GGUF",
+      "strip_prefix": "KittenTTS2-GGUF",
+      "files": [
+        "KittenTTS2-GGUF/kitten-tts2-20261021-tq2_1.gguf"
+      ]
+    }
+  ]
+}

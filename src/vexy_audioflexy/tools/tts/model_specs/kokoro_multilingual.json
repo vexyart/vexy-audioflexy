@@ -1,0 +1,29 @@
+{
+  "family": "kokoro_tts",
+  "tasks": [
+    "tts"
+  ],
+  "languages": [
+    "auto"
+  ],
+  "package_defaults": {
+    "download": {
+      "kind": "huggingface_snapshot",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "revision": "main"
+    }
+  },
+  "packages": [
+    {
+      "id": "kokoro_82m_multilingual_q8_0",
+      "display_name": "Kokoro 82M multilingual Q8_0",
+      "format": "gguf",
+      "precision": "q8_0",
+      "target_directory": "Kokoro-82M-GGUF",
+      "strip_prefix": "Kokoro-82M-GGUF",
+      "files": [
+        "Kokoro-82M-GGUF/kokoro-82m-multilingual-q8_0.gguf"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "family": "vibevoice_asr_streaming",
+  "tasks": [
+    "asr"
+  ],
+  "languages": [
+    "auto"
+  ],
+  "package_defaults": {
+    "download": {
+      "kind": "huggingface_snapshot",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "revision": "main"
+    }
+  },
+  "packages": [
+    {
+      "id": "vibevoice_streaming_central_q4",
+      "display_name": "vibevoice_streaming_central_q4",
+      "format": "gguf",
+      "precision": "q4_k",
+      "target_directory": "VibeVoice-ASR-Streaming-7B-GGUF",
+      "strip_prefix": "VibeVoice-ASR-Streaming-7B-GGUF",
+      "files": [
+        "VibeVoice-ASR-Streaming-7B-GGUF/vibevoice-asr-streaming-7b-q4_k.gguf"
+      ]
+    },
+    {
+      "id": "vibevoice_streaming_central_q8",
+      "display_name": "vibevoice_streaming_central_q8",
+      "format": "gguf",
+      "precision": "q8_0",
+      "target_directory": "VibeVoice-ASR-Streaming-7B-GGUF",
+      "strip_prefix": "VibeVoice-ASR-Streaming-7B-GGUF",
+      "files": [
+        "VibeVoice-ASR-Streaming-7B-GGUF/vibevoice-asr-streaming-7b-q8_0.gguf"
+      ]
+    },
+    {
+      "id": "vibevoice_streaming_central_bf16",
+      "display_name": "vibevoice_streaming_central_bf16",
+      "format": "gguf",
+      "precision": "bf16",
+      "target_directory": "VibeVoice-ASR-Streaming-7B-GGUF",
+      "strip_prefix": "VibeVoice-ASR-Streaming-7B-GGUF",
+      "files": [
+        "VibeVoice-ASR-Streaming-7B-GGUF/vibevoice-asr-streaming-7b-bf16.gguf"
+      ]
+    }
+  ],
+  "this_file": "src/vexy_audioflexy/tools/asr/model_specs/vibevoice_asr_streaming_central.json"
+}

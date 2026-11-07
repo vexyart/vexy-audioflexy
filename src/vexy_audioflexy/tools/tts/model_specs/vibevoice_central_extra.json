@@ -1,0 +1,29 @@
+{
+  "family": "vibevoice",
+  "tasks": [
+    "tts"
+  ],
+  "languages": [
+    "auto"
+  ],
+  "package_defaults": {
+    "download": {
+      "kind": "huggingface_snapshot",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "revision": "main"
+    }
+  },
+  "packages": [
+    {
+      "id": "vibevoice_1_5b_q4_ios",
+      "display_name": "vibevoice_1_5b_q4_ios",
+      "format": "gguf",
+      "precision": "q4",
+      "target_directory": "VibeVoice-1.5B-GGUF",
+      "strip_prefix": "VibeVoice-1.5B-GGUF",
+      "files": [
+        "VibeVoice-1.5B-GGUF/vibevoice-1.5b-q4-ios.gguf"
+      ]
+    }
+  ]
+}

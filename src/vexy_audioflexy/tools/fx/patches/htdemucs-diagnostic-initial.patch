@@ -1,0 +1,97 @@
+--- a/src/models/demucs/pipeline.cpp
++++ b/src/models/demucs/pipeline.cpp
+@@ -28,6 +28,8 @@
+ #include <cstddef>
+ #include <cstdint>
+ #include <memory>
++#include <cstdlib>
++#include <fstream>
+ #include <optional>
+ #include <stdexcept>
+ #include <string>
+@@ -1453,6 +1455,8 @@
+             core::TensorShape::from_dims({1, config_.audio_channels, config_.segment_samples}),
+             GGML_TYPE_F32);
+ 
++        capture("input_freq", x);
++        capture("input_time", xt);
+         std::vector<core::TensorValue> saved;
+         std::vector<core::TensorValue> saved_t;
+         std::vector<int64_t> lengths_t;
+@@ -1473,6 +1477,8 @@
+                 x = core::wrap_tensor(ggml_add(ctx.ggml, x.tensor, freq_emb.tensor), x.shape, GGML_TYPE_F32);
+             }
+             saved.push_back(x);
++            capture("encoder_freq_" + std::to_string(idx), x);
++            capture("encoder_time_" + std::to_string(idx), xt);
+         }
+ 
+         const int64_t freq_channels = x.shape.dims[1];
+@@ -1525,6 +1531,8 @@
+         xtf = modules::LayerNormModule({config_.bottom_channels, 1e-5f, true, true}).build(ctx, xtf, weights_.transformer->norm_in_time);
+         xtf = modules::AddModule{}.build(ctx, xtf, core::wrap_tensor(ggml_scale(ctx.ggml, time_pos.tensor, config_.transformer_weight_pos_embed), time_pos.shape, GGML_TYPE_F32));
+ 
++        capture("transformer_freq_input", xf);
++        capture("transformer_time_input", xtf);
+         for (int i = 0; i < config_.transformer_layers; ++i) {
+             const auto & f_layer = weights_.transformer->freq_layers[static_cast<size_t>(i)];
+             const auto & t_layer = weights_.transformer->time_layers[static_cast<size_t>(i)];
+@@ -1536,6 +1544,8 @@
+                 xf = build_transformer_cross_layer(ctx, xf, xtf, f_layer.cross_weights, config_);
+                 xtf = build_transformer_cross_layer(ctx, xtf, old_xf, t_layer.cross_weights, config_);
+             }
++            capture("transformer_freq_" + std::to_string(i), xf);
++            capture("transformer_time_" + std::to_string(i), xtf);
+         }
+ 
+         xf = core::reshape_tensor(ctx, ensure_contiguous(ctx, xf), core::TensorShape::from_dims({1, x.shape.dims[3], x.shape.dims[2], config_.bottom_channels}));
+@@ -1586,6 +1596,7 @@
+             freq_output_,
+             time_output_,
+         };
++        for (const auto & item : diagnostic_) { outputs_.push_back(item.second); }
+         constants_->finish_graph();
+         constants_->ensure_uploaded();
+         finalize_graph(262144);
+@@ -1629,6 +1640,7 @@
+         }
+         ggml_backend_tensor_get(freq_output_, freq_output.data(), 0, freq_output.size() * sizeof(float));
+         ggml_backend_tensor_get(time_output_, time_output.data(), 0, time_output.size() * sizeof(float));
++        dump_diagnostics();
+         const auto readback_end = std::chrono::steady_clock::now();
+         last_timing_.upload_ms = debug::elapsed_ms(upload_start, upload_end);
+         last_timing_.compute_ms = debug::elapsed_ms(compute_start, compute_end);
+@@ -1638,6 +1650,33 @@
+     const Timing & last_timing() const noexcept { return last_timing_; }
+ 
+ private:
++    std::vector<std::pair<std::string, ggml_tensor *>> diagnostic_;
++    void capture(const std::string & label, const core::TensorValue & value) {
++        if (std::getenv("AUDIOCPP_DEMUCS_DIAGNOSTIC_PREFIX") != nullptr) {
++            if (value.tensor->type != GGML_TYPE_F32) { throw std::runtime_error("diagnostic expects F32"); }
++            diagnostic_.emplace_back(label, value.tensor);
++        }
++    }
++    void dump_diagnostics() {
++        const char * prefix = std::getenv("AUDIOCPP_DEMUCS_DIAGNOSTIC_PREFIX");
++        if (prefix == nullptr) { return; }
++        for (const auto & item : diagnostic_) {
++            auto * tensor = item.second;
++            std::vector<char> bytes(ggml_nbytes(tensor));
++            ggml_backend_tensor_get(tensor, bytes.data(), 0, bytes.size());
++            const auto base = std::string(prefix) + "_" + item.first;
++            std::ofstream binary(base + ".bin", std::ios::binary);
++            binary.write(bytes.data(), static_cast<std::streamsize>(bytes.size()));
++            if (!binary) { throw std::runtime_error("diagnostic tensor write failed"); }
++            std::ofstream metadata(base + ".json");
++            metadata << "{\"type\":\"f32\",\"ne\":[";
++            for (int i = 0; i < 4; ++i) { metadata << (i ? "," : "") << tensor->ne[i]; }
++            metadata << "],\"nb\":[";
++            for (int i = 0; i < 4; ++i) { metadata << (i ? "," : "") << tensor->nb[i]; }
++            metadata << "]}\n";
++            if (!metadata) { throw std::runtime_error("diagnostic metadata write failed"); }
++        }
++    }
+     core::BackendType backend_type_ = core::BackendType::Cpu;
+     HTDemucsConfig base_config_;
+     HTDemucsConfig config_;

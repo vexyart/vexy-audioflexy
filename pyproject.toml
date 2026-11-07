@@ -1,0 +1,48 @@
+# this_file: pyproject.toml
+[build-system]
+requires = ["hatchling>=1.27", "hatch-vcs>=0.5"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vexy-audioflexy"
+dynamic = ["version"]
+description = "Audio tools with isolated model runtimes"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+dependencies = [
+    "fire>=0.7",
+    "platformdirs>=4",
+    "tomli-w>=1.2.0",
+]
+
+[project.scripts]
+vafx = "vexy_audioflexy.cli:main"
+
+[dependency-groups]
+dev = [
+    "gguf==0.19.0",
+    "huggingface-hub>=2.4.0",
+    "jieba==0.42.1",
+    "jiwer>=4.0.0",
+    "numpy>=2.5.4",
+    "pyannote-metrics>=4.2.0",
+    "pytest>=8",
+    "rich>=15.0.0",
+    "sacrebleu>=2.6.0",
+    "soundfile>=0.14.0",
+]
+
+[tool.hatch.version]
+source = "vcs"
+tag-pattern = "^v(?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)$"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vexy_audioflexy"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/src", "/tests", "/examples", "/pyproject.toml", "/README.md", "/LICENSE", "/test.sh", "/DEPENDENCIES.md", "/CHANGELOG.md", "/src_docs", "/requirements-docs.txt", "/build.sh", "/install.sh", "/release.sh", "/publish.sh"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

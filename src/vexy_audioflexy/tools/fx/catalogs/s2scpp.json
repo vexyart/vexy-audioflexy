@@ -1,0 +1,36 @@
+{
+  "this_file": "catalogs/s2scpp.json",
+  "package": "s2scpp-loopback-q8",
+  "models": [
+    {
+      "repo": "Serveurperso/Silero-VAD-GGUF",
+      "revision": "5c48a3a7850d43e35501c62cfca5a569a0f2c7c4",
+      "filename": "silero-vad-F32.gguf"
+    },
+    {
+      "repo": "Serveurperso/Smart-Turn-v3-GGUF",
+      "revision": "5f714f440d391492b05876e60a878114ed83abe9",
+      "filename": "smart-turn-v3.2-F32.gguf"
+    },
+    {
+      "repo": "Serveurperso/Parakeet-TDT-0.6b-v3-GGUF",
+      "revision": "e0d84ea3f2b17ceb95848452754bb8487e5abe4c",
+      "filename": "parakeet-tdt-0.6b-v3-Q8_0.gguf"
+    },
+    {
+      "repo": "Serveurperso/Qwen3-TTS-GGUF",
+      "revision": "b7ee2e8c7459c3bea99da23e3d178125a7d1713c",
+      "filename": "qwen-talker-1.7b-base-Q8_0.gguf"
+    },
+    {
+      "repo": "Serveurperso/Qwen3-TTS-GGUF",
+      "revision": "b7ee2e8c7459c3bea99da23e3d178125a7d1713c",
+      "filename": "qwen-tokenizer-12hz-Q8_0.gguf"
+    },
+    {
+      "repo": "Serveurperso/LocalVQE-GGUF",
+      "revision": "a96f128b0fd4a499e5c415cdaef9a4cde5d65a65",
+      "filename": "localvqe-v1.3-F32.gguf"
+    }
+  ]
+}

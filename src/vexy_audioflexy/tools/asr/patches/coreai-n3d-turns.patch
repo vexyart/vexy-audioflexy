@@ -1,0 +1,17 @@
+diff --git a/conversion/nemotron3_diar/swift/Sources/n3d-selftest/main.swift b/conversion/nemotron3_diar/swift/Sources/n3d-selftest/main.swift
+index 37d1c05..e240ac0 100644
+--- a/conversion/nemotron3_diar/swift/Sources/n3d-selftest/main.swift
++++ b/conversion/nemotron3_diar/swift/Sources/n3d-selftest/main.swift
+@@ -189,6 +189,12 @@ func closedLoop(args: Args, assets: N3DAssets, samples: [Float]) async throws ->
+     } else {
+         out = try await diarizer.process(samples: samples, onStep: onStep)
+     }
++    let turns: [[String: Any]] = N3DDiarizer.segments(from: out.probs).map {
++        ["start": Double($0.startFrame) * 0.01, "end": Double($0.endFrame) * 0.01,
++         "speaker": $0.speaker]
++    }
++    j["segments"] = turns
++    if let path = args.url("probs-f32-out") { try writeF32(out.probs, to: path) }
+     let gms = out.graphSeconds.map { $0 * 1e3 }
+     log("\(out.frames) frames (\(String(format: "%.2f", Double(samples.count) / 16000)) s audio), \(out.steps) steps, "
+         + "\(out.compressions) compressions, near-ties \(out.nearTies); wall \(String(format: "%.3f", out.wallSeconds)) s "

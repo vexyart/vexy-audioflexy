@@ -1,0 +1,46 @@
+{
+  "files": [
+    {
+      "rfilename": "Sidon-GGUF/LICENSE",
+      "lfs": {
+        "sha256": null
+      }
+    },
+    {
+      "rfilename": "Sidon-GGUF/sidon-v0.1-f32.gguf",
+      "lfs": {
+        "sha256": "5af689683a8142764dd69c956a87455c34f8b685cce90ac4bcb722037bc8e360"
+      }
+    },
+    {
+      "rfilename": "Tone-Color-VC-GGUF/LICENSE",
+      "lfs": {
+        "sha256": null
+      }
+    },
+    {
+      "rfilename": "Tone-Color-VC-GGUF/tone-color-vc-f16.gguf",
+      "lfs": {
+        "sha256": "7dcaff0888e2cdc3468a5a402287edb4f04c461e38a0e7ce69bf73a5c227fe70"
+      }
+    },
+    {
+      "rfilename": "Tone-Color-VC-GGUF/tone-color-vc-f32.gguf",
+      "lfs": {
+        "sha256": "68351862fdac4213c2bd6a412f6bba79bf2f6249d9e868995b2e678ecdaf2599"
+      }
+    },
+    {
+      "rfilename": "UniverSR-GGUF/universr-audio-orig.gguf",
+      "lfs": {
+        "sha256": "86d2980546effb2255fff79d813f5d4ccd09171d151f3f103c6c44be1e490a1e"
+      }
+    },
+    {
+      "rfilename": "UniverSR-GGUF/universr-speech-orig.gguf",
+      "lfs": {
+        "sha256": "0d8dc11bcbe9a1fa515071ff7fd5bf040b3487ddfecd05826ab6f11bc92aa740"
+      }
+    }
+  ]
+}

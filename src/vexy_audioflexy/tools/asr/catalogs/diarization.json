@@ -1,0 +1,71 @@
+{
+  "this_file": "src/vexy_audioflexy/tools/asr/catalogs/diarization.json",
+  "models": [
+    {
+      "package": "audiocpp-nemotron3-q8_0",
+      "engine": "audiocpp",
+      "family": "nemotron_3_diar",
+      "repo": "audio-cpp/Nemotron-3-Diarization-GGUF",
+      "revision": "647d39feaa0e91dca5ce355a95403837b76dff56",
+      "filename": "nemotron-3-diarization-q8_0.gguf"
+    },
+    {
+      "package": "audiocpp-nemotron3-bf16",
+      "engine": "audiocpp",
+      "family": "nemotron_3_diar",
+      "repo": "audio-cpp/Nemotron-3-Diarization-GGUF",
+      "revision": "647d39feaa0e91dca5ce355a95403837b76dff56",
+      "filename": "nemotron-3-diarization-bf16.gguf"
+    },
+    {
+      "package": "nemo-nemotron-3-diarization-q8",
+      "engine": "nemo",
+      "repo": "nvidia/Nemotron-3-Diarization",
+      "revision": "f667ed73aee57d40cc39428eb768b4fd87a0a29e",
+      "role": "diarization",
+      "type": "file",
+      "filename": "Nemotron-3-Diarization.q8_0.gguf",
+      "size": 107012128,
+      "sha256": "08456d9e22cd9a323c0364d98375f3746d6e68507ebb705cd46438c534c7a3a1"
+    },
+    {
+      "package": "nemo-sortformer-q8",
+      "engine": "nemo",
+      "repo": "nvidia/diar_streaming_sortformer_4spk-v2",
+      "revision": "5240a64075176943f677d30fa2171c780229f341",
+      "role": "diarization",
+      "type": "file",
+      "filename": "diar_streaming_sortformer_4spk-v2.q8_0.gguf",
+      "size": 147075776,
+      "sha256": "0679cfeb1ce356d0dea9470b31274f4bfc7eb927497d82005483770666da998a"
+    },
+    {
+      "package": "mlx-nemotron3-8bit",
+      "engine": "mlx",
+      "repo": "mlx-community/Nemotron-3-Diarization-8bit",
+      "revision": "dd8b8ce3d69a80540a7e50150e2beed1c34fee37",
+      "runtime": "mlx-audio==0.5.7"
+    },
+    {
+      "package": "coreai-mlboydaisuke-nemotron3-fp16",
+      "engine": "coreai-zoo",
+      "repo": "mlboydaisuke/Nemotron-3-Diarization-CoreAI",
+      "revision": "8dc6258987e69fc7addadd240df0998b6ae131c0",
+      "runtime_commit": "2d214b3d20cdd66c9a45b57e591df407b8a0147d"
+    },
+    {
+      "package": "coreai-coder-nemotron3-fast32",
+      "engine": "coreai-coder",
+      "profile": "fast32",
+      "repo": "coder543/nemotron-3-diarization-coreai",
+      "revision": "99f6a8a5b614b28d61bfd16190edb92eab745198"
+    },
+    {
+      "package": "coreai-coder-nemotron3-fast128",
+      "engine": "coreai-coder",
+      "profile": "fast128",
+      "repo": "coder543/nemotron-3-diarization-coreai",
+      "revision": "99f6a8a5b614b28d61bfd16190edb92eab745198"
+    }
+  ]
+}

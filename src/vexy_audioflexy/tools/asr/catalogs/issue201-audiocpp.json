@@ -1,0 +1,178 @@
+{
+  "this_file": "src/vexy_audioflexy/tools/asr/catalogs/issue201-audiocpp.json",
+  "commit": "2892ed3e94b6ccbdacc111fa2896aaae0a5dc8fc",
+  "models": [
+    {
+      "family": "cohere_asr",
+      "package": "cohere_transcribe_q8_0",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "quant": "q8_0",
+      "languages": [
+        "en",
+        "fr",
+        "de",
+        "es",
+        "it",
+        "pt",
+        "nl",
+        "pl",
+        "el",
+        "ar",
+        "ja",
+        "zh",
+        "vi",
+        "ko"
+      ],
+      "lang_flag": true
+    },
+    {
+      "family": "nemotron_asr",
+      "package": "nemotron_asr_q8_0",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "quant": "q8_0",
+      "languages": [
+        "ar-AR",
+        "bg-BG",
+        "cs-CZ",
+        "da-DK",
+        "de-DE",
+        "el-GR",
+        "en-GB",
+        "en-US",
+        "es-ES",
+        "es-US",
+        "et-EE",
+        "fi-FI",
+        "fr-CA",
+        "fr-FR",
+        "he-IL",
+        "hi-IN",
+        "hr-HR",
+        "hu-HU",
+        "it-IT",
+        "ja-JP",
+        "ko-KR",
+        "lt-LT",
+        "lv-LV",
+        "mt-MT",
+        "nb-NO",
+        "nl-NL",
+        "nn-NO",
+        "pl-PL",
+        "pt-BR",
+        "pt-PT",
+        "ro-RO",
+        "ru-RU",
+        "sk-SK",
+        "sl-SI",
+        "sv-SE",
+        "th-TH",
+        "tr-TR",
+        "uk-UA",
+        "vi-VN",
+        "zh-CN"
+      ],
+      "lang_flag": true
+    },
+    {
+      "family": "niagara_asr",
+      "package": "niagara_19m_f32",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "quant": "f32",
+      "languages": [
+        "en"
+      ],
+      "lang_flag": true
+    },
+    {
+      "family": "niagara_asr",
+      "package": "niagara_38m_f32",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "quant": "f32",
+      "languages": [
+        "en"
+      ],
+      "lang_flag": true
+    },
+    {
+      "family": "vibevoice_asr_streaming",
+      "package": "vibevoice_asr_streaming_7b_q8_0",
+      "repo": "audio-cpp/VibeVoice-ASR-Streaming-7B-GGUF",
+      "quant": "q8_0",
+      "languages": [
+        "en",
+        "zh",
+        "es",
+        "pt",
+        "de",
+        "ja",
+        "ko",
+        "fr",
+        "ru",
+        "it"
+      ],
+      "lang_flag": true
+    },
+    {
+      "family": "canary_asr",
+      "package": "canary_180m_flash_q8_0",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "quant": "q8_0",
+      "languages": [
+        "en",
+        "de",
+        "es",
+        "fr"
+      ],
+      "lang_flag": true
+    },
+    {
+      "family": "gigaam_asr",
+      "package": "gigaam_v3_ctc_f16",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "quant": "f16",
+      "languages": [
+        "ru"
+      ],
+      "lang_flag": false
+    },
+    {
+      "family": "moss_transcribe_diarize",
+      "package": "moss_transcribe_diarize_q4_k",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "quant": "q4_k",
+      "languages": [
+        "en",
+        "pl"
+      ],
+      "lang_flag": false,
+      "note": "50+ languages, no hint; speaker-labelled output needs task-aware parsing before WER."
+    },
+    {
+      "family": "moonshine_asr",
+      "package": "moonshine_streaming_tiny_q8_0",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "quant": "q8_0",
+      "languages": [
+        "en"
+      ],
+      "lang_flag": false
+    },
+    {
+      "family": "index_echo",
+      "package": "index_echo_s2tt_2b_q8_0",
+      "repo": "audio-cpp/Index-Echo-S2TT-GGUF",
+      "quant": "q8_0",
+      "languages": [
+        "zh"
+      ],
+      "lang_flag": false,
+      "targets": [
+        "en",
+        "es",
+        "ja"
+      ],
+      "note": "Chinese input; bilingual subtitles parsed by dedicated asr-indexecho wrapper."
+    }
+  ]
+}

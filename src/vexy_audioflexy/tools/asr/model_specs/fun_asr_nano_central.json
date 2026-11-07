@@ -1,0 +1,41 @@
+{
+  "family": "fun_asr_nano",
+  "tasks": [
+    "asr"
+  ],
+  "languages": [
+    "auto"
+  ],
+  "package_defaults": {
+    "download": {
+      "kind": "huggingface_snapshot",
+      "repo": "audio-cpp/audio.cpp-gguf",
+      "revision": "main"
+    }
+  },
+  "packages": [
+    {
+      "id": "fun_asr_nano_central_q8",
+      "display_name": "fun_asr_nano_central_q8",
+      "format": "gguf",
+      "precision": "q8_0",
+      "target_directory": "Fun-ASR-Nano-2512-GGUF",
+      "strip_prefix": "Fun-ASR-Nano-2512-GGUF",
+      "files": [
+        "Fun-ASR-Nano-2512-GGUF/fun-asr-nano-2512-q8_0.gguf"
+      ]
+    },
+    {
+      "id": "fun_asr_nano_central_f16",
+      "display_name": "fun_asr_nano_central_f16",
+      "format": "gguf",
+      "precision": "f16",
+      "target_directory": "Fun-ASR-Nano-2512-GGUF",
+      "strip_prefix": "Fun-ASR-Nano-2512-GGUF",
+      "files": [
+        "Fun-ASR-Nano-2512-GGUF/fun-asr-nano-2512-f16.gguf"
+      ]
+    }
+  ],
+  "this_file": "src/vexy_audioflexy/tools/asr/model_specs/fun_asr_nano_central.json"
+}
