@@ -4,6 +4,11 @@ this_file: CHANGELOG.md
 
 # Changelog
 
+## Unreleased
+
+- Create and push stable release tags with `uvx gitnextver` when release/publish is run without a tag on untagged or dirty work; reuse clean tagged releases for resumable publication.
+- Generate an ignored `__version__.py` through hatch-vcs and retain exact stable wheel/sdist version checks before release or publication.
+
 ## 1.0.0
 
 - Add chained build, uv tool installation, GitHub release and uv publication scripts.

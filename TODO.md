@@ -27,3 +27,7 @@ The initial implementation excluded publication. The subsequently authorized
 - [x] Verify stable tag configuration and semver-tag GitHub release workflow; actual tagged version is checked before publication.
 - [x] Complete privacy audit, commit, tag v1.0.0, push and verify GitHub release.
 - [ ] Publish the preserved 1.0.0 assets to PyPI and verify hashes and installation.
+
+- [x] Use uvx gitnextver before automatic stable release/publish and ignore the hatch-vcs generated __version__.py.
+- [x] Test automatic release tagging, tagged resume and failure guards.
+- [x] Verify release repair with real isolated artifacts, installed version, full regression suite and independent review.

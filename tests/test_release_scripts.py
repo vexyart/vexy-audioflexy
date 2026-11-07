@@ -20,9 +20,20 @@ with open(os.environ["COMMAND_LOG"], "a") as log:
     log.write(json.dumps([name, *args]) + "\n")
 store = Path(os.environ["REMOTE_ASSETS"])
 if name == "git":
-    if args[0] == "describe": print(os.environ.get("FAKE_TAG", "v1.2.3"))
+    if args[0] == "describe":
+        if os.environ.get("FAKE_UNTAGGED"): sys.exit(128)
+        print(os.environ.get("FAKE_TAG", "v1.2.3"))
     elif args[0] == "rev-parse": print("abc123")
-    elif args[0] == "status": print(os.environ.get("FAKE_DIRTY", ""), end="")
+    elif args[0] == "status":
+        tagged = (store.parent / "tagged").exists()
+        print(os.environ.get("FAKE_AFTER_DIRTY" if tagged else "FAKE_DIRTY", ""), end="")
+elif name == "uvx":
+    assert args in (["gitnextver", "--pull=False"], ["gitnextver", "--pull=False", "--commit=False"])
+    if os.environ.get("TAG_EXIT"): sys.exit(int(os.environ["TAG_EXIT"]))
+    if not os.environ.get("FAKE_DIRTY") and "--commit=False" not in args:
+        sys.exit(0)  # gitnextver's default commit mode stops when nothing changed.
+    (store.parent / "tagged").touch()
+    print(os.environ.get("FAKE_NEXT_TAG", "v1.2.3"))
 elif name == "uv":
     if args[0] == "build":
         root = Path(args[args.index("--out-dir") + 1])
@@ -64,7 +75,7 @@ def release_tree(tmp_path):
     for script in ("build", "install", "release", "publish"):
         shutil.copyfile(ROOT / f"{script}.sh", project / f"{script}.sh")
         (project / f"{script}.sh").chmod(0o755)
-    for name in ("uv", "git", "gh"):
+    for name in ("uv", "uvx", "git", "gh"):
         path = binary / name
         path.write_text(f"#!{sys.executable}\n" + FAKE)
         path.chmod(0o755)
@@ -111,8 +122,9 @@ def test_release_when_dirty_then_stops_before_build(release_tree):
     assert not any(row[0] == "uv" for row in commands)
 
 
-def test_release_when_built_version_differs_then_stops_before_install(release_tree):
-    result, commands = run_script(release_tree, "release", "v1.2.3", FAKE_VERSION="1.2.4")
+@pytest.mark.parametrize("version", ["1.2.4", "1.2.3.dev1+gdeadbeef", "1.2.3+dirty"])
+def test_release_when_built_version_differs_then_stops_before_install(release_tree, version):
+    result, commands = run_script(release_tree, "release", "v1.2.3", FAKE_VERSION=version)
     assert result.returncode != 0
     assert "Built version differs" in result.stderr
     assert [row[1] for row in commands if row[0] == "uv"] == ["build"]
@@ -143,3 +155,43 @@ def test_build_when_no_release_tag_then_allows_development_version(release_tree)
     assert result.returncode == 0, result.stderr
     assert Path(result.stdout.strip()).is_dir()
     assert len(commands) == 1 and commands[0][:2] == ["uv", "build"]
+
+
+@pytest.mark.parametrize("script", ["release", "publish"])
+@pytest.mark.parametrize("state", [{"FAKE_UNTAGGED": "1"}, {"FAKE_DIRTY": " M source.py"}])
+def test_release_when_no_tag_argument_then_gitnextver_before_build(release_tree, script, state):
+    result, commands = run_script(release_tree, script, **state)
+    assert result.returncode == 0, result.stderr
+    expected = ["uvx", "gitnextver", "--pull=False"]
+    if "FAKE_UNTAGGED" in state:
+        expected.append("--commit=False")
+    tagging = commands.index(expected)
+    build = next(i for i, row in enumerate(commands) if row[:2] == ["uv", "build"])
+    assert tagging < build
+    assert sum(row[0] == "uvx" for row in commands) == 1
+
+
+def test_release_when_no_argument_and_clean_stable_tag_then_reuses_tag(release_tree):
+    result, commands = run_script(release_tree, "release")
+    assert result.returncode == 0, result.stderr
+    assert not any(row[0] == "uvx" for row in commands)
+
+
+def test_release_when_gitnextver_fails_then_no_build_or_upload(release_tree):
+    result, commands = run_script(release_tree, "publish", FAKE_UNTAGGED="1", TAG_EXIT="42")
+    assert result.returncode == 42
+    assert not any(row[0] in ("uv", "gh") for row in commands)
+
+
+def test_release_when_gitnextver_leaves_dirty_checkout_then_no_build(release_tree):
+    result, commands = run_script(release_tree, "release", FAKE_UNTAGGED="1", FAKE_AFTER_DIRTY=" M source.py")
+    assert result.returncode != 0
+    assert "clean checkout" in result.stderr
+    assert not any(row[0] == "uv" for row in commands)
+
+
+def test_release_when_gitnextver_returns_development_tag_then_no_build(release_tree):
+    result, commands = run_script(release_tree, "release", FAKE_UNTAGGED="1", FAKE_NEXT_TAG="v1.2.4.dev1")
+    assert result.returncode != 0
+    assert "stable semantic tag" in result.stderr
+    assert not any(row[0] == "uv" for row in commands)

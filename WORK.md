@@ -165,3 +165,43 @@ made; project and version endpoints still returned 404. Exact release assets
 and hashes are preserved for resumption after the external limit is resolved.
 PyPI publication and installation from PyPI remain incomplete. No model jobs
 or model/storage changes were performed for this release.
+
+## Release version repair
+
+Baseline: 522 tests and the synthetic example passed before edits. The release
+script formerly required an exact tag even when no tag argument was supplied.
+No-argument release/publish now uses `uvx gitnextver --pull=False` when HEAD is
+untagged or dirty, committing pending changes and pushing the next stable tag.
+Clean untagged HEAD uses `--commit=False` because gitnextver otherwise stops
+without tagging when there is nothing to commit. Clean tagged HEAD is reused,
+preserving resumable publication. Explicit tags
+retain the clean checkout guard. Existing wheel/sdist metadata equality and exact
+stable tag checks remain mandatory before installation or publication.
+
+Added the hatch-vcs generated `src/vexy_audioflexy/__version__.py` build hook and
+ignored its filename so generation cannot dirty tagged checkouts. Runtime version
+reporting still uses installed package metadata. No mandatory dependency changed.
+Current official hatch-vcs build-hook docs and `uvx gitnextver --help` confirm the
+configuration and CLI flags. Focused tests cover automatic tagging, clean tagged
+reuse, failed tagging/push, residual dirty state and invalid returned tags.
+Final source suite: 532 tests and the synthetic example pass. Shellcheck and
+`git diff --check` pass. A first in-progress suite overlapped the clean-tag flag
+correction and failed against an older fixture snapshot; the settled-tree rerun
+above resolves those failures. Isolated artifact and independent review results
+follow verification.
+
+Independent real-command verification in disposable repositories found that
+gitnextver's default commit mode exits successfully without a tag on unchanged
+HEAD. The clean branch now supplies `--commit=False`; the fake CLI reproduces
+that no-change behavior. Real gitnextver, local bare-remote pushes, uv build and
+isolated install then passed for both clean and dirty untagged states. Selected
+versions 8.0.1 and 8.0.2 matched wheel/sdist metadata, generated modules and
+installed CLI output; generated version files remained ignored and checkout
+status stayed clean. Explicit dirty publication was refused before building.
+GitHub asset operations and PyPI upload were intercepted for this verification.
+
+Final strict ProperDocs build, uv lock check, shellcheck, actionlint and diff
+whitespace checks pass. Regenerated tracked development documentation and search
+index reflect the new release contract. Final independent diff review passed
+with no blocking findings; no placeholders, skipped tests or private data were
+introduced. No live release or PyPI publication is claimed by this repair pass.

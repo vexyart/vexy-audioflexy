@@ -78,3 +78,16 @@ No storage migration, model download, native rebuild or publication is needed.
 - [x] Verify stable tag configuration and semver-tag GitHub release workflow; actual tagged version is checked before publication.
 - [x] Complete privacy audit, commit, tag v1.0.0, push and verify GitHub release.
 - [ ] Publish the preserved 1.0.0 assets to PyPI and verify hashes and installation.
+
+## Release version repair
+
+Use `uvx gitnextver --pull=False` to create a committed, pushed stable tag before
+no-argument release/publish builds; add `--commit=False` for clean untagged HEAD.
+Reuse clean tagged HEAD for resumable uploads;
+explicit tags still require the selected clean checkout. Generate an ignored
+`__version__.py` using the hatch-vcs build hook. Keep development build versions
+honest and reject them at the existing release wheel/sdist metadata gate.
+
+- [x] Implement version generation, tagging and clean stable release guards.
+- [x] Cover automatic tagging, tagged reuse, tagging failures and dirty/development rejection with focused script tests.
+- [x] Verify actual isolated tagged wheel/sdist and installed version parity, full regression suite and independent review.

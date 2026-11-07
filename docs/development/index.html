@@ -473,18 +473,31 @@
 <code>src_docs/mkdocs.yml</code>, producing the repository's <code>docs/</code> directory.</p>
 <h2 id="build-install-release-and-publish">Build, install, release and publish</h2>
 <p>Versions come from stable <code>vMAJOR.MINOR.PATCH</code> Git tags through hatch-vcs; there is
-no manually edited package version. Development builds include the Git revision.
+no manually edited package version. Its build hook writes an ignored
+<code>src/vexy_audioflexy/__version__.py</code>; builds never track this generated file.
+Development builds include the Git revision and may include a dirty suffix.
 Run these executable scripts from any working directory:</p>
 <div class="highlight"><pre><span></span><code>./build.sh
 ./install.sh
-./release.sh<span class="w"> </span>v1.0.0
+./release.sh
+./publish.sh
+<span class="c1"># Resume an existing release from its clean tagged checkout:</span>
 ./publish.sh<span class="w"> </span>v1.0.0
 </code></pre></div>
 <p>The chain is <code>publish → release → install → build</code>. Build creates a fresh ignored
 <code>dist/build.*</code> directory and checks wheel/sdist metadata. Install replaces the
 installed <code>vafx</code> uv tool with that exact wheel. Each script prints its selected
 artifact directory on stdout; command progress goes to stderr.</p>
-<p>Release requires a clean checkout at the selected stable tag and a pushed tag.
+<p>Without a tag argument, release reuses a clean stable tag at HEAD. Otherwise it
+runs <code>uvx gitnextver --pull=False</code>, which commits all pending changes, creates the
+next stable semantic tag and atomically pushes the branch and tag. A clean untagged
+checkout adds <code>--commit=False</code> to tag the existing commit. Review pending
+changes first and synchronize the branch before running release; automatic pulls
+and stash restoration are disabled. A tagging or push failure stops the chain.
+An explicit tag selects an existing release without creating a commit or tag.</p>
+<p>Before building, release requires a clean checkout at the selected stable tag.
+The wheel and sdist must both have exactly the selected stable version; development
+or dirty versions stop the chain before installation or publication.
 It creates the GitHub release when missing, uploads missing package assets, and
 compares existing assets byte for byte without replacing them. Publish uploads
 those verified GitHub assets with <code>uv publish --check-url</code>; it stops on any error,
@@ -493,9 +506,11 @@ Retain selected artifacts when investigating an uncertain upload.</p>
 <p>Authenticate GitHub CLI with <code>gh auth login</code> or <code>GH_TOKEN</code>. Configure PyPI upload
 credentials through <code>UV_PUBLISH_TOKEN</code> or uv's supported credential store. Keep
 credentials outside the repository and out of shell command arguments and logs.
-Scripts do not create commits, tags or pushes. After validation, the release owner
-commits, creates the stable tag and pushes it, then waits for the tag workflow
-before running publish. This prevents concurrent release creation.</p>
+For CI-first releases, run <code>uvx gitnextver --pull=False</code> after validation (add
+<code>--commit=False</code> when there are no pending changes), wait for the tag workflow,
+then run <code>./publish.sh</code> from the clean tagged checkout. Direct
+release/publish invocations can race CI to create GitHub assets; immutable asset
+comparisons stop on a mismatch and reruns resume the same clean tagged version.</p>
 <h2 id="tag-workflow">Tag workflow</h2>
 <p>GitHub Actions runs on pushed tags matching <code>v*.*.*</code>, then validates the exact
 stable semantic form. It fetches full history for hatch-vcs, runs locked tests,

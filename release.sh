@@ -2,7 +2,14 @@
 # this_file: release.sh
 set -euo pipefail
 cd "$(dirname "$0")"
-tag=${1:-$(git describe --tags --exact-match HEAD)}
+tag=${1:-}
+if [[ -z "$tag" ]]; then
+    if [[ -n $(git status --porcelain) ]]; then
+        tag=$(uvx gitnextver --pull=False)
+    elif ! tag=$(git describe --tags --exact-match HEAD 2>/dev/null); then
+        tag=$(uvx gitnextver --pull=False --commit=False)
+    fi
+fi
 if [[ ! "$tag" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
     echo "Expected stable semantic tag vMAJOR.MINOR.PATCH" >&2
     exit 1
