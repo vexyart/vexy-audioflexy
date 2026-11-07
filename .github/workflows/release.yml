@@ -3,6 +3,12 @@ name: Release
 on:
   push:
     tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing stable release tag (vMAJOR.MINOR.PATCH)
+        required: true
+        type: string
 permissions:
   contents: write
 jobs:
@@ -12,12 +18,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          ref: ${{ inputs.tag || github.ref }}
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           python-version: "3.12"
       - name: Validate semantic release tag
         env:
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           python - <<'PY'
           import os, re
@@ -31,7 +38,7 @@ jobs:
           uv run pytest
       - name: Build distributions
         env:
-          VAFX_RELEASE_TAG: ${{ github.ref_name }}
+          VAFX_RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           dist_dir=$(./build.sh)
           echo "DIST_DIR=$dist_dir" >> "$GITHUB_ENV"
@@ -50,7 +57,7 @@ jobs:
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             existing=$(mktemp -d)
