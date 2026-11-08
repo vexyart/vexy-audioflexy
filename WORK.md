@@ -226,3 +226,114 @@ Full regression: 551 tests and the synthetic example pass, including nested
 metadata, Unicode, YAML-sensitive strings, empty registries, JSON scalar output,
 help and real child argument forwarding. CLI Ruff check, lock consistency and
 diff whitespace checks pass. Installed-wheel and separate review results follow.
+
+## Reusable speech model API port
+
+Ported current recognition/alignment/native/punctuation behavior into
+`vexy_audioflexy.speech`, preserving Qwen bare retry and dropped-chunk receipts,
+reference excerpts, vocabulary/metadata safeguards, lexical alignment checks,
+Whisper timings, native identities and diarization channel capacity. Shared
+validated Word/Turn types exclude subtitle Cue/rendering concerns. The language
+and syntax APIs keep langid sampling/probabilities/override checks and lazy NLTK
+English tagging; their dependencies are optional editorial extras.
+
+Workspace result APIs now default to installed ASR resources and retain explicit
+legacy workspace/environment compatibility. Their signatures bind resource bytes;
+subprocess exceptions propagate. Native environment settings retain legacy names
+and accept Audioflexy equivalents. No incoming tools, model storage, release
+behavior or model weights changed.
+
+Verification: established baseline 551 tests; 32 focused speech tests and full
+583-test suite pass, along with the synthetic example, Ruff, lock consistency and
+diff whitespace checks. Built wheel and sdist successfully. A fresh Python 3.12
+wheel installation imports the speech types and locates/hashes installed adapter
+resources without optional model dependencies. Speech wheel members contain no
+machine paths or weight/media artifacts in the inspected patterns. Real packaged
+`uv run --script speech-issue301.py --help` succeeds; invalid native family exits
+nonzero with its expected ValueError. Model inference remains unverified here;
+engine tests use synthetic isolated responses. Independent review is external
+to this implementation pass.
+
+### Speech workspace fingerprint review correction
+
+The independent review reproduced stale fingerprints when the packaged adapter's
+actual runtime binary changed. The signature now uses the existing packaged
+`_audioflexy_paths.runtime_root` resolver and the adapter's
+`AUDIOCPP_ISSUE301_ROOT` override, including VAFX_RUNTIME_DIR/platform-cache
+selection. It hashes that selected executable under its resolved path (or records
+its absence); foreign paths do not enter relative-to-workspace assumptions.
+Existing explicit legacy workspace resources and `.external` binary fingerprints
+remain present.
+
+Regression reproduced before the fix: 1 failed, 3 passed in the workspace suite.
+After the fix: all 34 speech tests pass, including platform-default byte changes,
+configured location changes with identical bytes, adapter override precedence,
+byte replacement/missing binary, and legacy workspace binary changes. Ruff and
+diff whitespace checks pass. Full-suite/artifact refresh remains part of final
+integration verification; no inference or native storage changes were made.
+
+## Subtitle consumer verification
+
+The final speech port passes 585 provider tests plus the example. The subtitle
+consumer passes 149 tests and uses the provider modules and neutral types.
+Exact wheels pass archive/private-path scans, portable metadata checks, and a
+fresh base-only installed synthetic API/export/resume check. Installed real MLX
+Qwen/forced-alignment/Nemotron inference produced two verified subtitle cues; a
+separate CLI resume retained an identical receipt. No source path overrides were
+used in the installed check; Python bytes match the checked wheels. Whole-scope
+independent review remains pending. Native Nemotron's existing local binary
+rejected its family name; no successful native execution is claimed.
+
+## Offline English POS compatibility correction
+
+The final review found that the speech port ignored existing vexy-subs NLTK
+weights. The tagger now searches the canonical Audioflexy cache first and the
+legacy vexy-subs cache second before attempting a download. New downloads keep
+the canonical destination; existing weights are neither moved nor rewritten.
+
+A synthetic legacy-only offline regression failed before the fix and passes
+after it. All 11 focused model tests and 586 provider tests plus the runnable
+example pass. Ruff check/format and diff whitespace checks pass. Rebuilt wheel
+and sdist pass Twine and archive privacy checks. Fresh installed base integration
+passes with two speakers, subtitle export and verified resume. Actual offline
+NLTK verification and independent final approval are recorded in the private
+integration evidence rather than inferred from the synthetic test.
+
+## Integration completion
+
+Independent whole-goal review and the scoped correction review passed with no
+material open findings. The final provider suite passes 586 tests and its example;
+the unchanged consumer suite passes 149 tests with 91.68% coverage and Ruff clean.
+The provider now searches existing subtitle NLTK caches before downloading. Real
+installed NLTK succeeds with legacy-only weights and downloads forbidden, without
+changing owner weights. Final installed Python bytes match the checked wheels.
+An editorial-only provider update reused unchanged real recognition/alignment/
+diarization caches; refreshed captions verify and a separate CLI resume skips
+inference. Exact archives, clean base-installed synthetic integration and strict
+docs passed. Recovery evidence and exact wheels are retained privately.
+
+This completes the local integration. The reviewed API is ready for the authorized
+stable provider/consumer release; registry publication and installation remain
+release acceptance gates. The local
+native Nemotron binary remains incompatible with that model family. Short real
+MLX smoke checks establish integration, not universal long-form model quality.
+No commit, push, publication or model-storage migration was performed.
+
+## Version 1.0.3 release preparation
+
+Publication of the reviewed provider and subtitle consumer is authorized. The
+next provider version is expected to be 1.0.3, subject to registry/version checks.
+Reconciled the current speech API status and release checklist without changing
+historical publication records or claiming remote publication. Stable tagged
+artifacts, CI, registry hashes and installed behavior remain controller-owned
+release checks. No model/storage changes are required.
+
+The release scripts accept an explicit clean HEAD tag, but still rebuild and
+replace the installed uv tool before comparing immutable GitHub assets. Preserve
+verified GitHub-downloaded archives for upload retries; direct uv publication of
+those exact files avoids rebuilding on a rate-limit resume.
+
+Preparation verification: strict ProperDocs/MaterialX build passed. Generated
+tracked HTML was restored after the check because it introduced theme whitespace;
+source-document diff whitespace checks pass. Executable suites were not rerun
+for these documentation-only changes.

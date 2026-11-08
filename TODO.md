@@ -33,3 +33,14 @@ The initial implementation excluded publication. The subsequently authorized
 - [x] Verify release repair with real isolated artifacts, installed version, full regression suite and independent review.
 
 - [x] Provide YAML structured CLI output and --json with source and installed-wheel verification.
+
+## Reusable speech integration
+
+- [x] Port reusable speech engines, neutral types and language/tagging APIs with lazy optional dependencies.
+- [x] Verify speech regressions, packaged workspace route, full suite and installable artifacts.
+
+## Version 1.0.3 integration release
+
+- [ ] Commit and tag the reviewed provider integration after registry/version checks.
+- [ ] Verify tagged CI, strict docs and exact public wheel/sdist contents.
+- [ ] Publish the verified stable assets and verify registry hashes and installation.

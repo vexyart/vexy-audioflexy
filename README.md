@@ -45,6 +45,36 @@ Batch aliases are `asr`, `diarize`, `translate`, `fx` (`aud` alias), `detect`, `
 `tts`. Supply your own inputs, text and output paths according to each command's
 help. Availability of an adapter does not establish every model's compatibility.
 
+## Reusable speech APIs
+
+`vexy_audioflexy.speech` exposes validated `Word` and `Turn` dataclasses.
+Its `qwen`, `inference`, `alignment`, `audiocpp`, `punctuation` and `workspace`
+modules retain recognition, diarization and lexical/timing validation contracts.
+Model imports happen only when inference is requested. Install optional `apple`,
+`native`, `cluster` or `editorial` extras for the selected runtime; native audio.cpp
+also requires its separately installed executable and model weights.
+
+```python
+from pathlib import Path
+from vexy_audioflexy.speech import qwen
+
+# Decoded mono 16 kHz PCM; model weights are fetched by the optional runtime.
+words, report = qwen.transcribe(Path("speech.wav"), "Terms: QuasarAPI.", "en")
+```
+
+`workspace.transcribe` and `workspace.diarize` return results through packaged
+isolated adapters by default. Their `root` argument accepts an explicit legacy
+workspace. `VEXY_AUDIOFLEXY_MODEL_WORKSPACE` and the legacy
+`VEXY_SUBS_MODEL_WORKSPACE` remain supported. Native model/binary settings accept
+`VEXY_AUDIOFLEXY_` equivalents of existing `VEXY_SUBS_` variables.
+`workspace.signature` and `audiocpp.identity` bind callers' stage caches to the
+actual resources and native bytes. No subtitle parser is required by these APIs.
+
+`language.identifier`/`detect_language` provide the optional langid model;
+`syntax.tagger`/`tags` provide optional NLTK tagging. NLTK downloads its small
+English model only on first use if unavailable; other languages need no tagger.
+Editorial layout and subtitle rendering remain in the consuming application.
+
 ## Model locations
 
 Use the platform configuration/data directories or override the models folder:

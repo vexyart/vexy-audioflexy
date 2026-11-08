@@ -4,7 +4,11 @@ this_file: CHANGELOG.md
 
 # Changelog
 
-## Unreleased
+## 1.0.3
+
+- Reuse existing vexy-subs NLTK cache weights for offline English tagging; keep new downloads in the Audioflexy cache.
+
+- Add reusable lazy speech APIs for Qwen/Whisper, native audio.cpp, alignment, diarization, punctuation, langid and NLTK, with shared validated Word/Turn types and packaged workspace execution.
 
 - Print structured `vafx` results as readable YAML by default and support `--json` for complete JSON documents, while preserving forwarded tool arguments and output.
 - Create and push stable release tags with `uvx gitnextver` when release/publish is run without a tag on untagged or dirty work; reuse clean tagged releases for resumable publication.

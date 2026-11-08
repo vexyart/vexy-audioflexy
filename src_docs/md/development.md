@@ -52,7 +52,18 @@ It creates the GitHub release when missing, uploads missing package assets, and
 compares existing assets byte for byte without replacing them. Publish uploads
 those verified GitHub assets with `uv publish --check-url`; it stops on any error,
 including rate limits. Existing matching files can be skipped on a later resume.
-Retain selected artifacts when investigating an uncertain upload.
+Retain selected artifacts when investigating an uncertain upload. An explicit-tag
+script resume still rebuilds and reinstalls before checking GitHub asset bytes;
+build differences stop the chain. To resume an upload using already verified
+GitHub-downloaded archives, keep the exact files and run:
+
+```sh
+UV_HTTP_RETRIES=0 uv publish --check-url https://pypi.org/simple/ dist/released.EXAMPLE/*.whl dist/released.EXAMPLE/*.tar.gz
+```
+
+Replace `dist/released.EXAMPLE` with the retained artifact directory. Stop on
+rate limits and retain those same files for the next attempt; do not change the
+version to work around an uncertain upload.
 
 Authenticate GitHub CLI with `gh auth login` or `GH_TOKEN`. Configure PyPI upload
 credentials through `UV_PUBLISH_TOKEN` or uv's supported credential store. Keep

@@ -93,3 +93,22 @@ honest and reject them at the existing release wheel/sdist metadata gate.
 - [x] Verify actual isolated tagged wheel/sdist and installed version parity, full regression suite and independent review.
 
 - [x] Provide YAML structured CLI output and --json with source and installed-wheel verification.
+
+## Reusable speech integration
+
+- [x] Port reusable speech engines, neutral types and language/tagging APIs with lazy optional dependencies.
+- [x] Verify speech regressions, packaged workspace route, full suite and installable artifacts.
+
+Subtitle consumer integration and independent whole-goal/correction review passed.
+Final provider586 and consumer149 tests, installed export/resume and legacy-only
+offline POS checks pass. Native-build limits remain explicit.
+
+## Version 1.0.3 integration release
+
+The reviewed speech API is ready for the authorized provider/consumer release.
+Publication and installation from the registry require fresh stable artifacts;
+local development-wheel acceptance alone does not establish either outcome.
+
+- [ ] Commit and tag the reviewed provider integration after registry/version checks.
+- [ ] Verify tagged CI, strict docs and exact public wheel/sdist contents.
+- [ ] Publish the verified stable assets and verify registry hashes and installation.
