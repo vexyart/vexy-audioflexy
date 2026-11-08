@@ -337,3 +337,16 @@ Preparation verification: strict ProperDocs/MaterialX build passed. Generated
 tracked HTML was restored after the check because it introduced theme whitespace;
 source-document diff whitespace checks pass. Executable suites were not rerun
 for these documentation-only changes.
+
+## Version 1.0.3 publication attempt
+
+Committed, tagged and pushed v1.0.3. Tagged GitHub CI passed package tests,
+distribution build and strict docs, and published wheel/sdist assets. Downloaded
+GitHub assets match the independently built stable archives byte-for-byte.
+Twine, metadata/privacy checks and a clean base wheel installation passed.
+
+PyPI rejected the first wheel upload with HTTP 429, "Too many new projects
+created". No retry/version bump was performed. Registry reconciliation still
+returns 404 for 1.0.3. Exact verified assets and the sanitized failure log are
+retained privately for a later uv publish retry without rebuilding. The consumer
+upload is held because this required provider is unavailable from PyPI.

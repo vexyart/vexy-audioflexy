@@ -109,6 +109,9 @@ The reviewed speech API is ready for the authorized provider/consumer release.
 Publication and installation from the registry require fresh stable artifacts;
 local development-wheel acceptance alone does not establish either outcome.
 
-- [ ] Commit and tag the reviewed provider integration after registry/version checks.
-- [ ] Verify tagged CI, strict docs and exact public wheel/sdist contents.
+- [x] Commit and tag the reviewed provider integration after registry/version checks.
+- [x] Verify tagged CI, strict docs and exact public wheel/sdist contents.
 - [ ] Publish the verified stable assets and verify registry hashes and installation.
+
+PyPI 1.0.3 upload attempted; HTTP 429 new-project quota blocks publication.
+Retain exact GitHub assets for retry; do not rebuild or bump to evade the limit.

@@ -44,3 +44,6 @@ The initial implementation excluded publication. The subsequently authorized
 - [ ] Commit and tag the reviewed provider integration after registry/version checks.
 - [ ] Verify tagged CI, strict docs and exact public wheel/sdist contents.
 - [ ] Publish the verified stable assets and verify registry hashes and installation.
+
+- [x] Tag/push 1.0.3 and verify CI, exact GitHub assets and clean stable installation.
+- [ ] Resume preserved 1.0.3 assets after PyPI new-project HTTP 429 clears.
