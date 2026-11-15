@@ -31,7 +31,13 @@ import wave
 from functools import cache
 from pathlib import Path
 
+import runpy
+
 from _audioflexy_paths import runtime_root, models_root
+
+# audio.cpp picks tensor formats by extension and canonicalises paths, so model files
+# must be hardlinks (or copies) under their real names, never symlinks to HF blobs.
+link_model_file = runpy.run_path(str(Path(__file__).resolve().parents[2] / "_audiocpp_provider.py"))["link_model_file"]
 
 VERSION = "1.0.0"
 
@@ -161,8 +167,10 @@ def _link_snapshot(entry: dict, snapshot: Path, target: Path, force: bool) -> No
         if not output.parent.resolve().is_relative_to(target.resolve()):
             raise ValueError(f"Native layout escapes its target: {output}")
         exists = output.exists() or output.is_symlink()
-        same = output.is_file() and output.samefile(source)
-        if exists and not same and (not force or output.is_dir()):
+        points_here = output.is_file() and output.samefile(source)
+        legacy = points_here and output.is_symlink()  # old blob symlink: upgrade without --force
+        same = points_here and not legacy
+        if exists and not points_here and (not force or output.is_dir()):
             raise FileExistsError(f"Model path differs from pinned provider file: {output}; use --force")
         plan.append((source, output, exists, same))
     for source, output, exists, same in plan:
@@ -171,7 +179,7 @@ def _link_snapshot(entry: dict, snapshot: Path, target: Path, force: bool) -> No
         output.parent.mkdir(parents=True, exist_ok=True)
         if exists:
             output.unlink()
-        output.symlink_to(source.resolve())
+        link_model_file(source.resolve(), output)
 
 
 def prep(package: str = "parakeet_tdt_q8_0", force: bool = False) -> None:

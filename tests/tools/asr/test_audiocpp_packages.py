@@ -49,7 +49,7 @@ def test_prep_when_specs_are_frozen_then_uses_provider_snapshot_and_native_links
     wrapper.prep("test-f16")
     assert calls == [(("public/test",), {"revision": "pinned", "allow_patterns": ["remote/model.gguf"]})]
     link = tmp_path / "models/Test/model.gguf"
-    assert link.is_symlink() and link.samefile(snapshot / "remote/model.gguf")
+    assert not link.is_symlink() and link.samefile(snapshot / "remote/model.gguf"), "audio.cpp needs named hardlinks, not blob symlinks"
 
 
 def test_native_command_when_paths_are_relative_then_resolves_before_engine_cwd(tmp_path, monkeypatch):
@@ -180,7 +180,7 @@ def test_prep_force_replaces_layout_link_and_checks_result(tmp_path, monkeypatch
     monkeypatch.setattr(wrapper, "_installed", lambda _: False)
     with pytest.raises(SystemExit, match="incomplete"):
         wrapper.prep("test", force=True)
-    assert (target / "exact.gguf").is_symlink()
+    assert not (target / "exact.gguf").is_symlink()
     assert (target / "exact.gguf").samefile(source)
 
 
@@ -209,3 +209,16 @@ def test_relative_engine_and_models_roots_resolve_from_caller(tmp_path, monkeypa
     spec.loader.exec_module(adapter)
     assert adapter.ENGINE_ROOT == tmp_path / "engine"
     assert adapter.MODELS_ROOT == tmp_path / "weights"
+
+
+def test_link_snapshot_when_legacy_blob_symlink_then_upgrades_to_hardlink(tmp_path):
+    snapshot = tmp_path / "hf-cache"
+    snapshot.mkdir()
+    source = snapshot / "model.gguf"
+    source.write_bytes(b"weights")
+    target = tmp_path / "models/Test"
+    target.mkdir(parents=True)
+    (target / "model.gguf").symlink_to(source)
+    wrapper._link_snapshot({"files": ["model.gguf"]}, snapshot, target, False)
+    output = target / "model.gguf"
+    assert not output.is_symlink() and output.samefile(source), "legacy symlink must become a hardlink"
