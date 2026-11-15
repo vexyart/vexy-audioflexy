@@ -291,9 +291,9 @@ def say(
     if lang:
         cmd += ["--language", lang]
     if voice_id:
-        cmd += ["--voice-id", voice_id]
+        cmd += ["--voice-id", str(voice_id)]  # fire parses numeric ids such as M5-TTS "1" to int
     if speaker:
-        cmd += ["--speaker", speaker]
+        cmd += ["--speaker", str(speaker)]
     if instruct:
         cmd += ["--instruct", instruct]
     if emotion:

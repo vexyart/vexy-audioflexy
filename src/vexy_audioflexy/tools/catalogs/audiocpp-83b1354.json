@@ -429,7 +429,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "audio8_tts_realistic_0_6b_q8_0",
           "langs": [
@@ -443,6 +443,11 @@
             "ref": true,
             "ref_text": true,
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -804,20 +809,8 @@
           ],
           "covered_by": [],
           "status": "pending runtime",
-          "route": "tts_all",
-          "package": "auk_base_f32",
-          "langs": [
-            "en",
-            "pl"
-          ],
-          "params": {
-            "mode": "clone",
-            "task": "clon",
-            "voice_id": null,
-            "ref": true,
-            "ref_text": false,
-            "lang_flag": false
-          }
+          "route": "pending adapter",
+          "reason": "multi-component model: each generator package also needs the Qwen2.5-Omni-3B and VAE packages; run 2026-11-15 failed on the missing qwen2.5-omni-3b-bf16.gguf"
         },
         {
           "registry": null,
@@ -905,7 +898,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "breeze_tts_2_q8_0",
           "langs": [
@@ -918,6 +911,11 @@
             "ref": true,
             "ref_text": true,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -1334,7 +1332,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "chatterbox_turbo_q8_0",
           "langs": [
@@ -1347,6 +1345,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -1816,7 +1819,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "cosyvoice3_q8_0",
           "langs": [
@@ -1829,6 +1832,11 @@
             "ref": true,
             "ref_text": true,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -3318,7 +3326,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "gradium_phonon_31m_en_q8_0",
           "langs": [
@@ -3331,6 +3339,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -4569,7 +4582,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "kitten_tts2_20261021_q8_0",
           "langs": [
@@ -4583,6 +4596,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -4829,7 +4847,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "kugelaudio_0_open_q8_0",
           "langs": [
@@ -4843,6 +4861,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -5078,7 +5101,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "lfm2_audio_1_5b_q8_0",
           "langs": [
@@ -5091,6 +5114,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         },
         {
@@ -5748,7 +5776,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "maya1_orig",
           "langs": [
@@ -5761,6 +5789,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -6193,7 +6226,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "ming_3_0_tts_0_5b_bf16",
           "langs": [
@@ -6206,6 +6239,11 @@
             "ref": true,
             "ref_text": true,
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -7372,7 +7410,7 @@
             "design"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "moss_voicegen_bf16_codec_f16_decode",
           "langs": [
@@ -7385,6 +7423,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -9123,7 +9166,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "piper_lessac_medium_orig",
           "langs": [
@@ -9136,6 +9179,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -9543,7 +9591,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "pocket_tts_small_english_18m_refl_f32",
           "langs": [
@@ -9556,6 +9604,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -10838,7 +10891,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "sanotts_heart_nano_orig",
           "langs": [
@@ -10851,6 +10904,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -11367,7 +11425,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "sopro_v2_turbo_safetensors",
           "langs": [
@@ -11380,6 +11438,11 @@
             "ref": true,
             "ref_text": false,
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -12653,19 +12716,8 @@
           ],
           "covered_by": [],
           "status": "pending runtime",
-          "route": "tts_all",
-          "package": "vieneu_v3_turbo_q8_0",
-          "langs": [
-            "en"
-          ],
-          "params": {
-            "mode": "clone",
-            "task": "clon",
-            "voice_id": null,
-            "ref": true,
-            "ref_text": false,
-            "lang_flag": false
-          }
+          "route": "pending adapter",
+          "reason": "reads SEA-G2P phonemes, not raw text, and needs a speaker_embedding_file; the CLI rejects --task clon (docs/models/vieneu_v3_turbo.md)"
         }
       ]
     },
@@ -13014,7 +13066,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "voxtral_4b_tts_2603_bf16",
           "langs": [
@@ -13027,6 +13079,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -13187,7 +13244,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "xtts_v2_gguf_q8_0",
           "langs": [
@@ -13201,6 +13258,11 @@
             "ref": true,
             "ref_text": false,
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -13382,7 +13444,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "zipvoice_distill_gguf",
           "langs": [
@@ -13395,6 +13457,11 @@
             "ref": true,
             "ref_text": true,
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 6.7% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a shot walk by the river'"
           }
         }
       ]
