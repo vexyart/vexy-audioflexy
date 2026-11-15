@@ -182,6 +182,26 @@
       "date": "2026-11-15",
       "check": "asr_roundtrip",
       "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
+    },
+    "asr_all:ming3_audio_tiny_bf16": {
+      "date": "2026-11-15",
+      "check": "transcript",
+      "result": "WER 15.4% CER 2.8% on en_kokoro+en_inflect after stripping the 'English\\t' language tag"
+    },
+    "asr_all:nemotron_transcribe_iq4_nl": {
+      "date": "2026-11-15",
+      "check": "transcript",
+      "result": "WER 15.4% CER 5.6% on en_kokoro+en_inflect with --model <experts gguf>"
+    },
+    "tts_all:moss_tts_v15_q8_0_codec_f16": {
+      "date": "2026-11-15",
+      "check": "asr_roundtrip",
+      "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
+    },
+    "tts_all:moss_ttsd_q8_0_codec_f16": {
+      "date": "2026-11-15",
+      "check": "asr_roundtrip",
+      "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
     }
   }
 }

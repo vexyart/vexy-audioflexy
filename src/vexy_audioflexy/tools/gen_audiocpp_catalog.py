@@ -78,6 +78,7 @@ MANUAL_PENDING = {
     ("sam_audio", "aud_all"): "prompt-conditioned separation; the harness supplies no target-source prompt",
     ("vevo2", "tts_all"): "text-to-speech needs a target_voice reference that tts-audiocpp does not pass",
     ("samsone", "asr_all"): "audio captioner (default instruct 'describe the audio'), not a transcriber; verified 2026-11-15 it returns captions",
+    ("minimax_h3", "tts_all"): "text-to-audio/video generation (--task gen, dit.gguf, video request options), not TTS; the CLI rejects --task tts (docs/models/minimax_h3.md)",
     ("vieneu_v3_turbo", "tts_all"): "reads SEA-G2P phonemes, not raw text, and needs a speaker_embedding_file; the CLI rejects --task clon (docs/models/vieneu_v3_turbo.md)",
     ("auk", "tts_all"): "multi-component model: each generator package also needs the Qwen2.5-Omni-3B and VAE packages; run 2026-11-15 failed on the missing qwen2.5-omni-3b-bf16.gguf",
 }

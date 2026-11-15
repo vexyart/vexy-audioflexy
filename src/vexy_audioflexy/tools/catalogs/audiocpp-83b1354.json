@@ -6119,7 +6119,7 @@
             "asr"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "asr_all",
           "package": "ming3_audio_tiny_bf16",
           "langs": [
@@ -6127,6 +6127,11 @@
           ],
           "params": {
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "transcript",
+            "result": "WER 15.4% CER 2.8% on en_kokoro+en_inflect after stripping the 'English\\t' language tag"
           }
         },
         {
@@ -6330,20 +6335,8 @@
           ],
           "covered_by": [],
           "status": "pending runtime",
-          "route": "tts_all",
-          "package": "minimax_h3_q4_k",
-          "langs": [
-            "en",
-            "pl"
-          ],
-          "params": {
-            "mode": "tts",
-            "task": "tts",
-            "voice_id": null,
-            "ref": false,
-            "ref_text": false,
-            "lang_flag": false
-          }
+          "route": "pending adapter",
+          "reason": "text-to-audio/video generation (--task gen, dit.gguf, video request options), not TTS; the CLI rejects --task tts (docs/models/minimax_h3.md)"
         },
         {
           "registry": null,
@@ -7266,7 +7259,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "moss_tts_v15_q8_0_codec_f16",
           "langs": [
@@ -7279,6 +7272,11 @@
             "ref": true,
             "ref_text": false,
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -7354,7 +7352,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "moss_ttsd_q8_0_codec_f16",
           "langs": [
@@ -7367,6 +7365,11 @@
             "ref": true,
             "ref_text": true,
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -7943,7 +7946,7 @@
             "asr"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "asr_all",
           "package": "nemotron_transcribe_iq4_nl",
           "langs": [
@@ -7952,6 +7955,11 @@
           ],
           "params": {
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "transcript",
+            "result": "WER 15.4% CER 5.6% on en_kokoro+en_inflect with --model <experts gguf>"
           }
         }
       ]

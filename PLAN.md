@@ -119,6 +119,6 @@ Retain exact GitHub assets for retry; do not rebuild or bump to evade the limit.
 ## Upstream follow-ups (from 2026-11-15 update)
 
 - codec.cpp: rebuild at current upstream in a worktree. `tts-cli` now builds under `tools/`; update `BIN_PATH` in `tts-chatterbox-mtl-codeccpp.py`, reconvert the Chatterbox multilingual weights and compare against the 63ade8b output before switching.
-- audio.cpp: the 45 `ac83-*` catalog rows (26 TTS, 9 ASR, 10 audio-to-audio) are wired but `pending runtime`. Run each one once, record pass/fail in the catalog status, and fix per-family args where a run fails. The lfm2/lfm3/ming3 s2s rows are spoken dialogue, not enhancement, so decide whether they belong in the `aud_all` report. Adapters are still needed for music, sfx, edit, sep, align and diar families.
+- audio.cpp: 40 catalog routes are verified on 83b1354 (ledger `catalogs/audiocpp-verified.json`). VieNeu v3 Turbo (phoneme input, speaker embedding), AuK (component packages), MiniMax-H3 (`--task gen`), SamsOne (captioner), SAM Audio (prompt) and VeVo2 (target voice) need adapter work. The remaining `pending runtime` routes still need one real run each; record results in the ledger and regenerate. The lfm2/lfm3/ming3 s2s rows are spoken dialogue, not enhancement, so decide whether they belong in the `aud_all` report. Adapters are still needed for music, sfx, edit, sep, align and diar families.
 - transcribe.cpp: decide whether 0.4.2 becomes the default runtime once phonon-2 is rechecked on it.
 - speech.cpp: run drama-3 once its weights are pulled deliberately.

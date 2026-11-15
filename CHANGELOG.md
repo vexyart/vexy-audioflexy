@@ -15,6 +15,11 @@ this_file: CHANGELOG.md
 - Follow the upstream package rename `voxcpm1_0.5b_q8_0` → `voxcpm1_0_5b_q8_0`. Point entries that defaulted to the missing `audio.cpp-20261030` / `macos-metal-full` runtime at the standard `audio.cpp` release build.
 - Pick the newest installed speech.cpp runtime instead of the fixed 0.8.11 path; the adapter's CLI is verified against speech.cpp 0.11.0.
 - Update `mlx-audio` from 0.5.7 to 0.6.5 in the `apple` extra and the pinned ASR/diarization scripts.
+- Verify 21 audio.cpp TTS families on 83b1354 by ASR round-trip: each spoke one English sentence and `parakeet_tdt_q8_0` transcribed it (WER 0% for 20, 6.7% for ZipVoice).
+- Route M5-TTS to its CustomVoice package: `voice_id=1` is a CustomVoice preset and the VoiceClone checkpoint rejects it. Pass `--voice-id`/`--speaker` to the engine as strings; fire had turned `1` into an int.
+- Mark VieNeu v3 Turbo (needs SEA-G2P phoneme input and a speaker embedding) and AuK (needs its Qwen2.5-Omni-3B and VAE component packages) `pending adapter`.
+- Verify MOSS-TTS v1.5, MOSS-TTSD (WER 0%), Ming3 Audio Tiny ASR and Nemotron Transcribe IQ4_NL (WER 15.4% each). The ASR adapter strips Ming3's leading language tag and passes Nemotron's experts GGUF as `--model`, since its package also holds the mmproj encoder. MiniMax-H3 is marked `pending adapter`: it is text-to-audio/video generation, not TTS.
+- Fix the TTS dashboard step: `build_dashboard.py` is loaded by path, so it now adds its own directory to `sys.path` before importing `_paths`. Every `tts_all.py` run had crashed there after synthesis.
 
 ## 1.0.3
 

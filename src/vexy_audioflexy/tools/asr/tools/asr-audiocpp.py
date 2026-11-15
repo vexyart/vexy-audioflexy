@@ -53,6 +53,8 @@ BIN_PATH = Path(os.environ.get("AUDIOCPP_BIN", str(ENGINE_ROOT / "build/macos-me
 MODELS_ROOT = Path(os.environ.get("AUDIOCPP_MODELS_ROOT", str(models_root() / "audio.cpp"))).expanduser().resolve()
 SPECS_DIR = Path(os.environ.get("AUDIOCPP_SPECS_DIR", str(ENGINE_ROOT / "model_specs"))).expanduser().resolve()
 EXTRA_SPECS_DIR = Path(__file__).resolve().parent.parent / "model_specs"
+# Families whose package directory holds several GGUFs; pass the non-mmproj one as --model.
+EXPLICIT_MODEL_FAMILIES = {"nemotron_transcribe"}
 BACKEND = os.environ.get("AUDIOCPP_BACKEND", "metal")
 
 # audio.cpp's Silero VAD chunker accepts exactly this rate; every ASR family here
@@ -117,6 +119,9 @@ def _model_path(package: str) -> Path:
     entry = _resolve(package)
     root = _package_root(package)
     files = entry["files"]
+    if entry["family"] in EXPLICIT_MODEL_FAMILIES:
+        # The engine cannot pick between the experts GGUF and the mmproj in one directory.
+        files = [f for f in files if f.endswith(".gguf") and "mmproj" not in f.lower()]
     if len(files) == 1 and files[0].endswith(".gguf"):
         relative = files[0]
         prefix = entry["strip_prefix"]
@@ -398,6 +403,10 @@ def transcribe(
         # tts hit exactly this: a run that exits 0 and produces nothing.
         console.print(f"[red]empty transcript[/red] — {package} returned no text")
         raise SystemExit(1)
+    if fam == "ming3_audio" and "\t" in transcript.split("\n", 1)[0]:
+        # Ming3 Audio prefixes its detected language, e.g. "English\t<text>".
+        transcript = transcript.split("\t", 1)[1].strip()
+        out_path.write_text(transcript + "\n", encoding="utf-8")
 
     metrics = _parse_metrics(stdout)
     audio_s = metrics.get("audio_duration_ms", 0.0) / 1000.0 or _wav_info(src)[2]
