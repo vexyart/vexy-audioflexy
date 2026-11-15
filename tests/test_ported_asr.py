@@ -351,6 +351,27 @@ def test_phonon_local_conversion_when_legacy_runtime_then_rejects(tmp_path, monk
         wrapper.transcribe(str(audio), package="phonon-2", quant="F32", local_model_path="exact-phonon.gguf")
 
 
+@pytest.mark.parametrize("commit", ["5700f127e38dd53c4735ea23ef743b4b538eacd4", "275cd50d2c4104c204009a197ac091b9687668e5"])
+def test_transcribe_when_local_phonon_on_verified_runtime_then_passes_pin(tmp_path, monkeypatch, commit):
+    audio = tmp_path / "input.wav"
+    audio.touch()
+    engine = tmp_path / "engine"
+    (engine / "build/bin").mkdir(parents=True)
+    (engine / "build/bin/transcribe-cli").touch()
+    monkeypatch.setattr(wrapper, "ENGINE_ROOT", engine)
+    monkeypatch.setattr(wrapper, "local_model", lambda *a: ("exact-phonon.gguf", {"languages": ["en"], "local_profile": wrapper.LOCAL_PHONON}))
+    monkeypatch.setattr(wrapper.subprocess, "check_output", lambda *a, **k: commit)
+
+    class Reached(Exception):
+        pass
+
+    def stop(*a, **k):
+        raise Reached
+    monkeypatch.setattr(wrapper.subprocess, "run", stop)
+    with pytest.raises(Reached):  # got past the runtime pin to the engine call
+        wrapper.transcribe(str(audio), package="phonon-2", quant="F32", local_model_path="exact-phonon.gguf")
+
+
 def test_prep_when_converted_local_model_supplied_then_validates_without_network(monkeypatch):
     import huggingface_hub
 

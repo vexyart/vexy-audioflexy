@@ -45,7 +45,9 @@ LOCAL_PHONON = {
     "package": "phonon-2", "quant": "F32", "size_bytes": 2508435648,
     "sha256": "f2b1a5563f0a4a764ca40f4fb72da6d3a4d4ce5653e0f8fbcc874a6a81c5c10e",
     "repo": "FermionResearch/Phonon-2", "source_revision": "7e153e4054c0a10db6d47d6fff5c062d4c77c154",
-    "runtime_commit": "5700f127e38dd53c4735ea23ef743b4b538eacd4",
+    "runtime_commit": "5700f127e38dd53c4735ea23ef743b4b538eacd4",  # converted with this commit
+    # Further runtimes that load this exact file and give byte-identical transcripts.
+    "verified_runtimes": ["275cd50d2c4104c204009a197ac091b9687668e5"],  # v0.4.2, 2026-11-16
     "metadata": {"general.architecture": "parakeet", "general.name": "Phonon-2",
                  "stt.variant": "tdt-0.6b-phonon-2", "stt.parakeet.head_kind": "tdt",
                  "general.file_type": 0, "stt.frontend.sample_rate": 16000},
@@ -197,7 +199,8 @@ def transcribe(
         actual = subprocess.check_output(["git", "-C", str(ENGINE_ROOT), "rev-parse", "HEAD"],
                                          text=True, timeout=min(timeout, 30)).strip()
         catalog = json.loads(CATALOG.read_text())
-        allowed = {profile["runtime_commit"]} if "runtime_commit" in profile else {catalog["commit"], catalog.get("catalog_commit", catalog["commit"])}
+        allowed = ({profile["runtime_commit"], *profile.get("verified_runtimes", ())} if "runtime_commit" in profile
+                   else {catalog["commit"], catalog.get("catalog_commit", catalog["commit"])})
         if actual not in allowed:
             raise SystemExit("Local model requires the pinned transcribe.cpp runtime commit")
     else:
