@@ -1,7 +1,7 @@
 {
   "this_file": "src/vexy_audioflexy/tools/catalogs/audiocpp-verified.json",
   "source_revision": "83b1354b00ef01ba3e7dcc81a85c5ff1c43515ec",
-  "note": "Real runs on Apple M4 Max, Metal, 2026-11-15. ASR: eval clips en_kokoro + en_inflect; aud: 3.25 s speech/noisy fixtures; TTS: one English sentence, output transcribed by parakeet_tdt_q8_0. Receipts: audioflexy-privdata/acceptance/upstream-refresh-2026-11-15/audiocpp-83b1354/. 'verified' means one real run produced usable output; it is not a quality bar (see each run's result).",
+  "note": "Real runs on Apple M4 Max, Metal, 2026-11-15. ASR: eval clips en_kokoro + en_inflect; aud: 3.25 s speech/noisy fixtures; TTS: one English sentence, output transcribed by parakeet_tdt_q8_0. sep (2026-11-16): stems transcribed by parakeet_tdt_q8_0. Receipts: audioflexy-privdata/acceptance/upstream-refresh-2026-11-15/audiocpp-83b1354/. 'verified' means one real run produced usable output; it is not a quality bar (see each run's result).",
   "runs": {
     "asr_all:lfm2_audio_1_5b_q8_0": {
       "date": "2026-11-15",
@@ -202,6 +202,31 @@
       "date": "2026-11-15",
       "check": "asr_roundtrip",
       "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
+    },
+    "separate_all:tf_gridnet_wsj0_2mix_f32": {
+      "date": "2026-11-16",
+      "check": "separation_asr",
+      "result": "stems speaker_1, speaker_2; mixture of en_kokoro + en_inflect (16 kHz) transcribes as one sentence; parakeet on the stems recovers both: 'Hello from the new audio, CPP build.' / 'Hello from the rebuilt ANF L E C T engine.'"
+    },
+    "separate_all:mossformer2_ss_16k_f32": {
+      "date": "2026-11-16",
+      "check": "separation_asr",
+      "result": "stems speaker_1, speaker_2; mixture of en_kokoro + en_inflect (16 kHz) transcribes as one sentence; parakeet on the stems recovers both: 'Hello from the rebuilt ANFLECT engine.' / 'Hello from the new audio, CPP build.'"
+    },
+    "separate_all:htdemucs_q8_0": {
+      "date": "2026-11-16",
+      "check": "separation_asr",
+      "result": "stems bass, drums, other, vocals; speech + synthetic bass/chord/hi-hat bed (44.1 kHz stereo); parakeet on vocals.wav: 'Hello from the new audio, CPP Build.'"
+    },
+    "separate_all:bs_roformer_q8_0": {
+      "date": "2026-11-16",
+      "check": "separation_asr",
+      "result": "stems instrumental, vocals; speech + synthetic bass/chord/hi-hat bed (44.1 kHz stereo); parakeet on vocals.wav: 'Hello from the new audio, CPP build.'; instrumental leaks some speech"
+    },
+    "separate_all:mel_band_roformer_q8_0": {
+      "date": "2026-11-16",
+      "check": "separation_asr",
+      "result": "stems instrumental, vocals; speech + synthetic bass/chord/hi-hat bed (44.1 kHz stereo); parakeet on vocals.wav: 'Hello from the new audio, CPP build.'; instrumental leaks some speech"
     }
   }
 }

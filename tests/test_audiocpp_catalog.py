@@ -48,7 +48,7 @@ def test_catalog_when_loaded_then_internally_consistent(catalog):
         for route in family["routes"]:
             assert route["status"] in {"pending runtime", "verified"}
             assert (route["status"] == "verified") == ("verification" in route), family["family"]
-            assert route["route"] in {"tts_all", "asr_all", "aud_all", "covered", "pending adapter"}
+            assert route["route"] in {"tts_all", "asr_all", "aud_all", "separate_all", "covered", "pending adapter"}
             if route["route"] in REGISTRIES:
                 assert route["package"] in ids, family["family"]
                 assert set(route["langs"]) <= {"en", "pl"} and route["langs"]
@@ -175,3 +175,12 @@ def test_link_model_file_when_copy_fails_then_no_partial_left(tmp_path):
     with pytest.raises(OSError):
         provider["link_model_file"](tmp_path / "missing-blob", tmp_path / "model.gguf")
     assert not list(tmp_path.glob(".*.partial")), "failed link must clean up its temp file"
+
+
+def test_separate_all_when_catalog_has_sep_routes_then_rows_are_accepted():
+    module = runpy.run_path(str(TOOLS / "fx/separate_all.py"))
+    rows = module["CATALOG_ROWS"]
+    catalog = json.loads(CATALOG.read_text())
+    sep = {r["package"] for f in catalog["families"] for r in f["routes"] if r["route"] == "separate_all"}
+    assert sep and {row["package"] for row in rows.values()} == sep, "every sep route must reach separate_all"
+    assert all(row["params"] == {"task": "sep"} for row in rows.values())

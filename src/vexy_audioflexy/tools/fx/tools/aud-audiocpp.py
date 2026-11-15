@@ -292,7 +292,7 @@ def run(
         "--family", fam,
         "--model", str(model_arg),
         "--backend", BACKEND,
-        "--out-dir" if fam == "sam_audio" else "--out", str(out_path),
+        "--out-dir" if fam == "sam_audio" or the_task == "sep" else "--out", str(out_path),
         "--metrics",
     ]
     if audio:
@@ -338,8 +338,13 @@ def run(
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(ENGINE_ROOT), check=False)
-    outputs = [out_path / "target.wav", out_path / "residual.wav"] if fam == "sam_audio" else [out_path]
-    if result.returncode != 0 or not all(p.is_file() and p.stat().st_size > 0 for p in outputs):
+    if fam == "sam_audio":
+        outputs = [out_path / "target.wav", out_path / "residual.wav"]
+    elif the_task == "sep":  # engine names stems itself (speaker_1.wav, vocals.wav, ...)
+        outputs = sorted(out_path.glob("*.wav")) if out_path.is_dir() else []
+    else:
+        outputs = [out_path]
+    if result.returncode != 0 or not outputs or not all(p.is_file() and p.stat().st_size > 0 for p in outputs):
         # ggml logs every Metal pipeline it compiles; keep only the decisive lines.
         noise = ("ggml_metal", "ggml_backend", "load_backend")
         lines = [
@@ -425,8 +430,75 @@ def loaders(family: str = "") -> None:
         print(f"{name:24} {json.dumps(spec.get('tasks', {}))}")
 
 
+# Catalog task -> (CLI task, JSON output flag or None when the engine prints its result).
+ANALYSIS_TASKS = {
+    "align": ("align", "--words-out"),
+    "vad": ("vad", "--segments-out"),
+    "diar": ("diar", "--turns-out"),
+    "wake_word": ("wake", "--segments-out"),
+    "classify": ("cls", "--text-out"),
+}
+
+
+def analyze(
+    audio: str,
+    package: str,
+    task: str,
+    output: str = "analysis.json",
+    family: str = "",
+    text: str = "",
+    language: str = "",
+    request_options: str = "",
+    force: bool = False,
+) -> None:
+    """Run an audio.cpp analysis task (align, vad, diar, wake_word, classify) on one file.
+
+    The engine writes word timings, segments or turns as JSON, or class scores as
+    text; this keeps that file at *output* and fails when it is missing or empty.
+
+    Args:
+        audio: Input audio file.
+        package: audio.cpp package id.
+        task: Catalog task name: align, vad, diar, wake_word or classify.
+        output: Result path (JSON for align/vad/diar/wake_word, text for classify).
+        family: Override the family from the package spec.
+        text: Reference transcript (align only).
+        language: Language for align (`eng` for MMS, `English` for Qwen3).
+        request_options: Per-request `key=value` settings separated by `;`.
+        force: Overwrite an existing output.
+    """
+    if task not in ANALYSIS_TASKS:
+        raise SystemExit(f"task must be one of {', '.join(ANALYSIS_TASKS)}")
+    if task == "align" and not text:
+        raise SystemExit("align needs --text with the exact transcript")
+    binary = _require_engine()
+    out_path = Path(output).resolve()
+    if out_path.exists() and out_path.stat().st_size > 0 and not force:
+        print(f"[analyze] exists: {out_path}")
+        return
+    fam = family or _resolve(package)["family"]
+    if not _installed(package):
+        prep(package)
+    cli_task, flag = ANALYSIS_TASKS[task]
+    cmd = [str(binary), "--task", cli_task, "--family", fam, "--model", str(_model_path(package, fam)),
+           "--backend", BACKEND, "--audio", str(Path(audio).resolve()), flag, str(out_path)]
+    if text:
+        cmd += ["--text", text]
+    if language:
+        cmd += ["--language", language]
+    for setting in (part.strip() for part in request_options.split(";") if part.strip()):
+        cmd += ["--request-option", setting]
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.unlink(missing_ok=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(ENGINE_ROOT), check=False)
+    if result.returncode != 0 or not out_path.is_file() or out_path.stat().st_size == 0:
+        tail = "\n".join(line for line in (result.stdout + result.stderr).splitlines() if "ggml_" not in line)[-2000:]
+        raise SystemExit(f"[analyze] {package} {task} failed (exit {result.returncode}):\n{tail}")
+    print(f"[analyze] {package} {task} -> {out_path}")
+
+
 if __name__ == "__main__":
     import fire
 
     fire.Fire({"prep": prep, "run": run, "info": info,
-               "packages": packages, "loaders": loaders})
+               "packages": packages, "loaders": loaders, "analyze": analyze})

@@ -38,11 +38,11 @@ REGISTRY_FOR_TASK = {
     "vc": "aud_all",
     "svc": "aud_all",
     "s2s": "aud_all",
+    "sep": "separate_all",
 }
 # Spec tasks with no generic adapter in any registry, and why.
 PENDING_REASONS = {
     "edit": "audiocpp_cli has no edit task, so aud-audiocpp cannot drive it",
-    "sep": "separate_all.py only wraps fixed demucs packages; no generic audio.cpp separation adapter",
     "music": "no registry harness supplies lyrics/tags/prompts for audio.cpp generation",
     "sfx": "no registry harness supplies sound-effect prompts for audio.cpp generation",
     "midi": "no registry consumes MIDI output",
@@ -63,7 +63,7 @@ REGISTRY_FILES = {
     "detect_all": ["fx/detect_all.py"],
 }
 OVERLAY_DIRS = {"tts_all": "tts/model_specs", "asr_all": "asr/model_specs"}
-SUPPORTED_REQUIRED = {"tts_all": {"reference_text", "instruct"}, "asr_all": {"language"}, "aud_all": set()}
+SUPPORTED_REQUIRED = {"tts_all": {"reference_text", "instruct"}, "asr_all": {"language"}, "aud_all": set(), "separate_all": set()}
 NOTABLE_OPTIONS = ("voice_id", "speaker", "reference_text", "language", "instruct", "lyrics", "tags", "prompt", "emotion")
 SR_WORDS = ("super-resolution", "super resolution", "upsampl")
 NOISY_WORDS = ("enhanc", "restor", "denois")
@@ -198,6 +198,8 @@ def route_record(spec: dict, registry: str, tasks: set[str], covered: list[str],
     package = PACKAGE_OVERRIDES.get((spec["family"], registry), package)
     required = [o["name"] for o in request_options(spec) if o.get("required")]
     langs = registry_langs(spec)
+    if registry == "separate_all":
+        langs = langs or ["any"]  # separation is language-independent
     unsupported = [name for name in required if name not in SUPPORTED_REQUIRED[registry]]
     if covered:
         record.update(route="covered", reason="an existing registry entry already references this family's packages")
@@ -210,7 +212,8 @@ def route_record(spec: dict, registry: str, tasks: set[str], covered: list[str],
     elif not langs:
         record.update(route=PENDING, reason="no en/pl support; the registries only benchmark en and pl text/audio")
     else:
-        params = {"tts_all": lambda: tts_params(spec, tasks, required), "asr_all": lambda: asr_params(spec), "aud_all": lambda: aud_params(spec, tasks)}[registry]()
+        params = {"tts_all": lambda: tts_params(spec, tasks, required), "asr_all": lambda: asr_params(spec), "aud_all": lambda: aud_params(spec, tasks),
+                  "separate_all": lambda: {"task": "sep"}}[registry]()
         record.update(route=registry, package=package, langs=langs, params=params)
     return record
 

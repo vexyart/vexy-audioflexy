@@ -20,6 +20,7 @@ this_file: CHANGELOG.md
 - Mark VieNeu v3 Turbo (needs SEA-G2P phoneme input and a speaker embedding) and AuK (needs its Qwen2.5-Omni-3B and VAE component packages) `pending adapter`.
 - Verify MOSS-TTS v1.5, MOSS-TTSD (WER 0%), Ming3 Audio Tiny ASR and Nemotron Transcribe IQ4_NL (WER 15.4% each). The ASR adapter strips Ming3's leading language tag and passes Nemotron's experts GGUF as `--model`, since its package also holds the mmproj encoder. MiniMax-H3 is marked `pending adapter`: it is text-to-audio/video generation, not TTS.
 - `prep` accepts a cross-volume copy of a cached blob (same size and mtime) as installed, so re-running it no longer asks for `--force`; a failed link removes its `.partial` file.
+- Add audio.cpp source separation: `aud-audiocpp.py run --task sep` writes the engine's named stems to `--out-dir`, and `separate_all.py` accepts the generated `ac83-*` separation rows. Verified TF-GridNet and MossFormer2 (a two-speaker mix split into both sentences) plus HTDemucs, BS-RoFormer and Mel-Band RoFormer (speech recovered from a synthetic music bed). 45 audio.cpp routes are now verified.
 - Fix the TTS dashboard step: `build_dashboard.py` is loaded by path, so it now adds its own directory to `sys.path` before importing `_paths`. Every `tts_all.py` run had crashed there after synthesis.
 
 ## 1.0.3

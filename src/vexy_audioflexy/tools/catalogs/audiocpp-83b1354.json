@@ -955,14 +955,26 @@
       "overlay_specs": [],
       "routes": [
         {
-          "registry": null,
+          "registry": "separate_all",
           "tasks": [
             "sep"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "separate_all.py only wraps fixed demucs packages; no generic audio.cpp separation adapter"
+          "status": "verified",
+          "route": "separate_all",
+          "package": "bs_roformer_q8_0",
+          "langs": [
+            "en",
+            "pl"
+          ],
+          "params": {
+            "task": "sep"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "separation_asr",
+            "result": "stems instrumental, vocals; speech + synthetic bass/chord/hi-hat bed (44.1 kHz stereo); parakeet on vocals.wav: 'Hello from the new audio, CPP build.'; instrumental leaks some speech"
+          }
         }
       ]
     },
@@ -3724,14 +3736,26 @@
       "overlay_specs": [],
       "routes": [
         {
-          "registry": null,
+          "registry": "separate_all",
           "tasks": [
             "sep"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "separate_all.py only wraps fixed demucs packages; no generic audio.cpp separation adapter"
+          "status": "verified",
+          "route": "separate_all",
+          "package": "htdemucs_q8_0",
+          "langs": [
+            "en",
+            "pl"
+          ],
+          "params": {
+            "task": "sep"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "separation_asr",
+            "result": "stems bass, drums, other, vocals; speech + synthetic bass/chord/hi-hat bed (44.1 kHz stereo); parakeet on vocals.wav: 'Hello from the new audio, CPP Build.'"
+          }
         }
       ]
     },
@@ -3785,7 +3809,7 @@
       "overlay_specs": [],
       "routes": [
         {
-          "registry": null,
+          "registry": "separate_all",
           "tasks": [
             "sep"
           ],
@@ -3795,7 +3819,7 @@
           ],
           "status": "pending runtime",
           "route": "covered",
-          "reason": "referenced by an existing registry"
+          "reason": "an existing registry entry already references this family's packages"
         }
       ]
     },
@@ -5927,14 +5951,26 @@
       "overlay_specs": [],
       "routes": [
         {
-          "registry": null,
+          "registry": "separate_all",
           "tasks": [
             "sep"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "separate_all.py only wraps fixed demucs packages; no generic audio.cpp separation adapter"
+          "status": "verified",
+          "route": "separate_all",
+          "package": "mel_band_roformer_q8_0",
+          "langs": [
+            "en",
+            "pl"
+          ],
+          "params": {
+            "task": "sep"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "separation_asr",
+            "result": "stems instrumental, vocals; speech + synthetic bass/chord/hi-hat bed (44.1 kHz stereo); parakeet on vocals.wav: 'Hello from the new audio, CPP build.'; instrumental leaks some speech"
+          }
         }
       ]
     },
@@ -7512,6 +7548,28 @@
       "overlay_specs": [],
       "routes": [
         {
+          "registry": "separate_all",
+          "tasks": [
+            "sep"
+          ],
+          "covered_by": [],
+          "status": "verified",
+          "route": "separate_all",
+          "package": "mossformer2_ss_16k_f32",
+          "langs": [
+            "en",
+            "pl"
+          ],
+          "params": {
+            "task": "sep"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "separation_asr",
+            "result": "stems speaker_1, speaker_2; mixture of en_kokoro + en_inflect (16 kHz) transcribes as one sentence; parakeet on the stems recovers both: 'Hello from the rebuilt ANFLECT engine.' / 'Hello from the new audio, CPP build.'"
+          }
+        },
+        {
           "registry": "aud_all",
           "tasks": [
             "s2s"
@@ -7535,16 +7593,6 @@
             "check": "audible, length",
             "result": "enhancement 3.25 s at 48 kHz, RMS 0.045 vs noisy 0.056"
           }
-        },
-        {
-          "registry": null,
-          "tasks": [
-            "sep"
-          ],
-          "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "separate_all.py only wraps fixed demucs packages; no generic audio.cpp separation adapter"
         }
       ]
     },
@@ -12006,14 +12054,26 @@
       "overlay_specs": [],
       "routes": [
         {
-          "registry": null,
+          "registry": "separate_all",
           "tasks": [
             "sep"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "separate_all.py only wraps fixed demucs packages; no generic audio.cpp separation adapter"
+          "status": "verified",
+          "route": "separate_all",
+          "package": "tf_gridnet_wsj0_2mix_f32",
+          "langs": [
+            "en",
+            "pl"
+          ],
+          "params": {
+            "task": "sep"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "separation_asr",
+            "result": "stems speaker_1, speaker_2; mixture of en_kokoro + en_inflect (16 kHz) transcribes as one sentence; parakeet on the stems recovers both: 'Hello from the new audio, CPP build.' / 'Hello from the rebuilt ANF L E C T engine.'"
+          }
         }
       ]
     },

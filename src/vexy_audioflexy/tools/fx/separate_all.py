@@ -24,6 +24,28 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 PACKAGES = ("htdemucs-4s", "htdemucs-6s", "htdemucs_6stems_f16", "htdemucs_6stems_q8_0")
+# Generated audio.cpp separation rows ("ac83-*"), run through the generic aud-audiocpp adapter.
+CATALOG_ROWS = {row["name"]: row for row in runpy.run_path(str(ROOT.parent / "_audiocpp_catalog.py"))["entries"]("separate_all")}
+
+
+def run_catalog_row(row: dict, source: Path, output: Path, timeout: int) -> dict:
+    """Separate *source* with one generated audio.cpp row; report every stem with its hash."""
+    import hashlib
+    argv = ["uv", "run", "--script", str(ROOT / "tools/aud-audiocpp.py"), "run", str(source),
+            "--package", row["package"], "--family", row["family"], "--task", "sep", "--output", str(output)]
+    try:
+        result = subprocess.run(argv, capture_output=True, text=True, timeout=timeout,
+                                env={**os.environ, **row["env"]}, check=False)
+    except subprocess.TimeoutExpired:
+        return {"package": row["name"], "success": False, "resumed": False, "error": "Batch deadline exceeded"}
+    stems = [{"file": p.name, "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
+             for p in sorted(output.glob("*.wav")) if p.stat().st_size > 0]
+    if result.returncode != 0 or not stems:
+        return {"package": row["name"], "success": False, "resumed": False, "error": (result.stdout + result.stderr)[-3000:]}
+    report = {"package": row["package"], "family": row["family"], "source_revision": row["source_revision"],
+              "input_sha256": hashlib.sha256(source.read_bytes()).hexdigest(), "stems": stems}
+    (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
+    return {"package": row["name"], "success": True, "resumed": False, "report": report}
 
 
 def main(audio: str, packages: str = "htdemucs-4s,htdemucs-6s",
@@ -31,13 +53,17 @@ def main(audio: str, packages: str = "htdemucs-4s,htdemucs-6s",
     """Run selected variants, resume validated reports and record individual failures."""
     source = Path(audio).resolve()
     selected = packages.split(",") if isinstance(packages, str) else list(packages)
-    if not source.is_file() or timeout <= 0 or not selected or any(p not in PACKAGES for p in selected):
-        raise SystemExit("Require input audio, positive timeout and known packages: " + ",".join(PACKAGES))
+    if not source.is_file() or timeout <= 0 or not selected or any(p not in PACKAGES and p not in CATALOG_ROWS for p in selected):
+        raise SystemExit("Require input audio, positive timeout and known packages: " + ",".join([*PACKAGES, *CATALOG_ROWS]))
     destination = Path(outdir).resolve()
     destination.mkdir(parents=True, exist_ok=True)
     records = []
     for package in selected:
         output = destination / package
+        if package in CATALOG_ROWS:
+            records.append(run_catalog_row(CATALOG_ROWS[package], source, output, timeout))
+            (destination / "report.json").write_text(json.dumps({"results": records}, indent=2) + "\n")
+            continue
         musiccpp = package.startswith("htdemucs_6stems_")
         report_path = output / "report.json"
         if report_path.exists() and not force:
