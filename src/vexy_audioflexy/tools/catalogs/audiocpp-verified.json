@@ -1,7 +1,7 @@
 {
   "this_file": "src/vexy_audioflexy/tools/catalogs/audiocpp-verified.json",
   "source_revision": "83b1354b00ef01ba3e7dcc81a85c5ff1c43515ec",
-  "note": "Real runs on Apple M4 Max, Metal, 2026-11-15. ASR: eval clips en_kokoro + en_inflect; aud: 3.25 s speech/noisy fixtures; TTS: one English sentence, output transcribed by parakeet_tdt_q8_0. Receipts: audioflexy-privdata/acceptance/upstream-refresh-2026-11-15/audiocpp-83b1354/.",
+  "note": "Real runs on Apple M4 Max, Metal, 2026-11-15. ASR: eval clips en_kokoro + en_inflect; aud: 3.25 s speech/noisy fixtures; TTS: one English sentence, output transcribed by parakeet_tdt_q8_0. Receipts: audioflexy-privdata/acceptance/upstream-refresh-2026-11-15/audiocpp-83b1354/. 'verified' means one real run produced usable output; it is not a quality bar (see each run's result).",
   "runs": {
     "asr_all:lfm2_audio_1_5b_q8_0": {
       "date": "2026-11-15",

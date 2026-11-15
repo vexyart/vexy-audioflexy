@@ -22,16 +22,33 @@ def link_model_file(blob: Path, output: Path) -> None:
     tensor container from the extension, so a symlink to the extensionless
     Hugging Face blob fails with "unsupported tensor source format". Use a
     hardlink, which keeps the name and costs no space; copy when the cache sits
-    on another volume or the filesystem refuses hardlinks. A cache wipe gives
-    re-downloads a new inode, so re-preparing then needs --force.
+    on another volume or the filesystem refuses hardlinks (that duplicates the
+    weights). A cache wipe gives re-downloads a new inode, so re-preparing then
+    needs --force.
     """
     temporary = output.with_name(f".{output.name}.partial")
     temporary.unlink(missing_ok=True)
     try:
-        temporary.hardlink_to(blob)
-    except OSError:
-        shutil.copy2(blob, temporary)
-    os.replace(temporary, output)
+        try:
+            temporary.hardlink_to(blob)
+        except OSError:
+            shutil.copy2(blob, temporary)
+        os.replace(temporary, output)
+    except BaseException:
+        temporary.unlink(missing_ok=True)
+        raise
+
+
+def installed_from(output: Path, blob: Path) -> bool:
+    """True when output is the blob itself or a copy2 of it (same size and mtime)."""
+    if not output.is_file():
+        return False
+    if output.samefile(blob):
+        return True
+    if output.is_symlink():
+        return False
+    a, b = output.stat(), blob.stat()
+    return a.st_size == b.st_size and int(a.st_mtime) == int(b.st_mtime)
 
 
 def install_package(entry: dict, models_root: Path, package: str, force: bool) -> None:
@@ -68,7 +85,7 @@ def install_package(entry: dict, models_root: Path, package: str, force: bool) -
         if not output.parent.resolve().is_relative_to(target.resolve()):
             raise ValueError(f"Native layout escapes its target: {output}")
         exists = output.exists() or output.is_symlink()
-        same = output.is_file() and output.samefile(source)
+        same = installed_from(output, source)
         # An older install's symlink to the same blob is ours to upgrade in place.
         ours = same and output.is_symlink()
         if exists and not same and (not force or output.is_dir()):

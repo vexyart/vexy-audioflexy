@@ -6,7 +6,7 @@ this_file: CHANGELOG.md
 
 ## Unreleased
 
-- Generate `tools/catalogs/audiocpp-83b1354.json` from the pinned audio.cpp `model_specs` with `tools/gen_audiocpp_catalog.py`. It records all 146 families, their packages (repo, revision, gated, files), existing registry coverage and a route per task. `tts_all`, `asr_all` and `aud_all` append one `ac83-*` row per uncovered routed family (26 TTS, 9 ASR, 10 audio-to-audio), each marked `pending runtime` until a real run.
+- Generate `tools/catalogs/audiocpp-83b1354.json` from the pinned audio.cpp `model_specs` with `tools/gen_audiocpp_catalog.py`. It records all 146 families, their packages (repo, revision, gated, files), existing registry coverage and a route per task. `tts_all`, `asr_all` and `aud_all` append one `ac83-*` row per uncovered routed family (26 TTS, 9 ASR, 10 audio-to-audio; VieNeu, AuK, MiniMax-H3 and SamsOne were later held as `pending adapter`), each marked `pending runtime` until a real run. `verified` means one real run produced usable output, not that quality is good.
 - Record real runs in `tools/catalogs/audiocpp-verified.json`, keyed `registry:package` and tied to engine SHA 83b1354. The generator marks matching routes `verified` and keeps rows from any other engine revision `pending runtime`. 15 routes are verified on Metal: 6 ASR (lfm2_audio, lfm3_audio, owsm, phonon2_asr, underdog_bark3, whistle_asr) and 9 audio-to-audio (apollo, chatterbox vc, lfm2/lfm3 spoken dialogue, miocodec, mossformer2 SE, realtime_reuse, rvc, tone_color_vc).
 - Pass OWSM's language as an ISO 639-3 code (`eng`, `pol`) through a catalog `lang_map`. Before this, `--lang en` failed with "OWSM v4 tokenizer is missing <en>".
 - Route Apollo to a 44.1 kHz manifest source (`noisy44k`); the engine rejects other rates.
@@ -19,6 +19,7 @@ this_file: CHANGELOG.md
 - Route M5-TTS to its CustomVoice package: `voice_id=1` is a CustomVoice preset and the VoiceClone checkpoint rejects it. Pass `--voice-id`/`--speaker` to the engine as strings; fire had turned `1` into an int.
 - Mark VieNeu v3 Turbo (needs SEA-G2P phoneme input and a speaker embedding) and AuK (needs its Qwen2.5-Omni-3B and VAE component packages) `pending adapter`.
 - Verify MOSS-TTS v1.5, MOSS-TTSD (WER 0%), Ming3 Audio Tiny ASR and Nemotron Transcribe IQ4_NL (WER 15.4% each). The ASR adapter strips Ming3's leading language tag and passes Nemotron's experts GGUF as `--model`, since its package also holds the mmproj encoder. MiniMax-H3 is marked `pending adapter`: it is text-to-audio/video generation, not TTS.
+- `prep` accepts a cross-volume copy of a cached blob (same size and mtime) as installed, so re-running it no longer asks for `--force`; a failed link removes its `.partial` file.
 - Fix the TTS dashboard step: `build_dashboard.py` is loaded by path, so it now adds its own directory to `sys.path` before importing `_paths`. Every `tts_all.py` run had crashed there after synthesis.
 
 ## 1.0.3

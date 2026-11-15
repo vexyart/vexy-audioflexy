@@ -23,6 +23,8 @@ from __future__ import annotations
 
 import json
 import os
+import re
+import runpy
 import shutil
 import subprocess
 import tempfile
@@ -31,13 +33,13 @@ import wave
 from functools import cache
 from pathlib import Path
 
-import runpy
 
 from _audioflexy_paths import runtime_root, models_root
 
 # audio.cpp picks tensor formats by extension and canonicalises paths, so model files
 # must be hardlinks (or copies) under their real names, never symlinks to HF blobs.
-link_model_file = runpy.run_path(str(Path(__file__).resolve().parents[2] / "_audiocpp_provider.py"))["link_model_file"]
+_PROVIDER = runpy.run_path(str(Path(__file__).resolve().parents[2] / "_audiocpp_provider.py"))
+link_model_file, installed_from = _PROVIDER["link_model_file"], _PROVIDER["installed_from"]
 
 VERSION = "1.0.0"
 
@@ -122,6 +124,8 @@ def _model_path(package: str) -> Path:
     if entry["family"] in EXPLICIT_MODEL_FAMILIES:
         # The engine cannot pick between the experts GGUF and the mmproj in one directory.
         files = [f for f in files if f.endswith(".gguf") and "mmproj" not in f.lower()]
+        if len(files) != 1:
+            raise SystemExit(f"package '{package}': expected one non-mmproj GGUF, found {files}")
     if len(files) == 1 and files[0].endswith(".gguf"):
         relative = files[0]
         prefix = entry["strip_prefix"]
@@ -172,7 +176,7 @@ def _link_snapshot(entry: dict, snapshot: Path, target: Path, force: bool) -> No
         if not output.parent.resolve().is_relative_to(target.resolve()):
             raise ValueError(f"Native layout escapes its target: {output}")
         exists = output.exists() or output.is_symlink()
-        points_here = output.is_file() and output.samefile(source)
+        points_here = installed_from(output, source)
         legacy = points_here and output.is_symlink()  # old blob symlink: upgrade without --force
         same = points_here and not legacy
         if exists and not points_here and (not force or output.is_dir()):
@@ -182,8 +186,7 @@ def _link_snapshot(entry: dict, snapshot: Path, target: Path, force: bool) -> No
         if same:
             continue
         output.parent.mkdir(parents=True, exist_ok=True)
-        if exists:
-            output.unlink()
+        # link_model_file swaps output in with os.replace, so a failure leaves the old file.
         link_model_file(source.resolve(), output)
 
 
@@ -403,9 +406,10 @@ def transcribe(
         # tts hit exactly this: a run that exits 0 and produces nothing.
         console.print(f"[red]empty transcript[/red] — {package} returned no text")
         raise SystemExit(1)
-    if fam == "ming3_audio" and "\t" in transcript.split("\n", 1)[0]:
+    tag = re.match(r"[A-Za-z][A-Za-z ()-]{1,30}\t", transcript) if fam == "ming3_audio" else None
+    if tag:
         # Ming3 Audio prefixes its detected language, e.g. "English\t<text>".
-        transcript = transcript.split("\t", 1)[1].strip()
+        transcript = transcript[tag.end():].strip()
         out_path.write_text(transcript + "\n", encoding="utf-8")
 
     metrics = _parse_metrics(stdout)

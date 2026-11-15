@@ -156,3 +156,22 @@ def test_apply_verification_when_revision_differs_then_rows_stay_pending(tmp_pat
     assert families[0]["routes"][0]["status"] == "pending runtime"
     gen["apply_verification"](families, "a" * 40, tmp_path)
     assert families[0]["routes"][0]["status"] == "verified"
+
+
+def test_installed_from_when_copy_fallback_then_prep_rerun_is_idempotent(tmp_path):
+    provider = runpy.run_path(str(TOOLS / "_audiocpp_provider.py"))
+    blob = tmp_path / "blob"
+    blob.write_bytes(b"w" * 32)
+    output = tmp_path / "model.gguf"
+    import shutil
+    shutil.copy2(blob, output)  # what link_model_file does across volumes
+    assert provider["installed_from"](output, blob), "a copy2 of the blob must count as installed"
+    output.write_bytes(b"x" * 33)
+    assert not provider["installed_from"](output, blob), "a different file must not count as installed"
+
+
+def test_link_model_file_when_copy_fails_then_no_partial_left(tmp_path):
+    provider = runpy.run_path(str(TOOLS / "_audiocpp_provider.py"))
+    with pytest.raises(OSError):
+        provider["link_model_file"](tmp_path / "missing-blob", tmp_path / "model.gguf")
+    assert not list(tmp_path.glob(".*.partial")), "failed link must clean up its temp file"
