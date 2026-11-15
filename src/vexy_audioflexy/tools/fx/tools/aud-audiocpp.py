@@ -436,7 +436,7 @@ ANALYSIS_TASKS = {
     "vad": ("vad", "--segments-out"),
     "diar": ("diar", "--turns-out"),
     "wake_word": ("wake", "--segments-out"),
-    "classify": ("cls", "--text-out"),
+    "classify": ("cls", None),  # scores arrive on stdout as custom_schema_output=<json>
 }
 
 
@@ -460,7 +460,7 @@ def analyze(
         audio: Input audio file.
         package: audio.cpp package id.
         task: Catalog task name: align, vad, diar, wake_word or classify.
-        output: Result path (JSON for align/vad/diar/wake_word, text for classify).
+        output: Result JSON path (word timings, segments, turns or class scores).
         family: Override the family from the package spec.
         text: Reference transcript (align only).
         language: Language for align (`eng` for MMS, `English` for Qwen3).
@@ -481,7 +481,9 @@ def analyze(
         prep(package)
     cli_task, flag = ANALYSIS_TASKS[task]
     cmd = [str(binary), "--task", cli_task, "--family", fam, "--model", str(_model_path(package, fam)),
-           "--backend", BACKEND, "--audio", str(Path(audio).resolve()), flag, str(out_path)]
+           "--backend", BACKEND, "--audio", str(Path(audio).resolve())]
+    if flag:
+        cmd += [flag, str(out_path)]
     if text:
         cmd += ["--text", text]
     if language:
@@ -491,6 +493,11 @@ def analyze(
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.unlink(missing_ok=True)
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(ENGINE_ROOT), check=False)
+    if flag is None and result.returncode == 0:
+        prefix = "custom_schema_output="
+        payload = next((line[len(prefix):] for line in result.stdout.splitlines() if line.startswith(prefix)), "")
+        if payload:
+            out_path.write_text(json.dumps(json.loads(payload), indent=2) + "\n")
     if result.returncode != 0 or not out_path.is_file() or out_path.stat().st_size == 0:
         tail = "\n".join(line for line in (result.stdout + result.stderr).splitlines() if "ggml_" not in line)[-2000:]
         raise SystemExit(f"[analyze] {package} {task} failed (exit {result.returncode}):\n{tail}")

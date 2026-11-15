@@ -48,7 +48,7 @@ def test_catalog_when_loaded_then_internally_consistent(catalog):
         for route in family["routes"]:
             assert route["status"] in {"pending runtime", "verified"}
             assert (route["status"] == "verified") == ("verification" in route), family["family"]
-            assert route["route"] in {"tts_all", "asr_all", "aud_all", "separate_all", "covered", "pending adapter"}
+            assert route["route"] in {"tts_all", "asr_all", "aud_all", "separate_all", "aud_analyze", "covered", "pending adapter"}
             if route["route"] in REGISTRIES:
                 assert route["package"] in ids, family["family"]
                 assert set(route["langs"]) <= {"en", "pl"} and route["langs"]
@@ -184,3 +184,12 @@ def test_separate_all_when_catalog_has_sep_routes_then_rows_are_accepted():
     sep = {r["package"] for f in catalog["families"] for r in f["routes"] if r["route"] == "separate_all"}
     assert sep and {row["package"] for row in rows.values()} == sep, "every sep route must reach separate_all"
     assert all(row["params"] == {"task": "sep"} for row in rows.values())
+
+
+def test_analysis_tasks_when_installable_then_route_to_analyze_command():
+    catalog = json.loads(CATALOG.read_text())
+    routes = {(f["family"], r["tasks"][0]): r for f in catalog["families"] for r in f["routes"] if r["registry"] is None}
+    assert routes[("firered_vad", "vad")]["route"] == "aud_analyze"
+    assert routes[("mms_forced_aligner", "align")]["params"] == {"task": "align", "language": "eng"}
+    assert routes[("sortformer_diar_v2", "diar")]["route"] == "pending adapter", "unsupported-only packages stay pending"
+    assert routes[("sherpa_kws", "wake_word")]["route"] == "pending adapter"

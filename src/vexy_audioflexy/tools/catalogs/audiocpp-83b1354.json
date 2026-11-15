@@ -248,9 +248,18 @@
             "classify"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "no audio-classification registry"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "ast_audioset_f32",
+          "params": {
+            "task": "classify"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "classification",
+            "result": "speech over a synthetic music bed: top label Speech 0.516, then Sine wave, Tick"
+          }
         }
       ]
     },
@@ -276,7 +285,7 @@
       "notable_options": [],
       "default_voice": null,
       "recommended_package": "audio8_asr_0_1b_q8_0",
-      "selected_package": "audio8_asr_0_1b_q8_0",
+      "selected_package": "audio8_asr_0_1b_safetensors",
       "packages": [
         {
           "id": "audio8_asr_0_1b_q8_0",
@@ -1158,9 +1167,18 @@
             "classify"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "no audio-classification registry"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "ced_tiny_f32",
+          "params": {
+            "task": "classify"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "classification",
+            "result": "speech over a synthetic music bed: Sine wave 0.418, Speech 0.279, Speech synthesizer 0.166"
+          }
         }
       ]
     },
@@ -2034,9 +2052,19 @@
             "align"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "asr-audiocpp has an align subcommand but no registry drives it"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "crisperwhisper_2_large_q8_0",
+          "params": {
+            "task": "align",
+            "language": ""
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "alignment",
+            "result": "kokoro16.wav 'Hello from the new audio cpp build.' (16 kHz): transcribes and word-times all 7 words, Hello 0.26-0.62 s"
+          }
         }
       ]
     },
@@ -2292,7 +2320,7 @@
       ],
       "default_voice": null,
       "recommended_package": "edda_v0_2_large_hurtig_q8_0",
-      "selected_package": "edda_v0_2_large_hurtig_q8_0",
+      "selected_package": "edda_v0_2_large_hurtig_safetensors",
       "packages": [
         {
           "id": "edda_v0_2_large_hurtig_q8_0",
@@ -2681,9 +2709,18 @@
             "vad"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "detect_all.py pins a fixed package list at its own runtime commit; no generic adapter"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "firered_vad_f32",
+          "params": {
+            "task": "vad"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "vad",
+            "result": "turns.wav: kokoro voice, 1 s silence, inflect voice (16 kHz, 8.7 s): speech 1.25-4.05 s and 5.53-8.71 s; the silent gap is excluded"
+          }
         }
       ]
     },
@@ -5423,8 +5460,12 @@
           ],
           "covered_by": [],
           "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "no audio-classification registry"
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "lfm_d1_omni_2b_q8_0",
+          "params": {
+            "task": "classify"
+          }
         }
       ]
     },
@@ -6014,9 +6055,18 @@
             "wake_word"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "no wake-word registry"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "micro_wake_word_okay_nabu_f32",
+          "params": {
+            "task": "wake_word"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "wake_word",
+            "result": "nabu.wav (macOS say): one 'Okay Nabu' detection, confidence 0.973"
+          }
         }
       ]
     },
@@ -6723,7 +6773,7 @@
       "notable_options": [],
       "default_voice": null,
       "recommended_package": "mms_forced_aligner_300m_f16",
-      "selected_package": "mms_forced_aligner_300m_f16",
+      "selected_package": "mms_forced_aligner_300m_safetensors",
       "packages": [
         {
           "id": "mms_forced_aligner_300m_f16",
@@ -6781,9 +6831,19 @@
             "align"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "asr-audiocpp has an align subcommand but no registry drives it"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "mms_forced_aligner_300m_safetensors",
+          "params": {
+            "task": "align",
+            "language": "eng"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "alignment",
+            "result": "kokoro16.wav 'Hello from the new audio cpp build.' (16 kHz): all 7 words aligned in order, Hello 0.30-0.52 s ... build. 2.46-3.24 s"
+          }
         }
       ]
     },
@@ -7783,9 +7843,18 @@
             "diar"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "diarize_all.py does not wrap audio.cpp diarization packages generically"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "nemotron_3_diar_bf16",
+          "params": {
+            "task": "diar"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "diarization",
+            "result": "turns.wav: kokoro voice, 1 s silence, inflect voice (16 kHz, 8.7 s): speaker_0 1.29-3.82 s, speaker_1 5.51-8.62 s"
+          }
         }
       ]
     },
@@ -8329,9 +8398,18 @@
             "wake_word"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "no wake-word registry"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "open_wake_word_alexa_f32",
+          "params": {
+            "task": "wake_word"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "wake_word",
+            "result": "alexa.wav (macOS say): one 'Alexa' detection, confidence 0.9997"
+          }
         }
       ]
     },
@@ -10021,9 +10099,19 @@
             "align"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "asr-audiocpp has an align subcommand but no registry drives it"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "qwen3_forced_aligner_0_6b_q8_0",
+          "params": {
+            "task": "align",
+            "language": "English"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "alignment",
+            "result": "kokoro16.wav 'Hello from the new audio cpp build.' (16 kHz): all 7 words aligned in order, Hello 0.32-0.64 s"
+          }
         }
       ]
     },
@@ -11253,7 +11341,7 @@
           "covered_by": [],
           "status": "pending runtime",
           "route": "pending adapter",
-          "reason": "no wake-word registry"
+          "reason": "keyword spotting needs BPE-token keywords= rows the analyze command does not build"
         }
       ]
     },
@@ -11578,9 +11666,18 @@
             "diar"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "diarize_all.py does not wrap audio.cpp diarization packages generically"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "sortformer_diar_4spk_v1_q8_0",
+          "params": {
+            "task": "diar"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "diarization",
+            "result": "turns.wav: kokoro voice, 1 s silence, inflect voice (16 kHz, 8.7 s): SPEAKER_00 1.28-4.00 s, SPEAKER_01 from 5.52 s; two speakers"
+          }
         }
       ]
     },
@@ -11656,7 +11753,7 @@
           "covered_by": [],
           "status": "pending runtime",
           "route": "pending adapter",
-          "reason": "diarize_all.py does not wrap audio.cpp diarization packages generically"
+          "reason": "every package needs a local conversion (download kind 'unsupported')"
         }
       ]
     },

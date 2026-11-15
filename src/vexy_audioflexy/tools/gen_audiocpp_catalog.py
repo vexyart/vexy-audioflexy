@@ -53,6 +53,35 @@ PENDING_REASONS = {
     "diar": "diarize_all.py does not wrap audio.cpp diarization packages generically",
     "align": "asr-audiocpp has an align subcommand but no registry drives it",
 }
+# Tasks `fx/tools/aud-audiocpp.py analyze` drives one clip at a time (no batch registry).
+ANALYSIS_ROUTE = "aud_analyze"
+ANALYSIS_TASKS = {"align", "vad", "diar", "wake_word", "classify"}
+ALIGN_LANGUAGE = {"mms_forced_aligner": "eng", "qwen3_forced_aligner": "English"}
+ANALYSIS_PENDING = {
+    "sherpa_kws": "keyword spotting needs BPE-token keywords= rows the analyze command does not build",
+}
+
+
+def package_installable(spec: dict, package: str | None) -> bool:
+    """True when prep can download *package* (its download kind is not 'unsupported')."""
+    defaults = (spec.get("package_defaults") or {}).get("download") or {}
+    entry = next((p for p in spec.get("packages") or [] if p["id"] == package), None)
+    return entry is not None and {**defaults, **(entry.get("download") or {})}.get("kind") != "unsupported"
+
+
+def analysis_route(spec: dict, task: str, package: str | None) -> dict:
+    """Route an analysis task to the single-clip `analyze` command, or say why not."""
+    family = spec["family"]
+    if family in ANALYSIS_PENDING:
+        return {"reason": ANALYSIS_PENDING[family]}
+    if not package_installable(spec, package):
+        return {"reason": "every package needs a local conversion (download kind 'unsupported')"}
+    params = {"task": task}
+    if task == "align":
+        params["language"] = ALIGN_LANGUAGE.get(family, "")
+    return {"route": ANALYSIS_ROUTE, "package": package, "params": params, "reason": "single-clip analyze command; no batch registry"}
+
+
 # Files whose text counts as an existing registry reference, per registry.
 REGISTRY_FILES = {
     "tts_all": ["tts/tts_all.py"],
@@ -104,7 +133,11 @@ def precision_rank(precision: str) -> tuple[int, str]:
 
 def pick_package(spec: dict) -> str | None:
     """recommended_package, else the default package, else the smallest precision."""
-    packages = spec.get("packages") or []
+    defaults = (spec.get("package_defaults") or {}).get("download") or {}
+    every = spec.get("packages") or []
+    # Prefer packages prep can install; "unsupported" ones need a local conversion.
+    installable = [p for p in every if {**defaults, **(p.get("download") or {})}.get("kind") != "unsupported"]
+    packages = installable or every
     ids = {p["id"] for p in packages}
     recommended = (spec.get("ui") or {}).get("recommended_package")
     if recommended in ids:
@@ -232,8 +265,11 @@ def family_routes(spec: dict, coverage: dict[str, list[str]], package: str | Non
             continue
         covered = [ref for reg, refs in coverage.items() if reg not in REGISTRY_FOR_TASK.values() for ref in refs]
         reason = PENDING_REASONS.get(task, f"no adapter for task {task}")
-        routes.append({"registry": None, "tasks": [task], "covered_by": covered, "status": STATUS,
-                       "route": "covered" if covered else PENDING, "reason": "referenced by an existing registry" if covered else reason})
+        record = {"registry": None, "tasks": [task], "covered_by": covered, "status": STATUS,
+                  "route": "covered" if covered else PENDING, "reason": "referenced by an existing registry" if covered else reason}
+        if not covered and task in ANALYSIS_TASKS:
+            record.update(analysis_route(spec, task, package))
+        routes.append(record)
     return routes
 
 
