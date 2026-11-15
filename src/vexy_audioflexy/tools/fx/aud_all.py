@@ -664,6 +664,16 @@ MODELS.append({
     "stack": "coreml", "quant": "fp16", "timeout": 900,
 })
 
+# audio.cpp families from the shared generated catalog (pending runtime until verified).
+for _ac83 in runpy.run_path(str(Path(__file__).resolve().parents[1] / "_audiocpp_catalog.py"))["entries"]("aud_all"):
+    MODELS.append({
+        **{k: _ac83[k] for k in ("name", "package", "family", "repo", "stack", "quant", "env", "status", "source_revision")},
+        **_ac83["params"],
+        "script": "tools/aud-audiocpp.py",
+        "route": "",
+        "timeout": 1800,
+    })
+
 # Model metadata — drives the self-describing filenames and the report
 # ---------------------------------------------------------------------------
 

@@ -6,6 +6,11 @@ this_file: CHANGELOG.md
 
 ## Unreleased
 
+- Generate `tools/catalogs/audiocpp-83b1354.json` from the pinned audio.cpp `model_specs` with `tools/gen_audiocpp_catalog.py`. It records all 146 families, their packages (repo, revision, gated, files), existing registry coverage and a route per task. `tts_all`, `asr_all` and `aud_all` append one `ac83-*` row per uncovered routed family (26 TTS, 9 ASR, 10 audio-to-audio), each marked `pending runtime` until a real run.
+- Record real runs in `tools/catalogs/audiocpp-verified.json`, keyed `registry:package` and tied to engine SHA 83b1354. The generator marks matching routes `verified` and keeps rows from any other engine revision `pending runtime`. 15 routes are verified on Metal: 6 ASR (lfm2_audio, lfm3_audio, owsm, phonon2_asr, underdog_bark3, whistle_asr) and 9 audio-to-audio (apollo, chatterbox vc, lfm2/lfm3 spoken dialogue, miocodec, mossformer2 SE, realtime_reuse, rvc, tone_color_vc).
+- Pass OWSM's language as an ISO 639-3 code (`eng`, `pol`) through a catalog `lang_map`. Before this, `--lang en` failed with "OWSM v4 tokenizer is missing <en>".
+- Route Apollo to a 44.1 kHz manifest source (`noisy44k`); the engine rejects other rates.
+- Mark SamsOne `pending adapter` for ASR, because it is an audio captioner: given speech, it returned captions such as "the audio clip is a clear and distinct recording of a woman speaking".
 - Run audio.cpp packages on upstream 83b1354 (2026-11-15). The new engine resolves model paths and picks the tensor format from the file extension, so the provider now hardlinks cached files under their package names (falling back to a symlink across volumes) and upgrades older blob symlinks in place.
 - Follow the upstream package rename `voxcpm1_0.5b_q8_0` → `voxcpm1_0_5b_q8_0`. Point entries that defaulted to the missing `audio.cpp-20261030` / `macos-metal-full` runtime at the standard `audio.cpp` release build.
 - Pick the newest installed speech.cpp runtime instead of the fixed 0.8.11 path; the adapter's CLI is verified against speech.cpp 0.11.0.

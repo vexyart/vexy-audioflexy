@@ -3477,6 +3477,52 @@ for _small_name, _small_package, _small_quant in (
         ],
     })
 
+# audio.cpp families from the shared generated catalog (pending runtime until verified).
+_AC83_DESIGN_INSTRUCT = "A warm adult narrator with clear, natural delivery."
+
+
+def _ac83_tts_args(row: dict):
+    params, package = row["params"], row["package"]
+
+    def args_fn(text, ref, out, lang="en"):
+        args = [text, "--package", package, "--output", out, "--family", row["family"], "--task", params["task"]]
+        if params["voice_id"]:
+            args += ["--voice-id", params["voice_id"]]
+        if params["ref"]:
+            args += ["--ref", ref]
+        if params["ref_text"]:
+            args += ["--ref-text", REF_TEXTS.get(lang, "")]
+        if params["mode"] == "design":
+            args += ["--instruct", _AC83_DESIGN_INSTRUCT]
+        if params["lang_flag"]:
+            args += ["--lang", lang]
+        return args
+
+    return args_fn
+
+
+def _ac83_tts_design_args(row: dict):
+    def design_args_fn(text, instruct, out, lang="en"):
+        args = [text, "--package", row["package"], "--output", out, "--family", row["family"],
+                "--task", "vdes", "--instruct", instruct]
+        return args + (["--lang", lang] if row["params"]["lang_flag"] else [])
+
+    return design_args_fn
+
+
+for _ac83 in runpy.run_path(str(Path(__file__).resolve().parents[1] / "_audiocpp_catalog.py"))["entries"]("tts_all"):
+    _ac83_entry = {
+        **{k: _ac83[k] for k in ("name", "repo", "package", "stack", "quant", "langs", "env", "status", "source_revision")},
+        "script": "tools/tts-audiocpp.py",
+        "voice_clone": _ac83["params"]["ref"],
+        "timeout": 3600,
+        "prep_args_fn": lambda p=_ac83["package"]: ["--package", p],
+        "args_fn": _ac83_tts_args(_ac83),
+    }
+    if _ac83["params"]["mode"] == "design":
+        _ac83_entry.update(design=True, design_args_fn=_ac83_tts_design_args(_ac83))
+    MODELS.append(_ac83_entry)
+
 # ---------------------------------------------------------------------------
 # Model metadata derivation (inference stack / quantization / cloning mode)
 # ---------------------------------------------------------------------------

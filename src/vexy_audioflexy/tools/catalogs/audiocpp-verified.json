@@ -1,0 +1,22 @@
+{
+  "this_file": "src/vexy_audioflexy/tools/catalogs/audiocpp-verified.json",
+  "source_revision": "83b1354b00ef01ba3e7dcc81a85c5ff1c43515ec",
+  "note": "Real runs on Apple M4 Max, Metal, 2026-11-15. ASR: eval clips en_kokoro + en_inflect; aud: 3.25 s speech/noisy fixtures. Receipts: audioflexy-privdata/acceptance/upstream-refresh-2026-11-15/audiocpp-83b1354/.",
+  "runs": {
+    "asr_all:lfm2_audio_1_5b_q8_0": {"date": "2026-11-15", "check": "transcript", "result": "WER 38.5% CER 5.6% RTF 0.71; 'Hello from the new audio, C P P build.'"},
+    "asr_all:lfm3_audio_2b_q8_0": {"date": "2026-11-15", "check": "transcript", "result": "WER 15.4% CER 2.8% RTF 1.11; 'Hello from the new audio, CPP Build.'"},
+    "asr_all:owsm_v4_base_102m_f32": {"date": "2026-11-15", "check": "transcript", "result": "WER 30.8% CER 8.3% RTF 0.33; 'Hello from the new audio, CPP build.' (needs ISO 639-3 --lang eng)"},
+    "asr_all:phonon2_asr_q8_0": {"date": "2026-11-15", "check": "transcript", "result": "WER 38.5% CER 9.7% RTF 1.08; 'Hello from the new audio, CPP build.'"},
+    "asr_all:underdog_bark3_standard_f16": {"date": "2026-11-15", "check": "transcript", "result": "WER 15.4% CER 2.8% RTF 0.93; 'Hello from the new audio, cp build.'"},
+    "asr_all:whistle_asr_f32": {"date": "2026-11-15", "check": "transcript", "result": "WER 84.6% CER 15.3% RTF 0.32; 'Hello from the new audio, C. P. BILD.' (spells out names)"},
+    "aud_all:apollo_orig": {"date": "2026-11-15", "check": "audible, length", "result": "44.1 kHz input required; restored output produced"},
+    "aud_all:chatterbox_q8_0": {"date": "2026-11-15", "check": "audible, length", "result": "vc 3.28 s / 3.25 s in, RMS 0.050"},
+    "aud_all:lfm2_audio_1_5b_q8_0": {"date": "2026-11-15", "check": "audible", "result": "spoken-dialogue reply 5.36 s, RMS 0.047 (replies, does not enhance)"},
+    "aud_all:lfm3_audio_2b_q8_0": {"date": "2026-11-15", "check": "audible", "result": "spoken-dialogue reply 15.36 s, RMS 0.056 (replies, does not enhance)"},
+    "aud_all:miocodec_q8_0": {"date": "2026-11-15", "check": "audible, length", "result": "vc 3.24 s at 44.1 kHz, RMS 0.128"},
+    "aud_all:mossformer2_se_48k_f32": {"date": "2026-11-15", "check": "audible, length", "result": "enhancement 3.25 s at 48 kHz, RMS 0.045 vs noisy 0.056"},
+    "aud_all:realtime_reuse_f32": {"date": "2026-11-15", "check": "audible, length", "result": "enhancement 3.25 s, RMS 0.050 vs noisy 0.056"},
+    "aud_all:rvc_f16": {"date": "2026-11-15", "check": "audible, length", "result": "vc 3.24 s at 40 kHz, RMS 0.059"},
+    "aud_all:tone_color_vc_f32": {"date": "2026-11-15", "check": "audible, length", "result": "vc 3.24 s at 22.05 kHz, RMS 0.048"}
+  }
+}

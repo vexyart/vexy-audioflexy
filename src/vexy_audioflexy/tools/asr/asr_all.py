@@ -167,7 +167,7 @@ def eval_clips(lang: str, limit: int = 0) -> list[tuple[Path, str]]:
 AUDIOCPP = "tools/asr-audiocpp.py"
 
 
-def _audiocpp_args(package: str, *, lang_flag: bool = False, instruct: str = ""):
+def _audiocpp_args(package: str, *, lang_flag: bool = False, instruct: str = "", lang_map: dict | None = None):
     """Build an args_fn for one audio.cpp package.
 
     *lang_flag* is opt-in: audio.cpp forwards ``--language`` as a per-request option
@@ -177,7 +177,7 @@ def _audiocpp_args(package: str, *, lang_flag: bool = False, instruct: str = "")
     def args_fn(audio: str, out: str, lang: str) -> list[str]:
         argv = ["--audio", audio, "--package", package, "--text-out", out]
         if lang_flag and lang:
-            argv += ["--lang", lang]
+            argv += ["--lang", (lang_map or {}).get(lang, lang)]
         if instruct:
             argv += ["--text", instruct]
         return argv
@@ -863,6 +863,15 @@ for _entry in json.loads((ROOT / "catalogs/issue301-audiocpp.json").read_text())
             "AUDIOCPP_BACKEND": "cpu" if _entry["family"] == "niagara_asr" else "metal",
         },
         "args_fn": _audiocpp_args(_entry["package"], lang_flag=_entry["lang_flag"]),
+        "timeout": 1800,
+    })
+
+# audio.cpp families from the shared generated catalog (pending runtime until verified).
+for _ac83 in runpy.run_path(str(Path(__file__).resolve().parents[1] / "_audiocpp_catalog.py"))["entries"]("asr_all"):
+    MODELS.append({
+        **{k: _ac83[k] for k in ("name", "repo", "package", "stack", "quant", "langs", "env", "status", "source_revision")},
+        "script": AUDIOCPP,
+        "args_fn": _audiocpp_args(_ac83["package"], lang_flag=_ac83["params"]["lang_flag"], lang_map=_ac83["params"].get("lang_map")),
         "timeout": 1800,
     })
 

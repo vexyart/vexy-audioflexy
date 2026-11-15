@@ -4,6 +4,16 @@ this_file: WORK.md
 
 # Work
 
+## audio.cpp 83b1354 catalog wiring (2026-11-15)
+
+- `python src/vexy_audioflexy/tools/gen_audiocpp_catalog.py` reads `runtime_path('audio.cpp')/model_specs` (or `--specs`) and the engine SHA, then writes `src/vexy_audioflexy/tools/catalogs/audiocpp-83b1354.json`. The output is identical across reruns.
+- 146 families. Routes: 26 TTS, 9 ASR, 10 audio-to-audio newly loaded as `ac83-*` rows; 70 families already covered by hand or issue201/issue301 entries; 38 families have no adapter (music, sfx, edit, sep, align, diar, classify, wake_word, midi, vad/turn, non-en/pl, no packages).
+- Real runs (2026-11-15, M4 Max, Metal): `asr_all.py` on 2 en clips and `aud_all.py` with a speech/noisy/noisy44k/spkb manifest. 15 routes are now `verified` through `catalogs/audiocpp-verified.json`; receipts are in `audioflexy-privdata/acceptance/upstream-refresh-2026-11-15/audiocpp-83b1354/`.
+- Fixes found by those runs: OWSM needs ISO 639-3 `--lang eng`; Apollo needs 44.1 kHz input; SamsOne is a captioner, not a transcriber, so it is now pending adapter.
+- TTS batch (23 rows) and the five rows over 10 GB (minimax_h3, nemotron, ming3, moss_tts_v15, moss_ttsd) are downloading and still pending.
+- ./test.sh: 600 passed.
+- Tests: `./test.sh` 598 passed (8 new in `tests/test_audiocpp_catalog.py`).
+
 ## Upstream runtime and library update (2026-11-15)
 
 - audio.cpp: new worktree at upstream 83b1354, built with Metal (`build/macos-metal-release`); the voice runtime link points there and the old c4dde1c checkout stays for rollback. Every CLI flag the adapters pass still exists. Real runs: Kokoro 82M q8_0 (RTF 0.24), Kokoro multilingual q8_0 (0.08), Kitten TTS2 tq2_1 (5.99, CPU-bound ternary); all outputs non-silent.

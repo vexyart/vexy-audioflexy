@@ -52,6 +52,8 @@ The initial implementation excluded publication. The subsequently authorized
 
 - [x] Run audio.cpp 83b1354, speech.cpp 0.11.0 adapter and mlx-audio 0.6.5 with real smoke runs.
 - [ ] Rebuild codec.cpp at upstream and reconvert Chatterbox multilingual weights.
-- [ ] Add new audio.cpp families after pinned real runs.
+- [x] Generate the audio.cpp 83b1354 family catalog and wire uncovered routed families into tts/asr/aud registries.
+- [ ] Run each `ac83-*` registry row once and replace `pending runtime` with the result.
+- [ ] Add adapters for audio.cpp music, sfx, edit, sep, align and diar families.
 - [ ] Recheck phonon-2 on transcribe.cpp 0.4.2 before making it the default.
 - [ ] Run speech.cpp drama-3 after a deliberate weight pull.
