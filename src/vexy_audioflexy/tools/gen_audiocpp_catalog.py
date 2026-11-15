@@ -71,6 +71,8 @@ NOISY_WORDS = ("enhanc", "restor", "denois")
 PACKAGE_OVERRIDES = {
     # The recommended package is the 16 kHz separation model; s2s needs the 48 kHz enhancer.
     ("mossformer2", "aud_all"): "mossformer2_se_48k_f32",
+    # voice_id=1 is a CustomVoice preset; the VoiceClone checkpoint rejects it (session.cpp:143).
+    ("m5_tts", "tts_all"): "m5_tts_50m_customvoice_q8_0",
 }
 MANUAL_PENDING = {
     ("sam_audio", "aud_all"): "prompt-conditioned separation; the harness supplies no target-source prompt",

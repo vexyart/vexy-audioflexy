@@ -167,6 +167,21 @@
       "date": "2026-11-15",
       "check": "asr_roundtrip",
       "result": "WER 6.7% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a shot walk by the river'"
+    },
+    "tts_all:m5_tts_50m_customvoice_q8_0": {
+      "date": "2026-11-15",
+      "check": "asr_roundtrip",
+      "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
+    },
+    "tts_all:zonos2_q8_0": {
+      "date": "2026-11-15",
+      "check": "asr_roundtrip",
+      "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
+    },
+    "tts_all:zonos3_mini_ptq": {
+      "date": "2026-11-15",
+      "check": "asr_roundtrip",
+      "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
     }
   }
 }

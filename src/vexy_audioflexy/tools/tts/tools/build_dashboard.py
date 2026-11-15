@@ -22,7 +22,10 @@ import json
 import sys
 from pathlib import Path
 from urllib.parse import quote
-from _paths import runtime_path
+
+# tts_all.py loads this file by path, so its directory is not on sys.path.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _paths import runtime_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))

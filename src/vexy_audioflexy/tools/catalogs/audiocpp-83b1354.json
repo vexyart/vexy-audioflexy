@@ -5544,9 +5544,9 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
-          "package": "m5_tts_50m_voiceclone_f16",
+          "package": "m5_tts_50m_customvoice_q8_0",
           "langs": [
             "en"
           ],
@@ -5557,6 +5557,11 @@
             "ref": false,
             "ref_text": false,
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -13518,7 +13523,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "zonos2_q8_0",
           "langs": [
@@ -13531,6 +13536,11 @@
             "ref": true,
             "ref_text": false,
             "lang_flag": false
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
@@ -13605,7 +13615,7 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
+          "status": "verified",
           "route": "tts_all",
           "package": "zonos3_mini_ptq",
           "langs": [
@@ -13618,6 +13628,11 @@
             "ref": true,
             "ref_text": false,
             "lang_flag": true
+          },
+          "verification": {
+            "date": "2026-11-15",
+            "check": "asr_roundtrip",
+            "result": "WER 0.0% via parakeet_tdt_q8_0; 'the weather is lovely today so let us take a short walk by the river'"
           }
         }
       ]
