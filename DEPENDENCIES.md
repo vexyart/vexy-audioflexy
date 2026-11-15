@@ -32,7 +32,7 @@ or weights are installed by the test dependency group.
 
 ## Optional speech APIs
 
-- `apple`: established `mlx-audio==0.5.7`, `mlx-whisper==0.4.3` runtime contracts,
+- `apple`: established `mlx-audio==0.6.5`, `mlx-whisper==0.4.3` runtime contracts,
   plus punctuation dependencies and `soundfile` for acoustic alignment repair.
 - `native`: `deepmultilingualpunctuation==1.0.1`, `torch>=2.6` and
   `transformers>=5.14,<6` for punctuation; audio.cpp stays an external executable.

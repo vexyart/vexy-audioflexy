@@ -4,7 +4,7 @@
 # dependencies = ["fire"]
 # ///
 # this_file: src/vexy_audioflexy/tools/tts/tools/tts-speechcpp.py
-"""Fish Audio Drama 3 Q6_K through speech.cpp >=0.8.8.
+"""Fish Audio Drama 3 Q6_K through speech.cpp >=0.8.8 (verified CLI: 0.11.0).
 
 Uses speech.cpp's own resumable, SHA-256 checked model download. SPEECHCPP_BIN
 selects the executable; SPEECH_MODEL_DIR relocates its native model cache.
@@ -24,11 +24,28 @@ ROOT = Path(__file__).resolve().parents[1]
 MODEL = "drama-3:q6_k"
 
 
+def _version(path: Path) -> tuple[int, ...] | None:
+    """Parse a stable speech.cpp-X.Y.Z folder; pre-releases and other names give None."""
+    parts = path.parent.name.removeprefix("speech.cpp-").split(".")
+    if not all(part.isdigit() for part in parts):
+        return None
+    numbers = [int(part) for part in parts]
+    while len(numbers) > 1 and numbers[-1] == 0:
+        numbers.pop()
+    return tuple(numbers)
+
+
+def newest_local() -> Path | None:
+    """Return the newest unpacked stable speech.cpp-X.Y.Z/speech release, if any."""
+    found = [p for p in runtime_path("").glob("speech.cpp-*/speech") if p.is_file() and _version(p)]
+    return max(found, key=_version) if found else None
+
+
 def binary() -> str:
     """Use an explicit binary, the local release, or the installed command."""
-    local = runtime_path('speech.cpp-0.8.11/speech')
+    local = newest_local()
     path = os.environ.get("SPEECHCPP_BIN") or (
-        str(local) if local.is_file() else shutil.which("speech")
+        str(local) if local else shutil.which("speech")
     )
     if not path:
         raise SystemExit(

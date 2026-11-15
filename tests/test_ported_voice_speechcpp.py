@@ -109,6 +109,7 @@ def test_invalid_audio_preserves_existing_file(tmp_path, monkeypatch, rate, fram
 def test_binary_discovery_info_and_no_overwrite(tmp_path, monkeypatch):
     module = wrapper()
     monkeypatch.setattr(module, "ROOT", tmp_path)
+    monkeypatch.setenv("VAFX_VOICE_ROOT", str(tmp_path / "voice"))
     monkeypatch.delenv("SPEECHCPP_BIN", raising=False)
     monkeypatch.setattr(module.shutil, "which", lambda _: None)
     with pytest.raises(SystemExit, match="Install speech.cpp"):
@@ -133,3 +134,16 @@ def test_output_cannot_replace_reference(tmp_path):
             "Hello", str(reference), ref=str(reference), ref_text="Words", force=True
         )
     assert reference.read_bytes() == b"keep recording"
+
+
+def test_binary_when_several_local_releases_then_newest_version_wins(tmp_path, monkeypatch):
+    module = wrapper()
+    monkeypatch.setenv("VAFX_VOICE_ROOT", str(tmp_path))
+    monkeypatch.delenv("SPEECHCPP_BIN", raising=False)
+    monkeypatch.setattr(module.shutil, "which", lambda _: None)
+    for version in ("0.8.11", "0.11.0", "0.9.4", "0.12.0-rc1"):
+        release = tmp_path / f"speech.cpp-{version}"
+        release.mkdir()
+        (release / "speech").write_bytes(b"")
+    (tmp_path / "speech.cpp-0.12.0").mkdir()  # folder without a binary is ignored
+    assert module.binary() == str(tmp_path / "speech.cpp-0.11.0" / "speech"), "0.11.0 must beat 0.9.4 numerically and pre-releases are skipped"

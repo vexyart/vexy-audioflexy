@@ -4,6 +4,15 @@ this_file: WORK.md
 
 # Work
 
+## Upstream runtime and library update (2026-11-15)
+
+- audio.cpp: new worktree at upstream 83b1354, built with Metal (`build/macos-metal-release`); the voice runtime link points there and the old c4dde1c checkout stays for rollback. Every CLI flag the adapters pass still exists. Real runs: Kokoro 82M q8_0 (RTF 0.24), Kokoro multilingual q8_0 (0.08), Kitten TTS2 tq2_1 (5.99, CPU-bound ternary); all outputs non-silent.
+- speech.cpp 0.11.0 installed with verified checksum; `speech --version` 0.11.0, C API 4.2. Drama-3 weights (29.9 GB) not pulled, so no synthesis run.
+- mlx-audio 0.6.5: all imported loaders keep their signatures; diarize-mlx Nemotron-3 8-bit ran on a 3.25 s clip (RTF 0.44).
+- transcribe.cpp v0.4.2 built beside 5700f12 (`runtimes/transcribe.cpp-0.4.2`). Parakeet TDT 0.6b v3 Q8_0 gives the identical transcript; warm wall time 0.14–0.19 s on both. Opt in with `TRANSCRIBECPP_ROOT`; phonon-2 provenance and acceptance receipts stay on 5700.
+- Not updated: codec.cpp (153 commits; `tts-cli` moved to `tools/`, Chatterbox multilingual conversion changed, so it needs a rebuild and weight reconversion), NeMo-Speech.cpp (one CUDA-only fix), new audio.cpp families (pending runtime until pinned and run).
+- Tests: `./test.sh` 589 passed.
+
 ## Package foundation
 
 Baseline: destination contained README, LICENSE and ignore rules; no package

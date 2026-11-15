@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["fire", "huggingface-hub", "mlx-audio==0.5.7", "soundfile", "platformdirs"]
+# dependencies = ["fire", "huggingface-hub", "mlx-audio==0.6.5", "soundfile", "platformdirs"]
 # ///
 # this_file: src/vexy_audioflexy/tools/asr/tools/diarize-mlx.py
 """Exact MLX Nemotron 3 eight-bit conversion, bounded AOSC and incremental turns.
@@ -86,7 +86,7 @@ def run(audio: str, output: str, package: str = PACKAGE, backend: str = "metal",
               "duration_s": duration, "wall_s": wall, "load_s": load_s, "rtf": wall / duration,
               "first_result_s": first_result_s, "mode": mode, "backend": backend,
               "latency_profile": "offline" if mode == "offline" else "low", "turns": turns,
-              "speakers": sorted({row["speaker"] for row in turns}), "runtime": "mlx-audio==0.5.7"}
+              "speakers": sorted({row["speaker"] for row in turns}), "runtime": "mlx-audio==0.6.5"}
     destination.mkdir(parents=True, exist_ok=True)
     (destination / "native.json").write_text(json.dumps(events, indent=2) + "\n")
     (destination / "report.json").write_text(json.dumps(report, indent=2) + "\n")

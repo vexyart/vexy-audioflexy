@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ["fire>=0.7,<0.8", "mlx-audio==0.5.7", "huggingface-hub", "soundfile", "sentencepiece>=0.2", "platformdirs"]
+# dependencies = ["fire>=0.7,<0.8", "mlx-audio==0.6.5", "huggingface-hub", "soundfile", "sentencepiece>=0.2", "platformdirs"]
 # ///
 # this_file: src/vexy_audioflexy/tools/asr/tools/asr-mlx301.py
 """Requested MLX conversions, pinned separately from their base-model families."""

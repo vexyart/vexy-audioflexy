@@ -115,3 +115,10 @@ local development-wheel acceptance alone does not establish either outcome.
 
 PyPI 1.0.3 upload attempted; HTTP 429 new-project quota blocks publication.
 Retain exact GitHub assets for retry; do not rebuild or bump to evade the limit.
+
+## Upstream follow-ups (from 2026-11-15 update)
+
+- codec.cpp: rebuild at current upstream in a worktree. `tts-cli` now builds under `tools/`; update `BIN_PATH` in `tts-chatterbox-mtl-codeccpp.py`, reconvert the Chatterbox multilingual weights and compare against the 63ade8b output before switching.
+- audio.cpp: add new families (M5-TTS, ZONOS2/3, Fish Drama 3, Haas ASR, Nemotron Transcribe, Phonon-2 ASR, XTTS v2) from the 83b1354 specs; mark each runnable only after a real run.
+- transcribe.cpp: decide whether 0.4.2 becomes the default runtime once phonon-2 is rechecked on it.
+- speech.cpp: run drama-3 once its weights are pulled deliberately.

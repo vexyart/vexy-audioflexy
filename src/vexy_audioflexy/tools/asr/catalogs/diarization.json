@@ -44,7 +44,7 @@
       "engine": "mlx",
       "repo": "mlx-community/Nemotron-3-Diarization-8bit",
       "revision": "dd8b8ce3d69a80540a7e50150e2beed1c34fee37",
-      "runtime": "mlx-audio==0.5.7"
+      "runtime": "mlx-audio==0.6.5"
     },
     {
       "package": "coreai-mlboydaisuke-nemotron3-fp16",

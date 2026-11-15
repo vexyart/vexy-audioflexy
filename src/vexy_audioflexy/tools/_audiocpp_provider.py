@@ -1,7 +1,9 @@
 # this_file: src/vexy_audioflexy/tools/_audiocpp_provider.py
 """Prepare audio.cpp compatibility links from exact Hugging Face package specs."""
 import json
+import os
 from pathlib import Path
+import shutil
 import time
 
 
@@ -11,6 +13,25 @@ def safe_relative(value: str) -> Path:
     if not value or path.is_absolute() or ".." in path.parts or "\\" in value or value == ".":
         raise ValueError(f"Unsafe relative model path: {value}")
     return path
+
+
+def link_model_file(blob: Path, output: Path) -> None:
+    """Expose a cached blob under its package filename, replacing output atomically.
+
+    audio.cpp (since about 2026-10) canonicalises model paths and picks the
+    tensor container from the extension, so a symlink to the extensionless
+    Hugging Face blob fails with "unsupported tensor source format". Use a
+    hardlink, which keeps the name and costs no space; copy when the cache sits
+    on another volume or the filesystem refuses hardlinks. A cache wipe gives
+    re-downloads a new inode, so re-preparing then needs --force.
+    """
+    temporary = output.with_name(f".{output.name}.partial")
+    temporary.unlink(missing_ok=True)
+    try:
+        temporary.hardlink_to(blob)
+    except OSError:
+        shutil.copy2(blob, temporary)
+    os.replace(temporary, output)
 
 
 def install_package(entry: dict, models_root: Path, package: str, force: bool) -> None:
@@ -48,16 +69,16 @@ def install_package(entry: dict, models_root: Path, package: str, force: bool) -
             raise ValueError(f"Native layout escapes its target: {output}")
         exists = output.exists() or output.is_symlink()
         same = output.is_file() and output.samefile(source)
+        # An older install's symlink to the same blob is ours to upgrade in place.
+        ours = same and output.is_symlink()
         if exists and not same and (not force or output.is_dir()):
             raise FileExistsError(f"Model path differs from provider file: {output}; use --force")
-        plan.append((source, output, exists, same))
+        plan.append((source, output, exists, same and not ours))
     for source, output, exists, same in plan:
         if same:
             continue
         output.parent.mkdir(parents=True, exist_ok=True)
-        if exists:
-            output.unlink()
-        output.symlink_to(source.resolve())
+        link_model_file(source.resolve(), output)
     payload = {"schema_version": 1, "package_id": package, "repo": entry["repo"],
                "requested_revision": entry.get("revision", "main"), "resolved_revision": snapshot.name,
                "installed_at_unix": int(time.time()),

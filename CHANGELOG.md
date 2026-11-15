@@ -4,6 +4,13 @@ this_file: CHANGELOG.md
 
 # Changelog
 
+## Unreleased
+
+- Run audio.cpp packages on upstream 83b1354 (2026-11-15). The new engine resolves model paths and picks the tensor format from the file extension, so the provider now hardlinks cached files under their package names (falling back to a symlink across volumes) and upgrades older blob symlinks in place.
+- Follow the upstream package rename `voxcpm1_0.5b_q8_0` → `voxcpm1_0_5b_q8_0`. Point entries that defaulted to the missing `audio.cpp-20261030` / `macos-metal-full` runtime at the standard `audio.cpp` release build.
+- Pick the newest installed speech.cpp runtime instead of the fixed 0.8.11 path; the adapter's CLI is verified against speech.cpp 0.11.0.
+- Update `mlx-audio` from 0.5.7 to 0.6.5 in the `apple` extra and the pinned ASR/diarization scripts.
+
 ## 1.0.3
 
 - Reuse existing vexy-subs NLTK cache weights for offline English tagging; keep new downloads in the Audioflexy cache.

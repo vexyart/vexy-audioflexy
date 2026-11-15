@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ["fire>=0.7,<0.8", "mlx-audio==0.5.7", "soundfile"]
+# dependencies = ["fire>=0.7,<0.8", "mlx-audio==0.6.5", "soundfile"]
 # ///
 # this_file: src/vexy_audioflexy/tools/asr/tools/asr-parakeet-mlx.py
 """Local 8-bit Parakeet TDT ASR, including models whose repository names mislead discovery."""

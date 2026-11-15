@@ -179,8 +179,9 @@ def test_audiocpp_prep_uses_provider_and_native_links(tmp_path, monkeypatch, nam
     adapter.prep("synthetic")
     assert calls == [("synthetic/repo", {"revision": "pinned", "allow_patterns": spec["packages"][0]["files"]})]
     target = tmp_path / "managed/native"
-    assert (target / "model.gguf").is_symlink()
-    assert (target / "model.gguf").resolve() == snapshot / "remote/model.gguf"
+    # Hardlinks keep the package filename: audio.cpp picks the container from it.
+    assert not (target / "model.gguf").is_symlink()
+    assert (target / "model.gguf").samefile(snapshot / "remote/model.gguf")
     assert (target / ".audiocpp-package-synthetic.json").is_file()
     assert adapter._installed("synthetic")
     adapter.prep("synthetic")
@@ -193,8 +194,8 @@ def test_audiocpp_prep_uses_provider_and_native_links(tmp_path, monkeypatch, nam
     with pytest.raises(FileExistsError): adapter.prep("synthetic")
     assert not marker.exists() and (target / "config.json").read_bytes() == b"owner config"
     adapter.prep("synthetic", force=True)
-    assert adapter._installed("synthetic") and (target / "config.json").is_symlink()
-    assert all(p.is_symlink() for p in target.rglob("*") if p.suffix in {".gguf", ".safetensors"})
+    assert adapter._installed("synthetic") and (target / "config.json").samefile(snapshot / "remote/config.json")
+    assert all(not p.is_symlink() and p.stat().st_nlink > 1 for p in target.rglob("*") if p.suffix in {".gguf", ".safetensors"})
 
 
 @pytest.mark.parametrize("target_kind", ["direct", "alias", "old", "companion_conflict", "external"])
@@ -290,3 +291,27 @@ def test_asr_batch_blocks_actual_qwen_existence_skip_but_standalone_keeps_it(tmp
     row = json.loads((out / "report.json").read_text())["results"][batch._result_key(model["name"], "en")]["clips"][0]
     assert not calls and not row["success"] and "hypothesis" not in row
     assert transcript.read_text() == "Old hypothesis."
+
+
+def test_provider_upgrades_legacy_blob_symlink_to_named_hardlink(tmp_path, monkeypatch):
+    helper = load("_audiocpp_provider.py")
+    snapshot = tmp_path / "hub/models--o--r/snapshots/abc"; snapshot.mkdir(parents=True)
+    (snapshot / "model.gguf").write_bytes(b"weights")
+    target = tmp_path / "managed/native"; target.mkdir(parents=True)
+    (target / "model.gguf").symlink_to((snapshot / "model.gguf").resolve())
+    monkeypatch.setitem(sys.modules, "huggingface_hub", types.SimpleNamespace(snapshot_download=lambda *a, **k: str(snapshot)))
+    entry = {"download_kind": "huggingface_snapshot", "repo": "o/r", "target_directory": "native", "files": ["model.gguf"]}
+    helper.install_package(entry, tmp_path / "managed", "pkg", force=False)
+    assert not (target / "model.gguf").is_symlink()
+    assert (target / "model.gguf").samefile(snapshot / "model.gguf")
+
+
+def test_provider_copies_when_hardlink_is_refused(tmp_path, monkeypatch):
+    helper = load("_audiocpp_provider.py")
+    blob = tmp_path / "blob"; blob.write_bytes(b"weights")
+    output = tmp_path / "model.gguf"
+    def cross_device(self, target): raise OSError(18, "Cross-device link")
+    monkeypatch.setattr(Path, "hardlink_to", cross_device)
+    helper.link_model_file(blob, output)
+    assert output.is_file() and not output.is_symlink() and output.read_bytes() == b"weights"
+    assert not list(tmp_path.glob(".*.partial"))

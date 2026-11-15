@@ -47,3 +47,11 @@ The initial implementation excluded publication. The subsequently authorized
 
 - [x] Tag/push 1.0.3 and verify CI, exact GitHub assets and clean stable installation.
 - [ ] Resume preserved 1.0.3 assets after PyPI new-project HTTP 429 clears.
+
+## Upstream follow-ups
+
+- [x] Run audio.cpp 83b1354, speech.cpp 0.11.0 adapter and mlx-audio 0.6.5 with real smoke runs.
+- [ ] Rebuild codec.cpp at upstream and reconvert Chatterbox multilingual weights.
+- [ ] Add new audio.cpp families after pinned real runs.
+- [ ] Recheck phonon-2 on transcribe.cpp 0.4.2 before making it the default.
+- [ ] Run speech.cpp drama-3 after a deliberate weight pull.

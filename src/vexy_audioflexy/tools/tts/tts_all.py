@@ -3067,8 +3067,8 @@ MODELS: list[dict[str, Any]] = [
         "name": "audiocpp-voxcpm1-0.5b",
         "script": "tools/tts-audiocpp.py",
         "repo": "audio-cpp/audio.cpp-gguf",
-        "package": "voxcpm1_0.5b_q8_0",
-        "prep_args_fn": lambda p="voxcpm1_0.5b_q8_0": ["--package", p],
+        "package": "voxcpm1_0_5b_q8_0",
+        "prep_args_fn": lambda p="voxcpm1_0_5b_q8_0": ["--package", p],
         "stack": "audiocpp",
         "quant": "q8_0",
         "voice_clone": True,
@@ -3077,7 +3077,7 @@ MODELS: list[dict[str, Any]] = [
         "args_fn": lambda text, ref, out, lang="en": [
             text,
             "--package",
-            "voxcpm1_0.5b_q8_0",
+            "voxcpm1_0_5b_q8_0",
             "--output",
             out,
             "--task",
@@ -3327,8 +3327,8 @@ MODELS.extend([
         "stack": "audiocpp", "quant": "q4", "voice_clone": True,
         "langs": ["en"], "timeout": 3600,
         "env": {
-            "AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030'))),
-            "AUDIOCPP_BIN": os.environ.get("AUDIOCPP_FULL_BIN", str(Path(os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030')))) / "build/macos-metal-full/bin/audiocpp_cli")),
+            "AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp'))),
+            "AUDIOCPP_BIN": os.environ.get("AUDIOCPP_FULL_BIN", str(Path(os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp')))) / "build/macos-metal-release/bin/audiocpp_cli")),
         },
         "prep_args_fn": lambda: ["--package", "vibevoice_1_5b_q4_ios"],
         "args_fn": lambda text, ref, out, lang="en": [
@@ -3342,8 +3342,8 @@ MODELS.extend([
         "stack": "audiocpp", "quant": "tq2_1", "voice_clone": False,
         "langs": ["en"], "timeout": 3600,
         "env": {
-            "AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030'))),
-            "AUDIOCPP_BIN": os.environ.get("AUDIOCPP_FULL_BIN", str(Path(os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030')))) / "build/macos-metal-full/bin/audiocpp_cli")),
+            "AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp'))),
+            "AUDIOCPP_BIN": os.environ.get("AUDIOCPP_FULL_BIN", str(Path(os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp')))) / "build/macos-metal-release/bin/audiocpp_cli")),
         },
         "prep_args_fn": lambda: ["--package", "kitten_tts2_20261021_tq2_1"],
         "args_fn": lambda text, _ref, out, lang="en": [text, "--package", "kitten_tts2_20261021_tq2_1", "--output", out, "--voice-id", "Bruno", "--seed", "42"],
@@ -3354,8 +3354,8 @@ MODELS.extend([
         "stack": "audiocpp", "quant": "q8_0", "voice_clone": False,
         "langs": ["en"], "timeout": 3600,
         "env": {
-            "AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030'))),
-            "AUDIOCPP_BIN": os.environ.get("AUDIOCPP_FULL_BIN", str(Path(os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030')))) / "build/macos-metal-full/bin/audiocpp_cli")),
+            "AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp'))),
+            "AUDIOCPP_BIN": os.environ.get("AUDIOCPP_FULL_BIN", str(Path(os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp')))) / "build/macos-metal-release/bin/audiocpp_cli")),
         },
         "prep_args_fn": lambda: ["--package", "kokoro_82m_multilingual_q8_0"],
         "args_fn": lambda text, _ref, out, lang="en": [text, "--package", "kokoro_82m_multilingual_q8_0", "--output", out, "--voice-id", "af_heart", "--lang", "en-us"],
@@ -3366,8 +3366,8 @@ MODELS.extend([
         "stack": "audiocpp", "quant": "q8_0", "voice_clone": True,
         "langs": ["en", "pl"], "timeout": 3600,
         "env": {
-            "AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030'))),
-            "AUDIOCPP_BIN": os.environ.get("AUDIOCPP_FULL_BIN", str(Path(os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030')))) / "build/macos-metal-full/bin/audiocpp_cli")),
+            "AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp'))),
+            "AUDIOCPP_BIN": os.environ.get("AUDIOCPP_FULL_BIN", str(Path(os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp')))) / "build/macos-metal-release/bin/audiocpp_cli")),
         },
         "prep_args_fn": lambda: ["--package", "moss_tts_local_v1_5_q8_0"],
         "args_fn": lambda text, ref, out, lang="en": [
@@ -3381,8 +3381,8 @@ MODELS.extend([
         "stack": "audiocpp", "quant": "q4_k_m", "voice_clone": False,
         "langs": ["en", "pl"], "timeout": 3600,
         "env": {
-            "AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030'))),
-            "AUDIOCPP_BIN": os.environ.get("AUDIOCPP_FULL_BIN", str(Path(os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030')))) / "build/macos-metal-full/bin/audiocpp_cli")),
+            "AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp'))),
+            "AUDIOCPP_BIN": os.environ.get("AUDIOCPP_FULL_BIN", str(Path(os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp')))) / "build/macos-metal-release/bin/audiocpp_cli")),
         },
         "prep_args_fn": lambda: ["--package", "lfm3_audio_2b_q4_k_m"],
         "args_fn": lambda text, _ref, out, lang="en": [
@@ -3396,7 +3396,7 @@ MODELS.extend([
         "repo": "audio-cpp/Audio8-TTS-Realistic-0.6b-GGUF", "package": "audio8_tts_realistic_q8_0",
         "stack": "audiocpp", "quant": "q8_0", "voice_clone": True,
         "langs": ["en", "pl"], "lang_agnostic": True, "timeout": 3600,
-        "env": {"AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030')))},
+        "env": {"AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp')))},
         "prep_args_fn": lambda: ["--package", "audio8_tts_realistic_q8_0"],
         "args_fn": lambda text, ref, out, lang="en": [
             text, "--package", "audio8_tts_realistic_q8_0", "--output", out,
@@ -3409,7 +3409,7 @@ MODELS.extend([
         "repo": "audio-cpp/Ming-3.0-Audio-Tiny-GGUF", "package": "ming3_audio_tiny_q4_k",
         "stack": "audiocpp", "quant": "q4_k", "voice_clone": True,
         "langs": ["en"], "timeout": 3600,
-        "env": {"AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp-20261030')))},
+        "env": {"AUDIOCPP_ROOT": os.environ.get("AUDIOCPP_NEW_ROOT", str(runtime_path('audio.cpp')))},
         "prep_args_fn": lambda: ["--package", "ming3_audio_tiny_q4_k"],
         "args_fn": lambda text, ref, out, lang="en": [
             text, "--package", "ming3_audio_tiny_q4_k", "--output", out,
