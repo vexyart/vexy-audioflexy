@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import unicodedata
 from pathlib import Path
 from _paths import runtime_path
 
@@ -72,9 +73,32 @@ def prep(force: bool = False) -> None:
     print(f"[prep] ready: {MODEL_REPO} ({codec.parent})")
 
 
+LANGUAGES = (
+    "ar", "da", "de", "el", "en", "es", "fi", "fr", "he", "hi", "it",
+    "ja", "ko", "ms", "nl", "no", "pl", "pt", "ru", "sv", "sw", "tr", "zh",
+)
+# Upstream MTLTokenizer converts zh to Cangjie and ja to hiragana before BPE;
+# this adapter does not ship those converters.
+NEEDS_CONVERSION = {"zh", "ja"}
+
+
+def prepare_text(text: str, language: str) -> str:
+    """Text as Multilingual T3 expects it: lowercase, NFKD, `[lang]` prefix.
+
+    codec.cpp tokenizes what it is given and leaves this to the caller
+    (docs/models/chatterbox.md); without the prefix T3 guesses the language.
+    """
+    if language not in LANGUAGES:
+        raise SystemExit(f"language '{language}' is not one of: {', '.join(LANGUAGES)}")
+    if language in NEEDS_CONVERSION:
+        raise SystemExit(f"language '{language}' needs a script conversion this adapter does not implement")
+    return f"[{language}]" + unicodedata.normalize("NFKD", text.lower())
+
+
 def say(
     text: str,
     output: str = "output.wav",
+    language: str = "en",
     ref: str = "",
     ref_text: str = "",
     seed: int = 0,
@@ -89,6 +113,7 @@ def say(
     Args:
         text: Text to synthesize.
         output: Output WAV path (24 kHz mono).
+        language: Language code; sets the `[lang]` prefix T3 needs (not zh or ja).
         ref: Reference speaker WAV; without it the model uses its baked cond.
         ref_text: Transcript of *ref*.
         seed: Fixed sampling seed; 0 leaves the engine default.
@@ -116,7 +141,7 @@ def say(
         str(binary), "synthesize",
         "--model", str(codec),
         "--backbone", str(backbone),
-        "--text", text,
+        "--text", prepare_text(text, language),
         "--output", str(out_path),
         "--temp", str(temperature),
         "--cfg-weight", str(cfg_weight),
@@ -167,10 +192,7 @@ def info() -> None:
         "repo": MODEL_REPO,
         "backend": "codeccpp",
         "quant": "q8_0",
-        "languages": [
-            "ar", "da", "de", "el", "en", "es", "fi", "fr", "he", "hi", "it",
-            "ja", "ko", "ms", "nl", "no", "pl", "pt", "ru", "sv", "sw", "tr", "zh",
-        ],
+        "languages": [lang for lang in LANGUAGES if lang not in NEEDS_CONVERSION],
         "sample_rate_hz": 24000,
         "modes": ["ivc"],
         "capabilities": ["voice_cloning", "multilingual"],

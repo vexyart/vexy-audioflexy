@@ -1934,15 +1934,15 @@ MODELS: list[dict[str, Any]] = [
         "stack": "codeccpp",
         "quant": "q8_0",
         "voice_clone": True,
-        # The upstream card lists 23 languages including Polish, but through
-        # codec.cpp the Polish output is Thai script ("Fontlub Oy กันซี ทุกทุพี")
-        # while the English is clean. tts-cli exposes no language flag at all, so
-        # there is no selector being missed — the model infers from the text and
-        # gets it wrong. English only until that host gains one.
-        "langs": ["en"],
+        # Multilingual T3 needs a "[lang]" text prefix that codec.cpp leaves to
+        # the caller; the adapter adds it from --language (without it Polish
+        # came out as Thai script).
+        "langs": ["en", "pl"],
         "timeout": 1800,
         "args_fn": lambda text, ref, out, lang="en": [
             text,
+            "--language",
+            lang,
             "--output",
             out,
             "--ref",
