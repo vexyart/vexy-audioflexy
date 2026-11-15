@@ -277,6 +277,56 @@
       "date": "2026-11-16",
       "check": "classification",
       "result": "speech over a synthetic music bed: Sine wave 0.418, Speech 0.279, Speech synthesizer 0.166"
+    },
+    "aud_generate:moss_soundeffect_q8_0:sfx": {
+      "date": "2026-11-16",
+      "check": "generation",
+      "result": "prompt 'steady rain on a wooden roof, distant thunder', 5 s 48 kHz; AST top labels Rain on surface 0.35, Rain, Raindrop"
+    },
+    "aud_generate:controlfoley_large_44k_q8_0:sfx": {
+      "date": "2026-11-16",
+      "check": "generation",
+      "result": "prompt 'a bird sings melodically in a forest', 5 s 44.1 kHz; AST Bird 0.58, Bird vocalization, Chirp"
+    },
+    "aud_generate:stable_audio_3_medium_q8_0:music": {
+      "date": "2026-11-16",
+      "check": "generation",
+      "result": "prompt 'soft piano melody with warm strings', 5 s stereo; AST Music 0.62, Piano"
+    },
+    "aud_generate:magenta_realtime_2_small_f16:music": {
+      "date": "2026-11-16",
+      "check": "generation",
+      "result": "prompt 'disco funk', 5 s stereo; AST Music 0.68, Funk, Disco"
+    },
+    "aud_generate:heartmula_q8_0:music": {
+      "date": "2026-11-16",
+      "check": "generation",
+      "result": "lyric '[Verse] A morning light across the sea.' with tags folk,piano,warm, 10 s stereo; AST Humming 0.67, Music 0.66"
+    },
+    "aud_generate:muscriptor_small_f32:midi": {
+      "date": "2026-11-16",
+      "check": "transcription to MIDI",
+      "result": "magenta disco-funk clip with instruments=drums,electric_bass: 58 notes over 5.0 s"
+    },
+    "aud_analyze:lfm_d1_omni_2b_q8_0": {
+      "date": "2026-11-16",
+      "check": "classification",
+      "result": "named question 'main sound': speech clip -> speech 0.89, stable_audio piano clip -> music 0.94"
+    },
+    "aud_generate:stable_audio_3_medium_q8_0:sfx": {
+      "date": "2026-11-16",
+      "check": "generation",
+      "result": "prompt 'a dog barking loudly outside', 5 s; AST Animal 0.66, Dog 0.64, Bark 0.49"
+    },
+    "aud_generate:midashenglm_gen_q8_0:music": {
+      "date": "2026-11-16",
+      "check": "generation",
+      "result": "prompt '<|caption|> A dog barking loudly outside.', 5 s 16 kHz; AST Animal 0.55, Dog 0.51. A rain/room-tone prompt came out as vehicle/train noise, so prompt adherence varies"
+    },
+    "aud_generate:sheetsage2_orig:midi": {
+      "date": "2026-11-16",
+      "check": "lead-sheet transcription",
+      "result": "stable_audio piano clip -> ABC notation (not MIDI) at 98 bpm in D with chords D, G and an instrumental melody line"
     }
   }
 }

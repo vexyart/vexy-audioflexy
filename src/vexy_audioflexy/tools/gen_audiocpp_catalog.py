@@ -79,7 +79,42 @@ def analysis_route(spec: dict, task: str, package: str | None) -> dict:
     params = {"task": task}
     if task == "align":
         params["language"] = ALIGN_LANGUAGE.get(family, "")
+    if family in ANALYSIS_OPTIONS:
+        params["request_options"] = ANALYSIS_OPTIONS[family]
     return {"route": ANALYSIS_ROUTE, "package": package, "params": params, "reason": "single-clip analyze command; no batch registry"}
+
+
+# Prompt-driven generation (`aud-audiocpp.py run --task gen|midi`), one clip per call.
+GENERATION_ROUTE = "aud_generate"
+GENERATION_TASKS = {"music", "sfx", "midi"}
+GENERATION_PENDING = {
+    "ace_step": "needs a --task-route the run command does not choose",
+    "minimax_h3": "text-to-audio/video model; the run command handles audio only",
+    "minimax_music3": "requires lyrics the run command does not supply by default",
+    "mulacover": "needs melody and chord MIDI input files",
+    "yue2": "requires a style option and a five-file package",
+    "vevo2": "needs a reference recording",
+    "latentsync": "needs a reference video",
+    "liveavatar": "needs a reference image",
+    "soulx_flashhead": "needs a reference image",
+}
+# Request options some analysis families cannot run without.
+ANALYSIS_OPTIONS = {
+    "lfm_d1_omni": 'questions={"sound":{"type":"choice","instructions":"What is the main sound?",'
+                   '"criteria":{"speech":"A person speaking","music":"Music playing","noise":"Background noise"}}}',
+}
+
+
+def generation_route(spec: dict, task: str, package: str | None) -> dict:
+    """Route music/sfx/midi to the single-clip run command, or say why not."""
+    family = spec["family"]
+    if family in GENERATION_PENDING:
+        return {"reason": GENERATION_PENDING[family]}
+    if not package_installable(spec, package):
+        return {"reason": "every package needs a local conversion (download kind 'unsupported')"}
+    params = {"task": "midi" if task == "midi" else "gen"}
+    return {"route": GENERATION_ROUTE, "package": package, "params": params,
+            "reason": "single-clip run command with a text prompt (midi: an audio input); no batch registry"}
 
 
 # Files whose text counts as an existing registry reference, per registry.
@@ -269,6 +304,8 @@ def family_routes(spec: dict, coverage: dict[str, list[str]], package: str | Non
                   "route": "covered" if covered else PENDING, "reason": "referenced by an existing registry" if covered else reason}
         if not covered and task in ANALYSIS_TASKS:
             record.update(analysis_route(spec, task, package))
+        elif not covered and task in GENERATION_TASKS:
+            record.update(generation_route(spec, task, package))
         routes.append(record)
     return routes
 
@@ -352,7 +389,9 @@ def apply_verification(families: list[dict], revision: str, tools: Path = TOOLS)
     runs = ledger.get("runs", {})
     for family in families:
         for route in family["routes"]:
-            run = runs.get(f"{route.get('route')}:{route.get('package')}")
+            key = f"{route.get('route')}:{route.get('package')}"
+            tasks = route.get("tasks") or [""]
+            run = runs.get(f"{key}:{tasks[0]}") or runs.get(key)  # task suffix for shared packages
             if run:
                 route.update(status=VERIFIED, verification=run)
 

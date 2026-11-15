@@ -16,7 +16,8 @@ this_file: WORK.md
 - Fixed while running: `tts_all.py` crashed at the dashboard step on every run (`ModuleNotFoundError: _paths` in `tools/build_dashboard.py`).
 - The five rows over 10 GB ran one at a time. MOSS-TTS v1.5 and MOSS-TTSD verified (WER 0%). Ming3 Audio Tiny ASR verified (WER 15.4%) after stripping its `English\t` language tag; Nemotron Transcribe IQ4_NL verified (WER 15.4%) once the adapter passes the experts GGUF as `--model`. MiniMax-H3 is text-to-audio/video generation (`--task gen`), not TTS, so it is `pending adapter`.
 - Remaining `pending runtime` rows have not been run on this machine; see PLAN.md.
-- ./test.sh: 602 passed. `tests/test_audiocpp_catalog.py` checks the catalog against real `model_specs` only when the engine is installed; that test skips otherwise.
+- 65 of 166 catalog routes verified (TTS, ASR, audio-to-audio, separation, analysis, generation); 71 more are covered by hand-written entries, 29 need adapters.
+- ./test.sh: 612 passed. `tests/test_audiocpp_catalog.py` checks the catalog against real `model_specs` only when the engine is installed; that test skips otherwise.
 
 ## Upstream runtime and library update (2026-11-15)
 
@@ -24,7 +25,8 @@ this_file: WORK.md
 - speech.cpp 0.11.0 installed with verified checksum; `speech --version` 0.11.0, C API 4.2. Drama-3 weights (29.9 GB) not pulled, so no synthesis run.
 - mlx-audio 0.6.5: all imported loaders keep their signatures; diarize-mlx Nemotron-3 8-bit ran on a 3.25 s clip (RTF 0.44).
 - transcribe.cpp v0.4.2 built beside 5700f12 (`runtimes/transcribe.cpp-0.4.2`). Parakeet TDT 0.6b v3 Q8_0 gives the identical transcript; warm wall time 0.14–0.19 s on both. Opt in with `TRANSCRIBECPP_ROOT`; phonon-2 provenance and acceptance receipts stay on 5700.
-- Not updated: codec.cpp (153 commits; `tts-cli` moved to `tools/`, Chatterbox multilingual conversion changed, so it needs a rebuild and weight reconversion), NeMo-Speech.cpp (one CUDA-only fix), new audio.cpp families (pending runtime until pinned and run).
+- codec.cpp: the voice runtime is already upstream d5e3852 (0 behind on 2026-11-16) and the adapter was retargeted to the 2026-11-02 GGUF layout in 7ce76ca; the earlier "153 behind" note referred to the older checkout. Chatterbox en and pl round-trip word-perfect after the `[lang]` prefix fix.
+- Not updated: NeMo-Speech.cpp (one CUDA-only fix), new audio.cpp families (pending runtime until pinned and run).
 - Tests: `./test.sh` 589 passed.
 
 ## Package foundation

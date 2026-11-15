@@ -48,7 +48,7 @@ def test_catalog_when_loaded_then_internally_consistent(catalog):
         for route in family["routes"]:
             assert route["status"] in {"pending runtime", "verified"}
             assert (route["status"] == "verified") == ("verification" in route), family["family"]
-            assert route["route"] in {"tts_all", "asr_all", "aud_all", "separate_all", "aud_analyze", "covered", "pending adapter"}
+            assert route["route"] in {"tts_all", "asr_all", "aud_all", "separate_all", "aud_analyze", "aud_generate", "covered", "pending adapter"}
             if route["route"] in REGISTRIES:
                 assert route["package"] in ids, family["family"]
                 assert set(route["langs"]) <= {"en", "pl"} and route["langs"]
@@ -91,7 +91,7 @@ def test_generator_when_fixture_specs_then_routes_by_task(tmp_path):
     assert {"mode": "clone", "task": "clon", "ref": True}.items() <= route("fx_clone")["params"].items()
     assert route("fx_asr")["params"]["lang_flag"] and route("fx_asr")["langs"] == ["pl"]
     assert route("fx_vc")["params"] == {"op": "vc", "task": "vc", "source": "speech", "target": "spkb"}
-    assert route("fx_music")["route"] == "pending adapter"
+    assert route("fx_music")["route"] == "aud_generate" and route("fx_music")["params"] == {"task": "gen"}
     for fam in ("fx_ja", "fx_need", "fx_empty"):
         assert route(fam)["route"] == "pending adapter", fam
     assert route("fx_pick")["package"] == "fx_pick_x_q4_k"
@@ -138,7 +138,11 @@ def test_verified_ledger_when_loaded_then_every_run_matches_a_routed_package(cat
     """Each ledger record names a registry:package the catalog routes, at the catalog's engine revision."""
     ledger = json.loads((TOOLS / "catalogs" / "audiocpp-verified.json").read_text())
     assert ledger["source_revision"] == catalog["source_revision"]
-    routed = {f"{r['route']}:{r.get('package')}": r for f in catalog["families"] for r in f["routes"]}
+    routed = {}
+    for family in catalog["families"]:
+        for r in family["routes"]:
+            routed[f"{r['route']}:{r.get('package')}"] = r
+            routed[f"{r['route']}:{r.get('package')}:{r['tasks'][0]}"] = r  # task-suffixed keys
     for key, run in ledger["runs"].items():
         assert key in routed, f"ledger entry {key} is not a catalog route"
         assert routed[key]["status"] == "verified", key
@@ -193,3 +197,21 @@ def test_analysis_tasks_when_installable_then_route_to_analyze_command():
     assert routes[("mms_forced_aligner", "align")]["params"] == {"task": "align", "language": "eng"}
     assert routes[("sortformer_diar_v2", "diar")]["route"] == "pending adapter", "unsupported-only packages stay pending"
     assert routes[("sherpa_kws", "wake_word")]["route"] == "pending adapter"
+
+
+def test_generation_tasks_when_routable_then_gen_or_midi_and_held_families_pending():
+    catalog = json.loads(CATALOG.read_text())
+    routes = {(f["family"], r["tasks"][0]): r for f in catalog["families"] for r in f["routes"] if r["registry"] is None}
+    assert routes[("stable_audio", "music")]["params"] == {"task": "gen"}
+    assert routes[("muscriptor", "midi")]["params"] == {"task": "midi"}
+    assert routes[("yue2", "music")]["route"] == "pending adapter", "style-required families stay pending"
+    assert routes[("lfm_d1_omni", "classify")]["params"]["request_options"].startswith("questions=")
+
+
+def test_verification_when_shared_package_then_task_suffix_selects_route(tmp_path):
+    ledger = {"source_revision": "r", "runs": {"aud_generate:pkg:sfx": {"result": "ok"}}}
+    (tmp_path / "catalogs").mkdir()
+    (tmp_path / "catalogs/audiocpp-verified.json").write_text(json.dumps(ledger))
+    families = [{"routes": [{"route": "aud_generate", "package": "pkg", "tasks": [t], "status": "pending runtime"} for t in ("music", "sfx")]}]
+    GEN["apply_verification"](families, "r", tmp_path)
+    assert [r["status"] for r in families[0]["routes"]] == ["pending runtime", "verified"]
