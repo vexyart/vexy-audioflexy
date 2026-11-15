@@ -332,6 +332,16 @@
       "date": "2026-11-16",
       "check": "spoken dialogue",
       "result": "kokoro.wav greeting -> 61.7 s 44.1 kHz spoken reply; parakeet hears coherent reasoning about the greeting ('The audio says, hello from the new audio...'). Works, but verbose"
+    },
+    "tts_all:vevo2_q8_0": {
+      "date": "2026-11-16",
+      "check": "asr_roundtrip",
+      "result": "zero_shot_tts with --voice-ref en_inflect.wav and no style transcript; parakeet_tdt_q8_0: 'Weather is lovely today, so let us take a short walk by the river.' (drops 'The'); with --style_ref_text it also speaks the reference transcript"
+    },
+    "tts_all:auk_flash_q8_0": {
+      "date": "2026-11-16",
+      "check": "asr_roundtrip",
+      "result": "instruction TTS on Metal; parakeet_tdt_q8_0: 'A warm adult. The weather is lovely today, so let us take a short walk by the river.' The sentence is complete but the first words of the voice description are spoken too. Reference-conditioned TTS and --task gen editing abort in the Metal flow sampler; CPU is unsupported"
     }
   }
 }

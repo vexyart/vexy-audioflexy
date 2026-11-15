@@ -4,6 +4,14 @@ this_file: WORK.md
 
 # Work
 
+## Remaining audio.cpp adapters (2026-11-16)
+
+- VeVo2 `zero_shot_tts`: with `--style_ref_text` the output also speaks the reference transcript; without it parakeet reads "Weather is lovely today, so let us take a short walk by the river." Verified.
+- AuK Flash q8_0 instruction TTS (Metal): "A warm adult. The weather is lovely today, …" (the start of the voice description leaks). In Polish it read the description and garbled the words, so the route is English only. Reference TTS and `--task gen` editing abort in `FlowRuntime::sample` on Metal; CPU reports "AuK native session does not support the CPU backend".
+- VieNeu v3 Turbo q8_0 with phoneme text and `minh_quan_pro`: OWSM v4 gives "Xin chào thế giới, đây là bản thử nghiệm." Not registry-routed (Vietnamese only).
+- SAM Audio small q8_0: prompts "a man speaking", "a woman speaking" and "a ticking clock" gave near-identical target/residual levels. Pending.
+- Tests: 615 passed.
+
 ## audio.cpp 83b1354 catalog wiring (2026-11-15)
 
 - `python src/vexy_audioflexy/tools/gen_audiocpp_catalog.py` reads `runtime_path('audio.cpp')/model_specs` (or `--specs`) and the engine SHA, then writes `src/vexy_audioflexy/tools/catalogs/audiocpp-83b1354.json`. The output is identical across reruns.

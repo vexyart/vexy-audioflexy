@@ -42,7 +42,7 @@ REGISTRY_FOR_TASK = {
 }
 # Spec tasks with no generic adapter in any registry, and why.
 PENDING_REASONS = {
-    "edit": "audiocpp_cli has no edit task, so aud-audiocpp cannot drive it",
+    "edit": "edits run as --task gen with source audio and an instruction; no registry benchmarks edits yet, and AuK editing crashed in the Metal flow sampler on 2026-11-16 (CPU unsupported)",
     "vad": "detect_all.py pins a fixed package list at its own runtime commit; no generic adapter",
     "turn": "detect_all.py pins a fixed package list at its own runtime commit; no generic adapter",
     "wake_word": "no wake-word registry",
@@ -132,14 +132,26 @@ PACKAGE_OVERRIDES = {
     ("mossformer2", "aud_all"): "mossformer2_se_48k_f32",
     # voice_id=1 is a CustomVoice preset; the VoiceClone checkpoint rejects it (session.cpp:143).
     ("m5_tts", "tts_all"): "m5_tts_50m_customvoice_q8_0",
+    # Flash runs on its fixed time grid; the Base generator is slower for the same check.
+    ("auk", "tts_all"): "auk_flash_q8_0",
 }
 MANUAL_PENDING = {
-    ("sam_audio", "aud_all"): "prompt-conditioned separation; the harness supplies no target-source prompt",
-    ("vevo2", "tts_all"): "text-to-speech needs a target_voice reference that tts-audiocpp does not pass",
+    ("sam_audio", "aud_all"): "prompt-conditioned separation; run 2026-11-16 on Metal gave the same target/residual split for three different --text prompts, so the prompt is not reaching the model",
     ("samsone", "asr_all"): "audio captioner (default instruct 'describe the audio'), not a transcriber; verified 2026-11-15 it returns captions",
     ("minimax_h3", "tts_all"): "text-to-audio/video generation (--task gen, dit.gguf, video request options), not TTS; the CLI rejects --task tts (docs/models/minimax_h3.md)",
-    ("vieneu_v3_turbo", "tts_all"): "reads SEA-G2P phonemes, not raw text, and needs a speaker_embedding_file; the CLI rejects --task clon (docs/models/vieneu_v3_turbo.md)",
-    ("auk", "tts_all"): "multi-component model: each generator package also needs the Qwen2.5-Omni-3B and VAE packages; run 2026-11-15 failed on the missing qwen2.5-omni-3b-bf16.gguf",
+    ("vieneu_v3_turbo", "tts_all"): "Vietnamese only and reads SEA-G2P phonemes, not raw text; verified 2026-11-16 by a direct run with phoneme text and the packaged minh_quan_pro voice (OWSM round trip exact), but the en/pl registries cannot feed it",
+}
+# Benchmark languages narrowed after real runs: AuK Polish read the voice description aloud and garbled the words (2026-11-16).
+LANG_OVERRIDES = {("auk", "tts_all"): ["en"]}
+# Per-family tts_all parameters the spec JSON cannot express.
+TTS_OVERRIDES = {
+    # zero_shot_tts conditions on --voice-ref; passing the reference transcript makes it speak that too.
+    "vevo2": {"mode": "tts", "task": "tts", "ref": True, "ref_text": False, "voice_id": None, "extra": "--task-route zero_shot_tts"},
+    # Generator + Qwen conditioning + VAE in one directory; duration is required without reference audio.
+    "auk": {"mode": "tts", "task": "tts", "ref": False, "ref_text": False, "voice_id": None,
+            "deps": "auk_qwen_q8_0,auk_vae_f32",
+            "session_options": "auk.variant=flash;auk.model_gguf=auk-flash-q8_0.gguf;auk.qwen_gguf=qwen2.5-omni-3b-q8_0.gguf",
+            "request_options": "instruct=A warm adult voice speaking clear English.;duration_sec=6"},
 }
 
 ISO639_3 = {"en": "eng", "pl": "pol"}
@@ -260,7 +272,7 @@ def route_record(spec: dict, registry: str, tasks: set[str], covered: list[str],
     record: dict = {"registry": registry, "tasks": sorted(tasks), "covered_by": covered, "status": STATUS}
     package = PACKAGE_OVERRIDES.get((spec["family"], registry), package)
     required = [o["name"] for o in request_options(spec) if o.get("required")]
-    langs = registry_langs(spec)
+    langs = LANG_OVERRIDES.get((spec["family"], registry), registry_langs(spec))
     if registry == "separate_all":
         langs = langs or ["any"]  # separation is language-independent
     unsupported = [name for name in required if name not in SUPPORTED_REQUIRED[registry]]
@@ -275,7 +287,7 @@ def route_record(spec: dict, registry: str, tasks: set[str], covered: list[str],
     elif not langs:
         record.update(route=PENDING, reason="no en/pl support; the registries only benchmark en and pl text/audio")
     else:
-        params = {"tts_all": lambda: tts_params(spec, tasks, required), "asr_all": lambda: asr_params(spec), "aud_all": lambda: aud_params(spec, tasks),
+        params = {"tts_all": lambda: {**tts_params(spec, tasks, required), **TTS_OVERRIDES.get(spec["family"], {})}, "asr_all": lambda: asr_params(spec), "aud_all": lambda: aud_params(spec, tasks),
                   "separate_all": lambda: {"task": "sep"}}[registry]()
         record.update(route=registry, package=package, langs=langs, params=params)
     return record

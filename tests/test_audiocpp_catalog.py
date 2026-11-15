@@ -224,3 +224,26 @@ def test_apply_verification_when_bare_key_and_package_has_two_tasks_then_neither
     routes = [{"route": "aud_generate", "package": "pkg", "tasks": [t], "status": "pending runtime"} for t in ("music", "midi")]
     GEN["apply_verification"]([{"routes": routes}], "r1", tmp_path)
     assert [r["status"] for r in routes] == ["pending runtime"] * 2, "a bare key must not verify a multi-task package"
+
+
+def test_tts_overrides_when_registry_builds_args_then_options_use_equals_form(registries):
+    """VeVo2's --extra starts with '--' and AuK needs companion packages; both must survive Fire parsing."""
+    by_package = {m["package"]: m for m in registries["tts_all"] if m["name"].startswith("ac83-")}
+    vevo2 = by_package["vevo2_q8_0"]["args_fn"]("Hi.", "ref.wav", "o.wav", "en")
+    assert "--extra=--task-route zero_shot_tts" in vevo2 and vevo2[vevo2.index("--ref") + 1] == "ref.wav"
+    assert "--ref-text" not in vevo2, "a reference transcript makes VeVo2 speak it too"
+    auk = by_package["auk_flash_q8_0"]["args_fn"]("Hi.", "", "o.wav", "en")
+    assert "--deps=auk_qwen_q8_0,auk_vae_f32" in auk
+    assert any(a.startswith("--request_options=") and "duration_sec=" in a for a in auk)
+    assert by_package["auk_flash_q8_0"]["langs"] == ["en"]
+
+
+def test_tts_audiocpp_prep_when_fire_passes_deps_tuple_then_each_dep_installed(monkeypatch):
+    spec = importlib.util.spec_from_file_location("tts_audiocpp_mod", TOOLS / "tts/tools/tts-audiocpp.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    seen = []
+    monkeypatch.setattr(module, "_require_engine", lambda: None)
+    monkeypatch.setattr(module, "_installed", lambda pkg: seen.append(pkg) or True)
+    module.prep("auk_flash_q8_0", deps=("auk_qwen_q8_0", "auk_vae_f32"))
+    assert seen == ["auk_qwen_q8_0", "auk_vae_f32", "auk_flash_q8_0"]

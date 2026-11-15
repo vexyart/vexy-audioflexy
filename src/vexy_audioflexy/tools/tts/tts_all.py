@@ -3496,6 +3496,9 @@ def _ac83_tts_args(row: dict):
             args += ["--instruct", _AC83_DESIGN_INSTRUCT]
         if params["lang_flag"]:
             args += ["--lang", lang]
+        for key in ("deps", "request_options", "session_options", "extra"):
+            if params.get(key):
+                args.append(f"--{key}={params[key]}")  # '=' keeps a leading '--' in the value from parsing as a flag
         return args
 
     return args_fn

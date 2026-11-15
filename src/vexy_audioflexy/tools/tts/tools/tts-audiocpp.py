@@ -168,7 +168,9 @@ def prep(
         force: Reinstall even if the target directory already holds the files.
     """
     _require_engine()
-    for dep in (d.strip() for d in deps.split(",") if d.strip()):
+    # Fire turns "a,b" on the command line into a tuple, so accept both forms.
+    names = deps if isinstance(deps, (tuple, list)) else str(deps).split(",")
+    for dep in (str(d).strip() for d in names if str(d).strip()):
         prep(dep, force=force)
     target = _model_path(package)
     if _installed(package) and not force:

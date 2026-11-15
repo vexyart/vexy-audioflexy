@@ -143,7 +143,7 @@
           "covered_by": [],
           "status": "pending runtime",
           "route": "pending adapter",
-          "reason": "audiocpp_cli has no edit task, so aud-audiocpp cannot drive it"
+          "reason": "edits run as --task gen with source audio and an instruction; no registry benchmarks edits yet, and AuK editing crashed in the Metal flow sampler on 2026-11-16 (CPU unsupported)"
         }
       ]
     },
@@ -817,9 +817,28 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "multi-component model: each generator package also needs the Qwen2.5-Omni-3B and VAE packages; run 2026-11-15 failed on the missing qwen2.5-omni-3b-bf16.gguf"
+          "status": "verified",
+          "route": "tts_all",
+          "package": "auk_flash_q8_0",
+          "langs": [
+            "en"
+          ],
+          "params": {
+            "mode": "tts",
+            "task": "tts",
+            "voice_id": null,
+            "ref": false,
+            "ref_text": false,
+            "lang_flag": false,
+            "deps": "auk_qwen_q8_0,auk_vae_f32",
+            "session_options": "auk.variant=flash;auk.model_gguf=auk-flash-q8_0.gguf;auk.qwen_gguf=qwen2.5-omni-3b-q8_0.gguf",
+            "request_options": "instruct=A warm adult voice speaking clear English.;duration_sec=6"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "asr_roundtrip",
+            "result": "instruction TTS on Metal; parakeet_tdt_q8_0: 'A warm adult. The weather is lovely today, so let us take a short walk by the river.' The sentence is complete but the first words of the voice description are spoken too. Reference-conditioned TTS and --task gen editing abort in the Metal flow sampler; CPU is unsupported"
+          }
         },
         {
           "registry": null,
@@ -829,7 +848,7 @@
           "covered_by": [],
           "status": "pending runtime",
           "route": "pending adapter",
-          "reason": "audiocpp_cli has no edit task, so aud-audiocpp cannot drive it"
+          "reason": "edits run as --task gen with source audio and an instruction; no registry benchmarks edits yet, and AuK editing crashed in the Metal flow sampler on 2026-11-16 (CPU unsupported)"
         }
       ]
     },
@@ -2662,7 +2681,7 @@
           "covered_by": [],
           "status": "pending runtime",
           "route": "pending adapter",
-          "reason": "audiocpp_cli has no edit task, so aud-audiocpp cannot drive it"
+          "reason": "edits run as --task gen with source audio and an instruction; no registry benchmarks edits yet, and AuK editing crashed in the Metal flow sampler on 2026-11-16 (CPU unsupported)"
         }
       ]
     },
@@ -10718,7 +10737,7 @@
           "covered_by": [],
           "status": "pending runtime",
           "route": "pending adapter",
-          "reason": "prompt-conditioned separation; the harness supplies no target-source prompt"
+          "reason": "prompt-conditioned separation; run 2026-11-16 on Metal gave the same target/residual split for three different --text prompts, so the prompt is not reaching the model"
         }
       ]
     },
@@ -12074,7 +12093,7 @@
           "covered_by": [],
           "status": "pending runtime",
           "route": "pending adapter",
-          "reason": "audiocpp_cli has no edit task, so aud-audiocpp cannot drive it"
+          "reason": "edits run as --task gen with source audio and an instruction; no registry benchmarks edits yet, and AuK editing crashed in the Metal flow sampler on 2026-11-16 (CPU unsupported)"
         }
       ]
     },
@@ -12532,9 +12551,26 @@
             "tts"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "text-to-speech needs a target_voice reference that tts-audiocpp does not pass"
+          "status": "verified",
+          "route": "tts_all",
+          "package": "vevo2_q8_0",
+          "langs": [
+            "en"
+          ],
+          "params": {
+            "mode": "tts",
+            "task": "tts",
+            "voice_id": null,
+            "ref": true,
+            "ref_text": false,
+            "lang_flag": false,
+            "extra": "--task-route zero_shot_tts"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "asr_roundtrip",
+            "result": "zero_shot_tts with --voice-ref en_inflect.wav and no style transcript; parakeet_tdt_q8_0: 'Weather is lovely today, so let us take a short walk by the river.' (drops 'The'); with --style_ref_text it also speaks the reference transcript"
+          }
         },
         {
           "registry": "aud_all",
@@ -12568,7 +12604,7 @@
           "covered_by": [],
           "status": "pending runtime",
           "route": "pending adapter",
-          "reason": "audiocpp_cli has no edit task, so aud-audiocpp cannot drive it"
+          "reason": "edits run as --task gen with source audio and an instruction; no registry benchmarks edits yet, and AuK editing crashed in the Metal flow sampler on 2026-11-16 (CPU unsupported)"
         }
       ]
     },
@@ -12979,7 +13015,7 @@
           "covered_by": [],
           "status": "pending runtime",
           "route": "pending adapter",
-          "reason": "reads SEA-G2P phonemes, not raw text, and needs a speaker_embedding_file; the CLI rejects --task clon (docs/models/vieneu_v3_turbo.md)"
+          "reason": "Vietnamese only and reads SEA-G2P phonemes, not raw text; verified 2026-11-16 by a direct run with phoneme text and the packaged minh_quan_pro voice (OWSM round trip exact), but the en/pl registries cannot feed it"
         }
       ]
     },
