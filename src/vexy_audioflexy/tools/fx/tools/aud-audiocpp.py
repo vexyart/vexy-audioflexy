@@ -41,6 +41,7 @@ CACHE_ROOT = Path(os.environ.get("VAFX_AUDIO_CACHE_ROOT", user_cache_path("vexy-
 import json
 import os
 import subprocess
+import time
 from functools import cache
 from pathlib import Path
 
@@ -337,11 +338,13 @@ def run(
     )
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    started = time.time()
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(ENGINE_ROOT), check=False)
     if fam == "sam_audio":
         outputs = [out_path / "target.wav", out_path / "residual.wav"]
     elif the_task == "sep":  # engine names stems itself (speaker_1.wav, vocals.wav, ...)
-        outputs = sorted(out_path.glob("*.wav")) if out_path.is_dir() else []
+        # Stems from an earlier run in the same directory are not this model's output.
+        outputs = sorted(p for p in out_path.glob("*.wav") if p.stat().st_mtime >= started) if out_path.is_dir() else []
     else:
         outputs = [out_path]
     if result.returncode != 0 or not outputs or not all(p.is_file() and p.stat().st_size > 0 for p in outputs):

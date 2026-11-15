@@ -43,15 +43,10 @@ REGISTRY_FOR_TASK = {
 # Spec tasks with no generic adapter in any registry, and why.
 PENDING_REASONS = {
     "edit": "audiocpp_cli has no edit task, so aud-audiocpp cannot drive it",
-    "music": "no registry harness supplies lyrics/tags/prompts for audio.cpp generation",
-    "sfx": "no registry harness supplies sound-effect prompts for audio.cpp generation",
-    "midi": "no registry consumes MIDI output",
     "vad": "detect_all.py pins a fixed package list at its own runtime commit; no generic adapter",
     "turn": "detect_all.py pins a fixed package list at its own runtime commit; no generic adapter",
     "wake_word": "no wake-word registry",
     "classify": "no audio-classification registry",
-    "diar": "diarize_all.py does not wrap audio.cpp diarization packages generically",
-    "align": "asr-audiocpp has an align subcommand but no registry drives it",
 }
 # Tasks `fx/tools/aud-audiocpp.py analyze` drives one clip at a time (no batch registry).
 ANALYSIS_ROUTE = "aud_analyze"
@@ -388,10 +383,16 @@ def apply_verification(families: list[dict], revision: str, tools: Path = TOOLS)
         return
     runs = ledger.get("runs", {})
     for family in families:
+        route_tasks: dict[str, int] = {}
+        for route in family["routes"]:
+            key = f"{route.get('route')}:{route.get('package')}"
+            route_tasks[key] = route_tasks.get(key, 0) + 1
         for route in family["routes"]:
             key = f"{route.get('route')}:{route.get('package')}"
             tasks = route.get("tasks") or [""]
-            run = runs.get(f"{key}:{tasks[0]}") or runs.get(key)  # task suffix for shared packages
+            run = runs.get(f"{key}:{tasks[0]}")
+            if run is None and route_tasks[key] == 1:  # a bare key is unambiguous only for one task
+                run = runs.get(key)
             if run:
                 route.update(status=VERIFIED, verification=run)
 

@@ -215,3 +215,12 @@ def test_verification_when_shared_package_then_task_suffix_selects_route(tmp_pat
     families = [{"routes": [{"route": "aud_generate", "package": "pkg", "tasks": [t], "status": "pending runtime"} for t in ("music", "sfx")]}]
     GEN["apply_verification"](families, "r", tmp_path)
     assert [r["status"] for r in families[0]["routes"]] == ["pending runtime", "verified"]
+
+
+def test_apply_verification_when_bare_key_and_package_has_two_tasks_then_neither_verified(tmp_path):
+    (tmp_path / "catalogs").mkdir()
+    ledger = {"source_revision": "r1", "runs": {"aud_generate:pkg": {"check": "x"}}}
+    (tmp_path / "catalogs" / "audiocpp-verified.json").write_text(json.dumps(ledger))
+    routes = [{"route": "aud_generate", "package": "pkg", "tasks": [t], "status": "pending runtime"} for t in ("music", "midi")]
+    GEN["apply_verification"]([{"routes": routes}], "r1", tmp_path)
+    assert [r["status"] for r in routes] == ["pending runtime"] * 2, "a bare key must not verify a multi-task package"

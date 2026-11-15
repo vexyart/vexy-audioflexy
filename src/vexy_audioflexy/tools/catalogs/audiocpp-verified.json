@@ -327,6 +327,11 @@
       "date": "2026-11-16",
       "check": "lead-sheet transcription",
       "result": "stable_audio piano clip -> ABC notation (not MIDI) at 98 bpm in D with chords D, G and an instrumental melody line"
+    },
+    "aud_all:ming3_audio_tiny_bf16": {
+      "date": "2026-11-16",
+      "check": "spoken dialogue",
+      "result": "kokoro.wav greeting -> 61.7 s 44.1 kHz spoken reply; parakeet hears coherent reasoning about the greeting ('The audio says, hello from the new audio...'). Works, but verbose"
     }
   }
 }
