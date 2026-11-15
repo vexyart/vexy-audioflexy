@@ -187,18 +187,15 @@ def say(
                 name=selected_voice,
                 overwrite=True,
             )
-        else:
-            # Create default dummy profile if no voice exists yet
-            dummy_voice_dir = voices_dir / selected_voice
-            dummy_voice_dir.mkdir(parents=True, exist_ok=True)
-            dummy_profile = {
-                "name": selected_voice,
-                "created_at": "2026-08-01T00:00:00Z",
-                "semantic_length": 0,
-                "reference_length": 0,
-                "transcript": "",
-            }
-            (dummy_voice_dir / "profile.json").write_text(json.dumps(dummy_profile))
+        elif not (voices_dir / selected_voice / "meta.json").is_file():
+            # Audio8 has no built-in voices: a profile needs semantic codes
+            # (meta.json + codes.npy) that only registration of a reference
+            # WAV produces, so an empty placeholder can never synthesise.
+            console.print(
+                f"[red]Voice '{selected_voice}' is not registered.[/red] "
+                "Pass --ref REFERENCE.wav (and --ref_text) to clone a voice."
+            )
+            raise SystemExit(1)
 
         console.print(f"[dim]Model repo: {spec["repo"]}[/dim]")
         if ref:

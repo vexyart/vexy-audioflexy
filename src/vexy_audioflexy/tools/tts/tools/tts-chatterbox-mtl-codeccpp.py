@@ -30,21 +30,25 @@ from _paths import runtime_path
 
 VERSION = "1.0.0"
 MODEL_REPO = "BricksDisplay/Chatterbox-Multilingual-TTS-GGUF"
+# 2026-11-02 layout: backbone carries the T3 tokenizer as its llama.cpp vocab and
+# needs codec.cpp from 2026-10-21 on. The old chatterbox-mtl-{t3,codec}-* files
+# live only at revision 44e18bb and do not load in current codec.cpp.
+MODEL_REVISION = "fe6b7d973a511d869b2a11ccd1d06d3d2483f0b3"
 
 ROOT = Path(__file__).resolve().parent.parent
 ENGINE_ROOT = runtime_path('codec.cpp')
 BIN_PATH = ENGINE_ROOT / "build/tts-cli"
 
-CODEC_FILE = "chatterbox-mtl-codec-q8_0.gguf"
-BACKBONE_FILE = "chatterbox-mtl-t3-q8_0.gguf"
+CODEC_FILE = "codec-q8_0.gguf"
+BACKBONE_FILE = "chatterbox-mtl-q8_0.gguf"
 
 BUILD = f"""\
   git clone --recursive https://github.com/mybigday/codec.cpp {ENGINE_ROOT}
   cd {ENGINE_ROOT}
-  cmake -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j --target tts-cli
-On macOS the backbone link step needs the Apple-linker patch in
-cmake/SetupTtsBackbone.cmake (-force_load / -exported_symbols_list instead of
---whole-archive / --version-script, plus the Accelerate and Metal frameworks)."""
+  cmake -B build -DCMAKE_BUILD_TYPE=Release -DGGML_METAL=ON && cmake --build build -j --target tts-cli
+Verified at codec.cpp d5e3852. On macOS the ttsbackbone ExternalProject must not
+inherit CMAKE_SYSTEM_* (cmake/SetupTtsBackbone.cmake), or the child configure
+thinks it is cross-compiling and ggml's ARM try_run() checks fail."""
 
 
 def _require_engine() -> Path:
@@ -56,8 +60,8 @@ def _require_engine() -> Path:
 def _weights() -> tuple[Path, Path]:
     from huggingface_hub import hf_hub_download
 
-    codec = Path(hf_hub_download(MODEL_REPO, CODEC_FILE))
-    backbone = Path(hf_hub_download(MODEL_REPO, BACKBONE_FILE))
+    codec = Path(hf_hub_download(MODEL_REPO, CODEC_FILE, revision=MODEL_REVISION))
+    backbone = Path(hf_hub_download(MODEL_REPO, BACKBONE_FILE, revision=MODEL_REVISION))
     return codec, backbone
 
 

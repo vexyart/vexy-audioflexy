@@ -31,11 +31,12 @@ KNOWN_MODELS = {
 
 ROOT = Path(__file__).resolve().parent.parent
 _BUILD_ROOT = runtime_path('InflectNanoTTS.cpp/build/macos-arm64')
-# CMake writes the binary one level deeper than the build directory it is given,
-# so accept either layout rather than depending on which one this checkout used.
+# Upstream renamed the binary to inflect-sano (a648df2, tools/build.sh); older
+# CMake builds wrote inflect-nano one level deeper. Accept every layout, newest first.
 DEFAULT_BINARY = next(
-    (c for c in (_BUILD_ROOT / "inflect-nano", _BUILD_ROOT / "macos-arm64" / "inflect-nano") if c.exists()),
-    _BUILD_ROOT / "inflect-nano",
+    (c for c in (_BUILD_ROOT / "inflect-sano", _BUILD_ROOT / "inflect-nano",
+                 _BUILD_ROOT / "macos-arm64" / "inflect-nano") if c.exists()),
+    _BUILD_ROOT / "inflect-sano",
 )
 
 
