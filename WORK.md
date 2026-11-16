@@ -8,6 +8,7 @@ this_file: WORK.md
 
 - VeVo2 `zero_shot_tts`: with `--style_ref_text` the output also speaks the reference transcript; without it parakeet reads "Weather is lovely today, so let us take a short walk by the river." Verified.
 - AuK Flash q8_0 instruction TTS (Metal): "A warm adult. The weather is lovely today, …" (the start of the voice description leaks). In Polish it read the description and garbled the words, so the route is English only. Reference TTS and `--task gen` editing abort in `FlowRuntime::sample` on Metal; CPU reports "AuK native session does not support the CPU backend".
+- VieNeu v3 Turbo with plain text: built sea-g2p 0.10.0 (`cargo build --release --no-default-features --features capi`) and passed `vieneu_v3_turbo.g2p_library` plus `g2p_dict_file` (`python/sea_g2p/sea_g2p.bin`). "Tỉ lệ giải ngân đầu tư công đạt 68,5% kế hoạch năm." came back from OWSM as "lu lễ dành ngân đầu tư công đạt 68,5 phần trăm kế hoạch 5." The number and percent normalisation works; the first words are misheard. There is no Vietnamese registry, so the route stays `pending adapter`.
 - VieNeu v3 Turbo q8_0 with phoneme text and `minh_quan_pro`: OWSM v4 gives "Xin chào thế giới, đây là bản thử nghiệm." Not registry-routed (Vietnamese only).
 - SAM Audio small q8_0: prompts "a man speaking", "a woman speaking" and "a ticking clock" gave near-identical target/residual levels. Pending.
 - Tests: 615 passed.

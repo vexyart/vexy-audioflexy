@@ -139,7 +139,7 @@ MANUAL_PENDING = {
     ("sam_audio", "aud_all"): "prompt-conditioned separation; run 2026-11-16 on Metal gave the same target/residual split for three different --text prompts, so the prompt is not reaching the model",
     ("samsone", "asr_all"): "audio captioner (default instruct 'describe the audio'), not a transcriber; verified 2026-11-15 it returns captions",
     ("minimax_h3", "tts_all"): "text-to-audio/video generation (--task gen, dit.gguf, video request options), not TTS; the CLI rejects --task tts (docs/models/minimax_h3.md)",
-    ("vieneu_v3_turbo", "tts_all"): "Vietnamese only and reads SEA-G2P phonemes, not raw text; verified 2026-11-16 by a direct run with phoneme text and the packaged minh_quan_pro voice (OWSM round trip exact), but the en/pl registries cannot feed it",
+    ("vieneu_v3_turbo", "tts_all"): "Vietnamese only and reads SEA-G2P phonemes, not raw text; verified 2026-11-16 by direct runs with the packaged minh_quan_pro voice: phoneme text (OWSM round trip exact) and plain text through the sea-g2p C library (session options vieneu_v3_turbo.g2p_library and g2p_dict_file; OWSM close). The en/pl registries cannot feed it",
 }
 # Benchmark languages narrowed after real runs: AuK Polish read the voice description aloud and garbled the words (2026-11-16).
 LANG_OVERRIDES = {("auk", "tts_all"): ["en"]}

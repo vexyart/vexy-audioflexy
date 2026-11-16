@@ -13015,7 +13015,7 @@
           "covered_by": [],
           "status": "pending runtime",
           "route": "pending adapter",
-          "reason": "Vietnamese only and reads SEA-G2P phonemes, not raw text; verified 2026-11-16 by a direct run with phoneme text and the packaged minh_quan_pro voice (OWSM round trip exact), but the en/pl registries cannot feed it"
+          "reason": "Vietnamese only and reads SEA-G2P phonemes, not raw text; verified 2026-11-16 by direct runs with the packaged minh_quan_pro voice: phoneme text (OWSM round trip exact) and plain text through the sea-g2p C library (session options vieneu_v3_turbo.g2p_library and g2p_dict_file; OWSM close). The en/pl registries cannot feed it"
         }
       ]
     },

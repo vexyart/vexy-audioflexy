@@ -55,7 +55,8 @@ The initial implementation excluded publication. The subsequently authorized
 - [x] Generate the audio.cpp 83b1354 family catalog and wire uncovered routed families into tts/asr/aud registries.
 - [ ] Run the remaining `pending runtime` audio.cpp routes once each (68 verified so far) and record them in `catalogs/audiocpp-verified.json`.
 - [x] Route VeVo2 zero-shot TTS and AuK Flash instruction TTS into `tts_all` (verified, en).
-- [ ] VieNeu plain-text input via sea-g2p; AuK reference TTS/editing (Metal abort); SAM Audio prompt; MiniMax-H3 (`--task gen`).
+- [x] VieNeu plain-text input via sea-g2p (direct run; no vi registry yet).
+- [ ] AuK reference TTS/editing (Metal abort); SAM Audio prompt; MiniMax-H3 (`--task gen`).
 - [x] Add adapters for audio.cpp music, sfx, sep, align, diar, vad, wake-word and classify families.
 - [ ] Add input-aware adapters for lyrics/melody/style music (ACE-Step, YuE 2, MiniMax Music 3, MulaCover, VeVo2), audio edit, and video/image-conditioned families.
 - [x] Recheck phonon-2 on transcribe.cpp 0.4.2 (byte-identical to 5700f12).
