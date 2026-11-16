@@ -59,6 +59,6 @@ The initial implementation excluded publication. The subsequently authorized
 - [ ] AuK reference TTS/editing (Metal abort); SAM Audio prompt; MiniMax-H3 (`--task gen`).
 - [x] Add adapters for audio.cpp music, sfx, sep, align, diar, vad, wake-word and classify families.
 - [x] Route ACE-Step (verified) and MiniMax Music 3 (q4_0 output off-prompt; try q8_0) with lyrics inputs; route sherpa_kws (verified).
-- [ ] Add input-aware adapters for melody/reference music (MulaCover, VeVo2), audio edit, and video/image-conditioned families (FlashHead done; LatentSync, LiveAvatar open).
+- [ ] Add input-aware adapters for melody/reference music (MulaCover, VeVo2), audio edit, and video/image-conditioned families (FlashHead and LatentSync done; LiveAvatar open).
 - [x] Recheck phonon-2 on transcribe.cpp 0.4.2 (byte-identical to 5700f12).
 - [ ] Run speech.cpp drama-3 after a deliberate weight pull.

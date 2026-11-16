@@ -844,7 +844,7 @@
             "lang_flag": false,
             "deps": "auk_qwen_q8_0,auk_vae_f32",
             "session_options": "auk.variant=flash;auk.model_gguf=auk-flash-q8_0.gguf;auk.qwen_gguf=qwen2.5-omni-3b-q8_0.gguf",
-            "request_options": "instruct=A warm adult voice speaking clear English.;duration_sec=6"
+            "request_options": "instruct=A warm adult voice speaking clear English.;duration_sec=auto"
           },
           "verification": {
             "date": "2026-11-16",
@@ -5046,9 +5046,23 @@
             "sfx"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "needs a reference video"
+          "status": "verified",
+          "route": "aud_generate",
+          "reason": "single-clip run command with a text prompt (midi: an audio input); no batch registry",
+          "package": "latentsync_1_6_q8_0_f16",
+          "params": {
+            "task": "gen",
+            "requires": [
+              "audio: new speech WAV (16 kHz)",
+              "video: source face video",
+              "output: .mp4"
+            ]
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "video",
+            "result": "3 s 512x512 face clip + 3 s replacement speech: 77 frames at 25 fps on Metal (sharing the GPU, ~25 min); only the mouth region is re-rendered and differs from the input frames, encoded to MP4 with the speech muxed"
+          }
         }
       ]
     },

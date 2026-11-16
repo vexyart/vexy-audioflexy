@@ -92,9 +92,10 @@ DEFAULT_TASK = {
 
 # Packages that load a second package from the same model root (YuE2 reads its
 # VAE GGUF next to the main model), so `run` installs both.
-# Families whose engine output is chunked RGB24 video artifacts in --out-dir
-# (`<prefix>_<chunk>.json` with meta + payload_hex); run() encodes them to MP4.
-VIDEO_ARTIFACT_FAMILIES = {"soulx_flashhead": "soulx_flashhead_video_"}
+# Families whose engine output is RGB24 video in --out-dir; run() encodes it to MP4.
+# Either chunked artifacts (`<prefix><chunk>.json` with meta + payload_hex) or one
+# raw file described by `<prefix>.json` ({format, width, height, frames, fps, file}).
+VIDEO_ARTIFACT_FAMILIES = {"soulx_flashhead": "soulx_flashhead_video_", "latentsync": "latentsync_video"}
 COMPANION_PACKAGES = {f"yue2_main_{q}": ("yue2_vae_f16",) for q in ("q8_0", "q4_0", "bf16")}
 
 
@@ -104,6 +105,15 @@ def _encode_video(frames_dir: Path, prefix: str, audio: str, out_path: Path) -> 
     Frames go through a temp file rather than a pipe: with -shortest ffmpeg stops
     reading once the audio ends, which breaks a writer still feeding the pipe.
     """
+    single = frames_dir / f"{prefix}.json"
+    if single.is_file():
+        meta = json.loads(single.read_text())
+        raw = frames_dir / meta["file"]
+        size = int(meta["width"]) * int(meta["height"]) * int(meta["frames"]) * 3
+        if meta["format"] != "rgb24" or not raw.is_file() or raw.stat().st_size != size:
+            raise SystemExit(f"{raw.name} does not match the frames described in {single.name}")
+        _ffmpeg_rgb24(raw, meta, audio, out_path)
+        return
     chunks = sorted(frames_dir.glob(f"{prefix}*.json"), key=lambda f: int(f.stem.rsplit("_", 1)[1]))
     if not chunks:
         raise SystemExit(f"no {prefix}*.json video artifacts in {frames_dir}")
@@ -120,13 +130,18 @@ def _encode_video(frames_dir: Path, prefix: str, audio: str, out_path: Path) -> 
             if len(payload) != int(meta["width"]) * int(meta["height"]) * int(meta["frames"]) * 3:
                 raise SystemExit(f"video chunk {chunk.name} byte count does not match its dimensions")
             sink.write(payload)
+    _ffmpeg_rgb24(raw, first, audio, out_path)
+    raw.unlink()
+
+
+def _ffmpeg_rgb24(raw: Path, meta: dict, audio: str, out_path: Path) -> None:
+    """Encode raw RGB24 frames to H.264 MP4, muxing `audio` (cut to the shorter stream)."""
     cmd = ["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pixel_format", "rgb24",
-           "-video_size", f"{first['width']}x{first['height']}", "-framerate", first["fps"], "-i", str(raw)]
+           "-video_size", f"{meta['width']}x{meta['height']}", "-framerate", str(meta["fps"]), "-i", str(raw)]
     if audio:
         cmd += ["-i", str(Path(audio).resolve()), "-c:a", "aac", "-shortest"]
     cmd += ["-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(out_path)]
     subprocess.run(cmd, check=True)
-    raw.unlink()
 
 
 def _require_engine() -> Path:
@@ -321,6 +336,7 @@ def run(
     duration_seconds: float = 0,
     voice_id: str = "",
     image: str = "",
+    video: str = "",
     num_inference_steps: int = 0,
     request_options: str = "",
     session_options: str = "",
@@ -360,6 +376,8 @@ def run(
             (e.g. `guidance_scale=3.5;seed=42`).
         image: Reference portrait for talking-head video families (SoulX FlashHead);
             passed as `reference_image_file`. Video families write `output` as MP4.
+        video: Source video for lip-sync families (LatentSync); passed as
+            `reference_video_file`. `audio` is the new speech.
         session_options: Per-session `key=value` settings separated by `;`.
         seed: Fixed seed; 0 leaves the model default.
         extra: Additional raw CLI arguments, space-separated.
@@ -432,6 +450,8 @@ def run(
         cmd += ["--request-option", f"voice_id={voice_id}"]
     if image:
         cmd += ["--request-option", f"reference_image_file={Path(image).resolve()}"]
+    if video:
+        cmd += ["--request-option", f"reference_video_file={Path(video).resolve()}"]
     if num_inference_steps:
         cmd += ["--num-inference-steps", str(num_inference_steps)]
     for flag, blob in (("--request-option", request_options),

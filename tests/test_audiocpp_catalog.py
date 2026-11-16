@@ -393,3 +393,38 @@ def test_aud_audiocpp_encode_video_when_chunk_size_wrong_then_exit(monkeypatch, 
     (frames / "soulx_flashhead_video_0.json").write_text(json.dumps({"meta": meta, "payload_hex": "00"}))
     with pytest.raises(SystemExit):
         module._encode_video(frames, "soulx_flashhead_video_", "", tmp_path / "v.mp4")
+
+
+def test_aud_audiocpp_encode_video_when_single_raw_artifact_then_mp4(monkeypatch, tmp_path):
+    if shutil.which("ffmpeg") is None:
+        pytest.skip("ffmpeg not installed")
+    module = _aud_module(monkeypatch, tmp_path, [])
+    monkeypatch.undo()
+    frames = tmp_path / "f"
+    frames.mkdir()
+    meta = {"format": "rgb24", "width": 16, "height": 16, "frames": 5, "fps": 25, "file": "latentsync_video_rgb24.rgb"}
+    (frames / "latentsync_video.json").write_text(json.dumps(meta))
+    (frames / meta["file"]).write_bytes(bytes(16 * 16 * 3 * 5))
+    out = tmp_path / "v.mp4"
+    module._encode_video(frames, "latentsync_video", "", out)
+    assert out.stat().st_size > 0, "single raw RGB24 artifact should encode to MP4"
+
+
+def test_aud_audiocpp_encode_video_when_raw_size_wrong_then_exit(monkeypatch, tmp_path):
+    module = _aud_module(monkeypatch, tmp_path, [])
+    frames = tmp_path / "f"
+    frames.mkdir()
+    meta = {"format": "rgb24", "width": 16, "height": 16, "frames": 5, "fps": 25, "file": "x.rgb"}
+    (frames / "latentsync_video.json").write_text(json.dumps(meta))
+    (frames / "x.rgb").write_bytes(b"00")
+    with pytest.raises(SystemExit):
+        module._encode_video(frames, "latentsync_video", "", tmp_path / "v.mp4")
+
+
+def test_tts_all_auk_args_when_duration_auto_then_scaled_to_text():
+    rows = [r for r in runpy.run_path(str(TOOLS / "_audiocpp_catalog.py"))["entries"]("tts_all") if r["family"] == "auk"]
+    assert rows and "duration_sec=auto" in rows[0]["params"]["request_options"]
+    tts_all = runpy.run_path(str(TOOLS / "tts/tts_all.py"), run_name="tts_all_mod")
+    args = tts_all["_ac83_tts_args"](rows[0])("x" * 560, None, "o.wav")
+    opts = next(a for a in args if a.startswith("--request_options="))
+    assert "duration_sec=40" in opts, opts

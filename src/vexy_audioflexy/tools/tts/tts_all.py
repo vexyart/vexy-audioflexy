@@ -3481,6 +3481,14 @@ for _small_name, _small_package, _small_quant in (
 _AC83_DESIGN_INSTRUCT = "A warm adult narrator with clear, natural delivery."
 
 
+_AC83_CHARS_PER_SEC = 14  # measured speaking rate of the standard texts across verified models
+
+
+def _ac83_duration(text: str) -> int:
+    """Seconds of speech for *text*, for models that need an explicit output length (AuK)."""
+    return max(4, round(len(text) / _AC83_CHARS_PER_SEC))
+
+
 def _ac83_tts_args(row: dict):
     params, package = row["params"], row["package"]
 
@@ -3498,7 +3506,8 @@ def _ac83_tts_args(row: dict):
             args += ["--lang", lang]
         for key in ("deps", "request_options", "session_options", "extra"):
             if params.get(key):
-                args.append(f"--{key}={params[key]}")  # '=' keeps a leading '--' in the value from parsing as a flag
+                value = params[key].replace("duration_sec=auto", f"duration_sec={_ac83_duration(text)}")
+                args.append(f"--{key}={value}")  # '=' keeps a leading '--' in the value from parsing as a flag
         return args
 
     return args_fn

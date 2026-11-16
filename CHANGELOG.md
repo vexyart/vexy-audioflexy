@@ -6,6 +6,8 @@ this_file: CHANGELOG.md
 
 ## Unreleased
 
+- aud-audiocpp `run --video` for LatentSync lip-sync; single raw RGB24 video artifacts are encoded to MP4 like FlashHead chunks. LatentSync 1.6 q8_0 is verified (74/166).
+- Standard EN/PL TTS test results for the 25 verified audio.cpp catalog models are in the private rankings report. AuK TTS derives `duration_sec` from the text length instead of a fixed 6 s.
 - aud-audiocpp `run --image` and MP4 output for SoulX FlashHead: the engine's RGB24 chunk artifacts are encoded to H.264 with the input speech muxed. FlashHead Lite q8_0 is verified (73/166). `--request_options` accepts `\;` for a literal semicolon. MuLaCover stays pending: the engine asserts in ggml-alloc on Metal and CPU.
 - Route and verify YuE2 (lyrics plus style; the VAE package is prepped with the main model). Harden `stage` after review: no self-link when the source is already at the spec path, extension check, streamed SHA-256, atomic marker, and `prep` tells you to `stage` packages that have no download. 72 of 166 routes are verified.
 - Add `aud-audiocpp.py stage` to install a locally converted file as a package (linked under the spec name, marker records size and SHA-256), and route Sortformer Diar v2.1 through it. Verified on a two-voice clip; 71 of 166 routes are verified.

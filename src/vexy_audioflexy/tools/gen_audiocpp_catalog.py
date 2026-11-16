@@ -97,7 +97,6 @@ GENERATION_PENDING = {
     "minimax_h3": "text-to-audio/video model; the run command handles audio only",
     "mulacover": "aborts in ggml-alloc (out of free blocks) on Metal and CPU at 83b1354 with reference audio",
     "vevo2": "needs a reference recording",
-    "latentsync": "needs a reference video",
     "liveavatar": "needs a reference image",
 }
 # Inputs some generators cannot run without (aud-audiocpp.py run keyword arguments).
@@ -112,6 +111,7 @@ GENERATION_OPTIONS = {
 # Inputs the caller must supply; video families also need an .mp4 output path.
 GENERATION_INPUTS = {
     "soulx_flashhead": ["audio: speech WAV (mono 16 kHz)", "image: portrait PNG/JPG", "output: .mp4"],
+    "latentsync": ["audio: new speech WAV (16 kHz)", "video: source face video", "output: .mp4"],
 }
 # Request options some analysis families cannot run without.
 ANALYSIS_OPTIONS = {
@@ -174,10 +174,11 @@ TTS_OVERRIDES = {
     # zero_shot_tts conditions on --voice-ref; passing the reference transcript makes it speak that too.
     ("vevo2", "tts_all"): {"mode": "tts", "task": "tts", "ref": True, "ref_text": False, "voice_id": None, "extra": "--task-route zero_shot_tts"},
     # Generator + Qwen conditioning + VAE in one directory; duration is required without reference audio.
+    # duration_sec=auto is replaced by tts_all with a length estimated from the text (a fixed 6 s cut long texts).
     ("auk", "tts_all"): {"mode": "tts", "task": "tts", "ref": False, "ref_text": False, "voice_id": None,
             "deps": "auk_qwen_q8_0,auk_vae_f32",
             "session_options": "auk.variant=flash;auk.model_gguf=auk-flash-q8_0.gguf;auk.qwen_gguf=qwen2.5-omni-3b-q8_0.gguf",
-            "request_options": "instruct=A warm adult voice speaking clear English.;duration_sec=6"},
+            "request_options": "instruct=A warm adult voice speaking clear English.;duration_sec=auto"},
 }
 
 ISO639_3 = {"en": "eng", "pl": "pol"}
