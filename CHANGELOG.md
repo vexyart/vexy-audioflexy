@@ -6,6 +6,7 @@ this_file: CHANGELOG.md
 
 ## Unreleased
 
+- Route and verify YuE2 (lyrics plus style; the VAE package is prepped with the main model). Harden `stage` after review: no self-link when the source is already at the spec path, extension check, streamed SHA-256, atomic marker, and `prep` tells you to `stage` packages that have no download. 72 of 166 routes are verified.
 - Add `aud-audiocpp.py stage` to install a locally converted file as a package (linked under the spec name, marker records size and SHA-256), and route Sortformer Diar v2.1 through it. Verified on a two-voice clip; 71 of 166 routes are verified.
 - Route ACE-Step (text2music with lyrics and duration; `aud-audiocpp.py run` gained `lyrics` and `duration_seconds`, passed as `--lyrics` and `--duration-seconds`), MiniMax Music 3 (lyrics request option) and sherpa_kws (embedded keywords) from the catalog. ACE-Step and sherpa_kws verified; MiniMax Music 3 q4_0 produced a gong-like clip, so it stays `pending runtime`. Wake-word analysis with no detections now writes an empty list instead of failing. 70 of 166 routes are verified.
 - Route VeVo2 (`zero_shot_tts` with `--voice-ref`, no reference transcript) and AuK Flash (instruction TTS with its Qwen2.5-Omni-3B and VAE packages, English only) into `tts_all`. Both verified on 83b1354 by an ASR round trip. AuK also speaks the first words of the voice description; its reference-conditioned TTS and `--task gen` editing abort in the Metal flow sampler, and AuK does not support the CPU backend. 68 of 166 routes are now verified.

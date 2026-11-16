@@ -13712,9 +13712,20 @@
             "music"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "requires a style option and a five-file package"
+          "status": "verified",
+          "route": "aud_generate",
+          "reason": "single-clip run command with a text prompt (midi: an audio input); no batch registry",
+          "package": "yue2_main_q8_0",
+          "params": {
+            "task": "gen",
+            "lyrics": "[Verse]\nSoft morning light is touching the window.\n[Chorus]\nStay with the rhythm, let it carry us home.",
+            "request_options": "style=English, indie pop, bright acoustic guitar, soft drums, warm lead vocal;cot=off"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "music",
+            "result": "q8_0 + vae_f16, two-line lyrics with an indie pop style, cot=off: 56.7 s 48 kHz stereo, rtf 0.41 on Metal; AST Music 0.88–0.95 with acoustic guitar; Whisper large-v3-turbo transcribed both lyric lines"
+          }
         }
       ]
     },

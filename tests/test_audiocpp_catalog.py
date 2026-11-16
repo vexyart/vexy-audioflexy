@@ -204,7 +204,9 @@ def test_generation_tasks_when_routable_then_gen_or_midi_and_held_families_pendi
     routes = {(f["family"], r["tasks"][0]): r for f in catalog["families"] for r in f["routes"] if r["registry"] is None}
     assert routes[("stable_audio", "music")]["params"] == {"task": "gen"}
     assert routes[("muscriptor", "midi")]["params"] == {"task": "midi"}
-    assert routes[("yue2", "music")]["route"] == "pending adapter", "style-required families stay pending"
+    assert routes[("mulacover", "music")]["route"] == "pending adapter", "MIDI-input families stay pending"
+    yue = routes[("yue2", "music")]
+    assert yue["package"] == "yue2_main_q8_0" and "style=" in yue["params"]["request_options"]
     assert routes[("lfm_d1_omni", "classify")]["params"]["request_options"].startswith("questions=")
 
 
@@ -266,6 +268,7 @@ def _aud_module(monkeypatch, tmp_path, calls, writes=None):
     spec.loader.exec_module(module)
     monkeypatch.setattr(module, "_require_engine", lambda: tmp_path / "audiocpp_cli")
     monkeypatch.setattr(module, "_resolve", lambda pkg: {"family": "fx"})
+    module._real_installed = module._installed
     monkeypatch.setattr(module, "_installed", lambda pkg: True)
     monkeypatch.setattr(module, "_model_path", lambda pkg, fam="": tmp_path / "model.gguf")
 
@@ -325,5 +328,24 @@ def test_aud_audiocpp_stage_when_converted_file_then_linked_with_marker(monkeypa
     assert dest.is_symlink() and dest.resolve() == src.resolve()
     marker = json.loads((tmp_path / "models/Fx-local/.audiocpp-package-fx_local.json").read_text())
     assert marker["files"]["Fx-local/fx-f16.gguf"]["size"] == 4
+    assert module._real_installed("fx_local"), "a staged package satisfies the real install check"
+    module.stage("fx_local", str(dest.resolve()), force=True)
+    assert src.read_bytes() == b"GGUF", "re-staging the same file must not delete it"
+    wrong = tmp_path / "converted.bin"
+    wrong.write_bytes(b"x")
+    with pytest.raises(SystemExit):
+        module.stage("fx_local", str(wrong), force=True)
     with pytest.raises(SystemExit):
         module.stage("fx_local", str(tmp_path / "missing.gguf"))
+
+
+def test_aud_audiocpp_run_when_yue2_then_vae_companion_prepped(monkeypatch, tmp_path):
+    module = _aud_module(monkeypatch, tmp_path, [])
+    prepped = []
+    monkeypatch.setattr(module, "_installed", lambda pkg: False)
+    monkeypatch.setattr(module, "prep", prepped.append)
+    try:
+        module.run("in.wav", package="yue2_main_q8_0", task="gen", output=str(tmp_path / "o.wav"))
+    except SystemExit:
+        pass
+    assert prepped[:2] == ["yue2_main_q8_0", "yue2_vae_f16"]

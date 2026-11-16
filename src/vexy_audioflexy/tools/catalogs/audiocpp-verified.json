@@ -357,6 +357,11 @@
       "date": "2026-11-16",
       "check": "diar",
       "result": "locally converted from nvidia/diar_streaming_sortformer_4spk-v2.1 .nemo (SHA-256 8abd3283… as documented; f16 + non-matrix f32, 263.7 MB, gguf sha256 77df3aa3…); a 10 s kokoro/inflect/kokoro clip gave SPEAKER_00, SPEAKER_01, SPEAKER_00 at 0.32–2.96, 3.60–6.72, 7.04–9.84 s (true changes at 3.25 and 6.71 s); a one-voice clip gave one speaker"
+    },
+    "aud_generate:yue2_main_q8_0": {
+      "date": "2026-11-16",
+      "check": "music",
+      "result": "q8_0 + vae_f16, two-line lyrics with an indie pop style, cot=off: 56.7 s 48 kHz stereo, rtf 0.41 on Metal; AST Music 0.88–0.95 with acoustic guitar; Whisper large-v3-turbo transcribed both lyric lines"
     }
   }
 }

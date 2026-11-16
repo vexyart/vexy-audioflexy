@@ -96,7 +96,6 @@ GENERATION_TASKS = {"music", "sfx", "midi"}
 GENERATION_PENDING = {
     "minimax_h3": "text-to-audio/video model; the run command handles audio only",
     "mulacover": "needs melody and chord MIDI input files",
-    "yue2": "requires a style option and a five-file package",
     "vevo2": "needs a reference recording",
     "latentsync": "needs a reference video",
     "liveavatar": "needs a reference image",
@@ -106,6 +105,8 @@ GENERATION_PENDING = {
 GENERATION_OPTIONS = {
     "ace_step": {"task_route": "text2music", "lyrics": "The river remembers our names", "duration_seconds": 20},
     "minimax_music3": {"request_options": "lyrics=[verse] The morning light is on the hill;duration_sec=20"},
+    "yue2": {"lyrics": "[Verse]\nSoft morning light is touching the window.\n[Chorus]\nStay with the rhythm, let it carry us home.",
+             "request_options": "style=English, indie pop, bright acoustic guitar, soft drums, warm lead vocal;cot=off"},
 }
 # Request options some analysis families cannot run without.
 ANALYSIS_OPTIONS = {
@@ -148,6 +149,8 @@ PACKAGE_OVERRIDES = {
     ("m5_tts", "tts_all"): "m5_tts_50m_customvoice_q8_0",
     # Flash runs on its fixed time grid; the Base generator is slower for the same check.
     ("auk", "tts_all"): "auk_flash_q8_0",
+    # The main model; the VAE package (same directory) is prepped alongside it by aud-audiocpp.
+    ("yue2", "aud_generate"): "yue2_main_q8_0",
     # q8_0 (6.2 GB) instead of bf16 (10.1 GB); the verified run used q8_0.
     ("ace_step", "aud_generate"): "ace_step_turbo_q8_0",
 }

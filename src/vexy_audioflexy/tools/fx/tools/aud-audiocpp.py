@@ -88,6 +88,11 @@ DEFAULT_TASK = {
 }
 
 
+# Packages that load a second package from the same model root (YuE2 reads its
+# VAE GGUF next to the main model), so `run` installs both.
+COMPANION_PACKAGES = {f"yue2_main_{q}": ("yue2_vae_f16",) for q in ("q8_0", "q4_0", "bf16")}
+
+
 def _require_engine() -> Path:
     """Return the audiocpp_cli path, or exit with build instructions."""
     if BIN_PATH.exists():
@@ -203,6 +208,8 @@ def prep(package: str = "meanvc2_120ms_40ms_f32", force: bool = False) -> None:
     if _installed(package) and not force:
         print(f"[prep] ready: {package} -> {target}")
         return
+    if _resolve(package).get("download_kind") == "unsupported":
+        raise SystemExit(f"[prep] {package} has no download (licence); convert it locally, then run: aud-audiocpp.py stage {package} <file>")
     _install_package(_resolve(package), MODELS_ROOT, package, force)
     if not _installed(package):
         raise SystemExit(f"[prep] {package}: installation remains incomplete; inspect existing files or use --force to replace them")
@@ -238,14 +245,21 @@ def stage(package: str, source: str, force: bool = False) -> None:
     prefix = entry.get("strip_prefix", "").rstrip("/") + "/"
     name = files[0][len(prefix):] if prefix != "/" and files[0].startswith(prefix) else files[0]
     dest = directory / name
+    if src.suffix != dest.suffix:
+        raise SystemExit(f"[stage] {src.name}: expected a {dest.suffix} file (audio.cpp picks the format from the extension)")
     dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.unlink(missing_ok=True)
-    dest.symlink_to(src)
-    digest = hashlib.sha256(src.read_bytes()).hexdigest()
+    if dest.resolve() != src:
+        dest.unlink(missing_ok=True)
+        dest.symlink_to(src)
+    with src.open("rb") as handle:
+        digest = hashlib.file_digest(handle, "sha256").hexdigest()
     marker = {"schema_version": 1, "package_id": package, "staged_from": str(src),
               "installed_at_unix": int(time.time()),
               "files": {files[0]: {"size": src.stat().st_size, "sha256": digest}}}
-    (directory / f".audiocpp-package-{package}.json").write_text(json.dumps(marker, indent=2) + "\n")
+    marker_path = directory / f".audiocpp-package-{package}.json"
+    tmp = marker_path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(marker, indent=2) + "\n")
+    tmp.replace(marker_path)
     print(f"[stage] ready: {package} -> {dest} (sha256 {digest[:12]})")
 
 
@@ -330,6 +344,9 @@ def run(
 
     if not _installed(package):
         prep(package)
+    for extra in COMPANION_PACKAGES.get(package, ()):
+        if not _installed(extra):
+            prep(extra)
     model_arg = _model_path(package, fam)
 
     cmd = [
