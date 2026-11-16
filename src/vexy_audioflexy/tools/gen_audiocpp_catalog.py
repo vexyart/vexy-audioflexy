@@ -55,6 +55,13 @@ ALIGN_LANGUAGE = {"mms_forced_aligner": "eng", "qwen3_forced_aligner": "English"
 # sherpa_kws runs with the keyword rows embedded in its GGUF (ARPAbet/pinyin tokens such as
 # "L AY1 T AH1 P @LIGHT_UP"); custom rows go in a keywords= request option.
 ANALYSIS_PENDING: dict[str, str] = {}
+# Packages whose weights may not be redistributed: convert locally, then
+# `aud-audiocpp.py stage <package> <file>` before `analyze`.
+LOCAL_CONVERSION = {
+    "sortformer_diar_v2": ("sortformer_diar_v2_1_f16_mixed_gguf_local",
+                           "convert the .nemo with tools/community_models/convert_sortformer_v2_1.py "
+                           "(--type f16 --keep-nonmatrix-f32), then aud-audiocpp.py stage"),
+}
 
 
 def package_installable(spec: dict, package: str | None) -> bool:
@@ -69,6 +76,10 @@ def analysis_route(spec: dict, task: str, package: str | None) -> dict:
     family = spec["family"]
     if family in ANALYSIS_PENDING:
         return {"reason": ANALYSIS_PENDING[family]}
+    if family in LOCAL_CONVERSION:
+        package, how = LOCAL_CONVERSION[family]
+        return {"route": ANALYSIS_ROUTE, "package": package, "params": {"task": task},
+                "reason": f"local conversion: {how}"}
     if not package_installable(spec, package):
         return {"reason": "every package needs a local conversion (download kind 'unsupported')"}
     params = {"task": task}

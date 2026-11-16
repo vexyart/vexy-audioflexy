@@ -11870,9 +11870,18 @@
             "diar"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "every package needs a local conversion (download kind 'unsupported')"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "local conversion: convert the .nemo with tools/community_models/convert_sortformer_v2_1.py (--type f16 --keep-nonmatrix-f32), then aud-audiocpp.py stage",
+          "package": "sortformer_diar_v2_1_f16_mixed_gguf_local",
+          "params": {
+            "task": "diar"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "diar",
+            "result": "locally converted from nvidia/diar_streaming_sortformer_4spk-v2.1 .nemo (SHA-256 8abd3283… as documented; f16 + non-matrix f32, 263.7 MB, gguf sha256 77df3aa3…); a 10 s kokoro/inflect/kokoro clip gave SPEAKER_00, SPEAKER_01, SPEAKER_00 at 0.32–2.96, 3.60–6.72, 7.04–9.84 s (true changes at 3.25 and 6.71 s); a one-voice clip gave one speaker"
+          }
         }
       ]
     },

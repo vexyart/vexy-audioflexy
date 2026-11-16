@@ -352,6 +352,11 @@
       "date": "2026-11-16",
       "check": "wake_word",
       "result": "embedded keywords; Zonos2 clip 'Please light up the room for my lovely child.' gave LIGHT_UP 0.87 and LOVELY_CHILD 0.59; a clip without the keywords gave no detections; a custom keywords=L AY1 T AH1 P @LIGHT_UP row gave only LIGHT_UP"
+    },
+    "aud_analyze:sortformer_diar_v2_1_f16_mixed_gguf_local": {
+      "date": "2026-11-16",
+      "check": "diar",
+      "result": "locally converted from nvidia/diar_streaming_sortformer_4spk-v2.1 .nemo (SHA-256 8abd3283… as documented; f16 + non-matrix f32, 263.7 MB, gguf sha256 77df3aa3…); a 10 s kokoro/inflect/kokoro clip gave SPEAKER_00, SPEAKER_01, SPEAKER_00 at 0.32–2.96, 3.60–6.72, 7.04–9.84 s (true changes at 3.25 and 6.71 s); a one-voice clip gave one speaker"
     }
   }
 }

@@ -12,6 +12,7 @@ this_file: WORK.md
 - ACE-Step 1.5 turbo q8_0 (`--task gen --task-route text2music`, new `run --lyrics/--duration_seconds`): 20 s stereo song; AST Music 0.86, Singing. Verified.
 - sherpa_kws (embedded ARPAbet/pinyin keyword rows): LIGHT_UP 0.87 and LOVELY_CHILD 0.59 on a Zonos2 clip, nothing on a clip without them, custom `keywords=` row honoured. `analyze` now writes `[]` when no segment is detected. Verified.
 - MiniMax Music 3 q4_0 with `lyrics=` and `duration_sec=20`: 20 s at rtf 12.3, but AST hears a gong (0.81), not the prompted pop song. Routed, left `pending runtime`; next check is the q8_0 package (9.9 GB).
+- Sortformer Diar v2.1: built `audiocpp_gguf`, downloaded the public `.nemo` (SHA-256 matches the upstream doc), converted with `--type f16 --keep-nonmatrix-f32` (263.7 MB, same size as upstream; different hash) and staged it with the new `aud-audiocpp.py stage`. A kokoro/inflect/kokoro clip gave A, B, A turns within 0.35 s of the true changes; one voice gave one speaker. Verified. Weights stay local (NVIDIA Open Model License; no redistribution).
 - VieNeu v3 Turbo q8_0 with phoneme text and `minh_quan_pro`: OWSM v4 gives "Xin chào thế giới, đây là bản thử nghiệm." Not registry-routed (Vietnamese only).
 - SAM Audio small q8_0: prompts "a man speaking", "a woman speaking" and "a ticking clock" gave near-identical target/residual levels. Pending.
 - Tests: 615 passed.

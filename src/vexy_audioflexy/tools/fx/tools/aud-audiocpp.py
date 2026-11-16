@@ -209,6 +209,46 @@ def prep(package: str = "meanvc2_120ms_40ms_f32", force: bool = False) -> None:
     print(f"[prep] ready: {package} -> {target}")
 
 
+def stage(package: str, source: str, force: bool = False) -> None:
+    """Install a locally converted file as *package* (specs whose download kind is 'unsupported').
+
+    Some checkpoints may not be redistributed (e.g. Sortformer v2.1 under the NVIDIA
+    Open Model License), so their spec lists no download. Convert the checkpoint with
+    the upstream converter, then stage the single resulting file here: it is linked
+    under the name the spec declares and a package marker records its size and SHA-256.
+
+    Args:
+        package: Package id with exactly one declared file.
+        source: Path to the converted file.
+        force: Replace an already staged package.
+    """
+    import hashlib
+
+    entry = _resolve(package)
+    files = entry.get("files") or []
+    if len(files) != 1:
+        raise SystemExit(f"[stage] {package} declares {len(files)} files; only single-file packages can be staged")
+    src = Path(source).expanduser().resolve()
+    if not src.is_file() or src.stat().st_size == 0:
+        raise SystemExit(f"[stage] missing or empty source: {src}")
+    if _installed(package) and not force:
+        print(f"[stage] already staged: {package} (use --force to replace)")
+        return
+    directory = MODELS_ROOT / entry["target_directory"]
+    prefix = entry.get("strip_prefix", "").rstrip("/") + "/"
+    name = files[0][len(prefix):] if prefix != "/" and files[0].startswith(prefix) else files[0]
+    dest = directory / name
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.unlink(missing_ok=True)
+    dest.symlink_to(src)
+    digest = hashlib.sha256(src.read_bytes()).hexdigest()
+    marker = {"schema_version": 1, "package_id": package, "staged_from": str(src),
+              "installed_at_unix": int(time.time()),
+              "files": {files[0]: {"size": src.stat().st_size, "sha256": digest}}}
+    (directory / f".audiocpp-package-{package}.json").write_text(json.dumps(marker, indent=2) + "\n")
+    print(f"[stage] ready: {package} -> {dest} (sha256 {digest[:12]})")
+
+
 def run(
     audio: str = "",
     package: str = "meanvc2_120ms_40ms_f32",
@@ -522,5 +562,5 @@ def analyze(
 if __name__ == "__main__":
     import fire
 
-    fire.Fire({"prep": prep, "run": run, "info": info,
+    fire.Fire({"prep": prep, "stage": stage, "run": run, "info": info,
                "packages": packages, "loaders": loaders, "analyze": analyze})

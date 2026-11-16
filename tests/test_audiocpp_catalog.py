@@ -195,7 +195,7 @@ def test_analysis_tasks_when_installable_then_route_to_analyze_command():
     routes = {(f["family"], r["tasks"][0]): r for f in catalog["families"] for r in f["routes"] if r["registry"] is None}
     assert routes[("firered_vad", "vad")]["route"] == "aud_analyze"
     assert routes[("mms_forced_aligner", "align")]["params"] == {"task": "align", "language": "eng"}
-    assert routes[("sortformer_diar_v2", "diar")]["route"] == "pending adapter", "unsupported-only packages stay pending"
+    assert routes[("sortformer_diar_v2", "diar")]["package"].endswith("_local"), "local-conversion packages are staged"
     assert routes[("sherpa_kws", "wake_word")]["route"] == "aud_analyze", "embedded keyword rows need no extra input"
 
 
@@ -309,3 +309,21 @@ def test_generation_options_when_set_then_match_run_keywords():
     names = set(inspect.signature(module.run).parameters)
     for family, options in GEN["GENERATION_OPTIONS"].items():
         assert set(options) <= names, family
+
+
+def test_aud_audiocpp_stage_when_converted_file_then_linked_with_marker(monkeypatch, tmp_path):
+    module = _aud_module(monkeypatch, tmp_path, [])
+    monkeypatch.setattr(module, "MODELS_ROOT", tmp_path / "models")
+    monkeypatch.setattr(module, "_installed", lambda pkg: False)
+    monkeypatch.setattr(module, "_resolve", lambda pkg: {
+        "family": "fx", "target_directory": "Fx-local", "strip_prefix": "Fx-local",
+        "files": ["Fx-local/fx-f16.gguf"]})
+    src = tmp_path / "converted.gguf"
+    src.write_bytes(b"GGUF")
+    module.stage("fx_local", str(src))
+    dest = tmp_path / "models/Fx-local/fx-f16.gguf"
+    assert dest.is_symlink() and dest.resolve() == src.resolve()
+    marker = json.loads((tmp_path / "models/Fx-local/.audiocpp-package-fx_local.json").read_text())
+    assert marker["files"]["Fx-local/fx-f16.gguf"]["size"] == 4
+    with pytest.raises(SystemExit):
+        module.stage("fx_local", str(tmp_path / "missing.gguf"))
