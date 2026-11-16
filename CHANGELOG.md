@@ -6,6 +6,7 @@ this_file: CHANGELOG.md
 
 ## Unreleased
 
+- aud-audiocpp `run --image` and MP4 output for SoulX FlashHead: the engine's RGB24 chunk artifacts are encoded to H.264 with the input speech muxed. FlashHead Lite q8_0 is verified (73/166). `--request_options` accepts `\;` for a literal semicolon. MuLaCover stays pending: the engine asserts in ggml-alloc on Metal and CPU.
 - Route and verify YuE2 (lyrics plus style; the VAE package is prepped with the main model). Harden `stage` after review: no self-link when the source is already at the spec path, extension check, streamed SHA-256, atomic marker, and `prep` tells you to `stage` packages that have no download. 72 of 166 routes are verified.
 - Add `aud-audiocpp.py stage` to install a locally converted file as a package (linked under the spec name, marker records size and SHA-256), and route Sortformer Diar v2.1 through it. Verified on a two-voice clip; 71 of 166 routes are verified.
 - Route ACE-Step (text2music with lyrics and duration; `aud-audiocpp.py run` gained `lyrics` and `duration_seconds`, passed as `--lyrics` and `--duration-seconds`), MiniMax Music 3 (lyrics request option) and sherpa_kws (embedded keywords) from the catalog. ACE-Step and sherpa_kws verified; MiniMax Music 3 q4_0 produced a gong-like clip, so it stays `pending runtime`. Wake-word analysis with no detections now writes an empty list instead of failing. 70 of 166 routes are verified.

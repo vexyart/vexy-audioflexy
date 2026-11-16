@@ -7806,7 +7806,7 @@
           "covered_by": [],
           "status": "pending runtime",
           "route": "pending adapter",
-          "reason": "needs melody and chord MIDI input files"
+          "reason": "aborts in ggml-alloc (out of free blocks) on Metal and CPU at 83b1354 with reference audio"
         }
       ]
     },
@@ -11940,9 +11940,23 @@
             "sfx"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "needs a reference image"
+          "status": "verified",
+          "route": "aud_generate",
+          "reason": "single-clip run command with a text prompt (midi: an audio input); no batch registry",
+          "package": "soulx_flashhead_lite_q8_0",
+          "params": {
+            "task": "gen",
+            "requires": [
+              "audio: speech WAV (mono 16 kHz)",
+              "image: portrait PNG/JPG",
+              "output: .mp4"
+            ]
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "video",
+            "result": "Lite q8_0 on Metal, upstream examples/girl.png with 4 s of examples/podcast_sichuan_16k.wav: 100 frames 512x512 at 25 fps muxed to H.264+AAC MP4, rtf 8.2; sampled frames keep the identity with changing mouth shapes, mean YDIF 1.5"
+          }
         }
       ]
     },

@@ -4,6 +4,8 @@ import importlib.util
 import json
 import os
 import runpy
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -354,3 +356,40 @@ def test_aud_audiocpp_prep_when_yue2_main_then_vae_companion_prepped(monkeypatch
     assert installs == ["yue2_main_q8_0", "yue2_vae_f16"]
     module.prep("ace_step_turbo_q8_0")
     assert installs[-1] == "ace_step_turbo_q8_0" and installs.count("yue2_vae_f16") == 1, "other packages get no companion"
+
+
+def test_aud_audiocpp_run_when_escaped_semicolon_then_one_request_option(monkeypatch, tmp_path):
+    calls = []
+    module = _aud_module(monkeypatch, tmp_path, calls, writes=True)
+    module.run("", package="mulacover_q8_0", task="gen", output=str(tmp_path / "o.wav"),
+               request_options=r"tags=genre:[folk]\; mood:[warm];seed=7")
+    cmd = calls[0]
+    opts = [cmd[i + 1] for i, part in enumerate(cmd) if part == "--request-option"]
+    assert opts == ["tags=genre:[folk]; mood:[warm]", "seed=7"], opts
+
+
+@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="needs ffmpeg")
+def test_aud_audiocpp_encode_video_when_rgb24_chunks_then_mp4_with_all_frames(monkeypatch, tmp_path):
+    module = _aud_module(monkeypatch, tmp_path, [])
+    monkeypatch.undo()  # real subprocess for ffmpeg
+    frames = tmp_path / "frames"
+    frames.mkdir()
+    for index in range(2):  # chunk 10 sorts after chunk 2 only with a numeric key
+        meta = {"chunk_index": str(index), "format": "rgb24", "fps": "25", "frames": "3", "height": "16", "width": "16"}
+        payload = bytes([index * 100]) * (16 * 16 * 3 * 3)
+        (frames / f"soulx_flashhead_video_{index}.json").write_text(json.dumps({"meta": meta, "payload_hex": payload.hex()}))
+    out = tmp_path / "v.mp4"
+    module._encode_video(frames, "soulx_flashhead_video_", "", out)
+    probe = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-show_entries", "stream=nb_read_frames",
+                            "-of", "csv=p=0", str(out)], capture_output=True, text=True, check=True)
+    assert probe.stdout.strip() == "6", probe.stdout
+
+
+def test_aud_audiocpp_encode_video_when_chunk_size_wrong_then_exit(monkeypatch, tmp_path):
+    module = _aud_module(monkeypatch, tmp_path, [])
+    frames = tmp_path / "frames"
+    frames.mkdir()
+    meta = {"format": "rgb24", "fps": "25", "frames": "2", "height": "4", "width": "4"}
+    (frames / "soulx_flashhead_video_0.json").write_text(json.dumps({"meta": meta, "payload_hex": "00"}))
+    with pytest.raises(SystemExit):
+        module._encode_video(frames, "soulx_flashhead_video_", "", tmp_path / "v.mp4")

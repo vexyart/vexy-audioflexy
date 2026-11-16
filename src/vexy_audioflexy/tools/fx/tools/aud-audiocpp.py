@@ -39,6 +39,8 @@ from platformdirs import user_cache_path, user_data_path
 RUNTIME_ROOT = Path(os.environ.get("VAFX_AUDIO_RUNTIME_ROOT", user_data_path("vexy-audioflexy") / "audio" )).expanduser()
 CACHE_ROOT = Path(os.environ.get("VAFX_AUDIO_CACHE_ROOT", user_cache_path("vexy-audioflexy") / "audio")).expanduser()
 import json
+import re
+import shutil
 import os
 import subprocess
 import time
@@ -90,7 +92,41 @@ DEFAULT_TASK = {
 
 # Packages that load a second package from the same model root (YuE2 reads its
 # VAE GGUF next to the main model), so `run` installs both.
+# Families whose engine output is chunked RGB24 video artifacts in --out-dir
+# (`<prefix>_<chunk>.json` with meta + payload_hex); run() encodes them to MP4.
+VIDEO_ARTIFACT_FAMILIES = {"soulx_flashhead": "soulx_flashhead_video_"}
 COMPANION_PACKAGES = {f"yue2_main_{q}": ("yue2_vae_f16",) for q in ("q8_0", "q4_0", "bf16")}
+
+
+def _encode_video(frames_dir: Path, prefix: str, audio: str, out_path: Path) -> None:
+    """Join the engine's RGB24 chunk artifacts into an H.264 MP4, muxing `audio` when given.
+
+    Frames go through a temp file rather than a pipe: with -shortest ffmpeg stops
+    reading once the audio ends, which breaks a writer still feeding the pipe.
+    """
+    chunks = sorted(frames_dir.glob(f"{prefix}*.json"), key=lambda f: int(f.stem.rsplit("_", 1)[1]))
+    if not chunks:
+        raise SystemExit(f"no {prefix}*.json video artifacts in {frames_dir}")
+    raw = frames_dir / "frames.rgb24"
+    first = None
+    with raw.open("wb") as sink:
+        for chunk in chunks:
+            art = json.loads(chunk.read_text())
+            meta = art["meta"]
+            first = first or meta
+            if meta["format"] != "rgb24" or any(meta[k] != first[k] for k in ("width", "height", "fps")):
+                raise SystemExit(f"video chunk {chunk.name} differs in format from the first chunk")
+            payload = bytes.fromhex(art["payload_hex"])
+            if len(payload) != int(meta["width"]) * int(meta["height"]) * int(meta["frames"]) * 3:
+                raise SystemExit(f"video chunk {chunk.name} byte count does not match its dimensions")
+            sink.write(payload)
+    cmd = ["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pixel_format", "rgb24",
+           "-video_size", f"{first['width']}x{first['height']}", "-framerate", first["fps"], "-i", str(raw)]
+    if audio:
+        cmd += ["-i", str(Path(audio).resolve()), "-c:a", "aac", "-shortest"]
+    cmd += ["-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(out_path)]
+    subprocess.run(cmd, check=True)
+    raw.unlink()
 
 
 def _require_engine() -> Path:
@@ -284,6 +320,7 @@ def run(
     lyrics: str = "",
     duration_seconds: float = 0,
     voice_id: str = "",
+    image: str = "",
     num_inference_steps: int = 0,
     request_options: str = "",
     session_options: str = "",
@@ -321,6 +358,8 @@ def run(
             (Seed-VC, VeVo2); 0 leaves the model default.
         request_options: Per-request `key=value` settings separated by `;`
             (e.g. `guidance_scale=3.5;seed=42`).
+        image: Reference portrait for talking-head video families (SoulX FlashHead);
+            passed as `reference_image_file`. Video families write `output` as MP4.
         session_options: Per-session `key=value` settings separated by `;`.
         seed: Fixed seed; 0 leaves the model default.
         extra: Additional raw CLI arguments, space-separated.
@@ -350,13 +389,21 @@ def run(
         prep(package)
     model_arg = _model_path(package, fam)
 
+    video_prefix = VIDEO_ARTIFACT_FAMILIES.get(fam, "")
+    frames_dir = out_path.with_name(out_path.stem + ".frames") if video_prefix else None
+    if frames_dir:
+        if out_path.suffix.lower() != ".mp4":
+            raise SystemExit(f"{fam} writes video: give --output a .mp4 path")
+        shutil.rmtree(frames_dir, ignore_errors=True)
+        frames_dir.mkdir(parents=True)
     cmd = [
         str(binary),
         "--task", the_task,
         "--family", fam,
         "--model", str(model_arg),
         "--backend", BACKEND,
-        "--out-dir" if fam == "sam_audio" or the_task == "sep" else "--out", str(out_path),
+        *(["--out-dir", str(frames_dir)] if frames_dir else
+          ["--out-dir" if fam == "sam_audio" or the_task == "sep" else "--out", str(out_path)]),
         "--metrics",
     ]
     if audio:
@@ -383,12 +430,16 @@ def run(
         cmd += ["--duration-seconds", f"{float(duration_seconds):g}"]
     if voice_id:
         cmd += ["--request-option", f"voice_id={voice_id}"]
+    if image:
+        cmd += ["--request-option", f"reference_image_file={Path(image).resolve()}"]
     if num_inference_steps:
         cmd += ["--num-inference-steps", str(num_inference_steps)]
     for flag, blob in (("--request-option", request_options),
                        ("--session-option", session_options)):
-        for setting in (part.strip() for part in blob.split(";") if part.strip()):
-            cmd += [flag, setting]
+        # `\;` keeps a literal semicolon inside one value (MuLaCover tags are `;`-separated).
+        for part in re.split(r"(?<!\\);", blob):
+            if part.strip():
+                cmd += [flag, part.strip().replace("\\;", ";")]
     if seed:
         cmd += ["--seed", str(seed)]
     if extra:
@@ -412,6 +463,8 @@ def run(
     elif the_task == "sep":  # engine names stems itself (speaker_1.wav, vocals.wav, ...)
         # Stems from an earlier run in the same directory are not this model's output.
         outputs = sorted(p for p in out_path.glob("*.wav") if p.stat().st_mtime >= started) if out_path.is_dir() else []
+    elif frames_dir:
+        outputs = sorted(frames_dir.glob(f"{video_prefix}*.json"))
     else:
         outputs = [out_path]
     if result.returncode != 0 or not outputs or not all(p.is_file() and p.stat().st_size > 0 for p in outputs):
@@ -426,6 +479,9 @@ def run(
         console.print("\n".join(lines[-12:]))
         raise SystemExit(1)
 
+    if frames_dir:
+        _encode_video(frames_dir, video_prefix, audio, out_path)
+        shutil.rmtree(frames_dir, ignore_errors=True)
     metrics = {
         k: v
         for k, _, v in (
@@ -436,6 +492,8 @@ def run(
     }
     if play and fam == "sam_audio":
         subprocess.run(["afplay", str(out_path / "target.wav")], check=True)
+    elif play and frames_dir:
+        subprocess.run(["open", str(out_path)], check=True)
     elif play:
         subprocess.run(["afplay", str(out_path)], check=True)
     else:

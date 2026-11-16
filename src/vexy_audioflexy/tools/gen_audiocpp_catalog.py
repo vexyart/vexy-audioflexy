@@ -95,11 +95,10 @@ GENERATION_ROUTE = "aud_generate"
 GENERATION_TASKS = {"music", "sfx", "midi"}
 GENERATION_PENDING = {
     "minimax_h3": "text-to-audio/video model; the run command handles audio only",
-    "mulacover": "needs melody and chord MIDI input files",
+    "mulacover": "aborts in ggml-alloc (out of free blocks) on Metal and CPU at 83b1354 with reference audio",
     "vevo2": "needs a reference recording",
     "latentsync": "needs a reference video",
     "liveavatar": "needs a reference image",
-    "soulx_flashhead": "needs a reference image",
 }
 # Inputs some generators cannot run without (aud-audiocpp.py run keyword arguments).
 GENERATION_OPTIONS = {
@@ -109,6 +108,10 @@ GENERATION_OPTIONS = {
                        "request_options": "lyrics=[verse] City lights are shining low. I keep moving with the glow. [chorus] Turn it up and let it fly. Sing the melody tonight.;duration_sec=20;num_inference_steps=30"},
     "yue2": {"lyrics": "[Verse]\nSoft morning light is touching the window.\n[Chorus]\nStay with the rhythm, let it carry us home.",
              "request_options": "style=English, indie pop, bright acoustic guitar, soft drums, warm lead vocal;cot=off"},
+}
+# Inputs the caller must supply; video families also need an .mp4 output path.
+GENERATION_INPUTS = {
+    "soulx_flashhead": ["audio: speech WAV (mono 16 kHz)", "image: portrait PNG/JPG", "output: .mp4"],
 }
 # Request options some analysis families cannot run without.
 ANALYSIS_OPTIONS = {
@@ -125,6 +128,8 @@ def generation_route(spec: dict, task: str, package: str | None) -> dict:
     if not package_installable(spec, package):
         return {"reason": "every package needs a local conversion (download kind 'unsupported')"}
     params = {"task": "midi" if task == "midi" else "gen", **GENERATION_OPTIONS.get(family, {})}
+    if family in GENERATION_INPUTS:
+        params["requires"] = GENERATION_INPUTS[family]
     return {"route": GENERATION_ROUTE, "package": package, "params": params,
             "reason": "single-clip run command with a text prompt (midi: an audio input); no batch registry"}
 

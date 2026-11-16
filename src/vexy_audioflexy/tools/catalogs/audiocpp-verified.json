@@ -362,6 +362,11 @@
       "date": "2026-11-16",
       "check": "music",
       "result": "q8_0 + vae_f16, two-line lyrics with an indie pop style, cot=off: 56.7 s 48 kHz stereo, rtf 0.41 on Metal; AST Music 0.88–0.95 with acoustic guitar; Whisper large-v3-turbo transcribed both lyric lines"
+    },
+    "aud_generate:soulx_flashhead_lite_q8_0": {
+      "date": "2026-11-16",
+      "check": "video",
+      "result": "Lite q8_0 on Metal, upstream examples/girl.png with 4 s of examples/podcast_sichuan_16k.wav: 100 frames 512x512 at 25 fps muxed to H.264+AAC MP4, rtf 8.2; sampled frames keep the identity with changing mouth shapes, mean YDIF 1.5"
     }
   }
 }
