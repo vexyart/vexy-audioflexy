@@ -52,9 +52,9 @@ PENDING_REASONS = {
 ANALYSIS_ROUTE = "aud_analyze"
 ANALYSIS_TASKS = {"align", "vad", "diar", "wake_word", "classify"}
 ALIGN_LANGUAGE = {"mms_forced_aligner": "eng", "qwen3_forced_aligner": "English"}
-ANALYSIS_PENDING = {
-    "sherpa_kws": "keyword spotting needs BPE-token keywords= rows the analyze command does not build",
-}
+# sherpa_kws runs with the keyword rows embedded in its GGUF (ARPAbet/pinyin tokens such as
+# "L AY1 T AH1 P @LIGHT_UP"); custom rows go in a keywords= request option.
+ANALYSIS_PENDING: dict[str, str] = {}
 
 
 def package_installable(spec: dict, package: str | None) -> bool:
@@ -83,15 +83,18 @@ def analysis_route(spec: dict, task: str, package: str | None) -> dict:
 GENERATION_ROUTE = "aud_generate"
 GENERATION_TASKS = {"music", "sfx", "midi"}
 GENERATION_PENDING = {
-    "ace_step": "needs a --task-route the run command does not choose",
     "minimax_h3": "text-to-audio/video model; the run command handles audio only",
-    "minimax_music3": "requires lyrics the run command does not supply by default",
     "mulacover": "needs melody and chord MIDI input files",
     "yue2": "requires a style option and a five-file package",
     "vevo2": "needs a reference recording",
     "latentsync": "needs a reference video",
     "liveavatar": "needs a reference image",
     "soulx_flashhead": "needs a reference image",
+}
+# Inputs some generators cannot run without (aud-audiocpp.py run keyword arguments).
+GENERATION_OPTIONS = {
+    "ace_step": {"task_route": "text2music", "lyrics": "The river remembers our names", "duration_seconds": 20},
+    "minimax_music3": {"request_options": "lyrics=[verse] The morning light is on the hill;duration_sec=20"},
 }
 # Request options some analysis families cannot run without.
 ANALYSIS_OPTIONS = {
@@ -107,7 +110,7 @@ def generation_route(spec: dict, task: str, package: str | None) -> dict:
         return {"reason": GENERATION_PENDING[family]}
     if not package_installable(spec, package):
         return {"reason": "every package needs a local conversion (download kind 'unsupported')"}
-    params = {"task": "midi" if task == "midi" else "gen"}
+    params = {"task": "midi" if task == "midi" else "gen", **GENERATION_OPTIONS.get(family, {})}
     return {"route": GENERATION_ROUTE, "package": package, "params": params,
             "reason": "single-clip run command with a text prompt (midi: an audio input); no batch registry"}
 
@@ -134,6 +137,8 @@ PACKAGE_OVERRIDES = {
     ("m5_tts", "tts_all"): "m5_tts_50m_customvoice_q8_0",
     # Flash runs on its fixed time grid; the Base generator is slower for the same check.
     ("auk", "tts_all"): "auk_flash_q8_0",
+    # q8_0 (6.2 GB) instead of bf16 (10.1 GB); the verified run used q8_0.
+    ("ace_step", "aud_generate"): "ace_step_turbo_q8_0",
 }
 MANUAL_PENDING = {
     ("sam_audio", "aud_all"): "prompt-conditioned separation; run 2026-11-16 on Metal gave the same target/residual split for three different --text prompts, so the prompt is not reaching the model",
@@ -312,7 +317,7 @@ def family_routes(spec: dict, coverage: dict[str, list[str]], package: str | Non
         if not covered and task in ANALYSIS_TASKS:
             record.update(analysis_route(spec, task, package))
         elif not covered and task in GENERATION_TASKS:
-            record.update(generation_route(spec, task, package))
+            record.update(generation_route(spec, task, PACKAGE_OVERRIDES.get((spec["family"], GENERATION_ROUTE), package)))
         routes.append(record)
     return routes
 

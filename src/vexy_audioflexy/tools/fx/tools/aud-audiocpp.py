@@ -223,6 +223,8 @@ def run(
     text: str = "",
     target_text: str = "",
     style_ref_text: str = "",
+    lyrics: str = "",
+    duration_seconds: float = 0,
     voice_id: str = "",
     num_inference_steps: int = 0,
     request_options: str = "",
@@ -252,6 +254,9 @@ def run(
         text: Target text, or PersonaPlex's system/persona prompt.
         target_text: Target text/lyrics when separate from *text* (VeVo2).
         style_ref_text: Transcript of the style/voice reference (VeVo2).
+        lyrics: Lyrics for song generators (`--lyrics`; ACE-Step, YuE2).
+        duration_seconds: Target length for generators that take
+            `--duration-seconds` (ACE-Step); 0 lets the model choose.
         voice_id: Packaged voice prompt id (PersonaPlex `NATF2`, `NATM1`, ...),
             sent as a request option.
         num_inference_steps: Sampler steps for families that take the flag
@@ -314,6 +319,10 @@ def run(
         cmd += ["--target-text", target_text]
     if style_ref_text:
         cmd += ["--style-ref-text", style_ref_text]
+    if lyrics:
+        cmd += ["--lyrics", str(lyrics)]
+    if duration_seconds:
+        cmd += ["--duration-seconds", f"{float(duration_seconds):g}"]
     if voice_id:
         cmd += ["--request-option", f"voice_id={voice_id}"]
     if num_inference_steps:
@@ -501,6 +510,9 @@ def analyze(
         payload = next((line[len(prefix):] for line in result.stdout.splitlines() if line.startswith(prefix)), "")
         if payload:
             out_path.write_text(json.dumps(json.loads(payload), indent=2) + "\n")
+    if flag == "--segments-out" and result.returncode == 0 and not out_path.is_file():
+        # The CLI writes no segments file when nothing is detected (e.g. no keyword spoken).
+        out_path.write_text("[]\n")
     if result.returncode != 0 or not out_path.is_file() or out_path.stat().st_size == 0:
         tail = "\n".join(line for line in (result.stdout + result.stderr).splitlines() if "ggml_" not in line)[-2000:]
         raise SystemExit(f"[analyze] {package} {task} failed (exit {result.returncode}):\n{tail}")

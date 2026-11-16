@@ -58,6 +58,7 @@ The initial implementation excluded publication. The subsequently authorized
 - [x] VieNeu plain-text input via sea-g2p (direct run; no vi registry yet).
 - [ ] AuK reference TTS/editing (Metal abort); SAM Audio prompt; MiniMax-H3 (`--task gen`).
 - [x] Add adapters for audio.cpp music, sfx, sep, align, diar, vad, wake-word and classify families.
-- [ ] Add input-aware adapters for lyrics/melody/style music (ACE-Step, YuE 2, MiniMax Music 3, MulaCover, VeVo2), audio edit, and video/image-conditioned families.
+- [x] Route ACE-Step (verified) and MiniMax Music 3 (q4_0 output off-prompt; try q8_0) with lyrics inputs; route sherpa_kws (verified).
+- [ ] Add input-aware adapters for melody/style music (YuE 2, MulaCover, VeVo2), audio edit, and video/image-conditioned families.
 - [x] Recheck phonon-2 on transcribe.cpp 0.4.2 (byte-identical to 5700f12).
 - [ ] Run speech.cpp drama-3 after a deliberate weight pull.

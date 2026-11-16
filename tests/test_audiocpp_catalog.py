@@ -196,7 +196,7 @@ def test_analysis_tasks_when_installable_then_route_to_analyze_command():
     assert routes[("firered_vad", "vad")]["route"] == "aud_analyze"
     assert routes[("mms_forced_aligner", "align")]["params"] == {"task": "align", "language": "eng"}
     assert routes[("sortformer_diar_v2", "diar")]["route"] == "pending adapter", "unsupported-only packages stay pending"
-    assert routes[("sherpa_kws", "wake_word")]["route"] == "pending adapter"
+    assert routes[("sherpa_kws", "wake_word")]["route"] == "aud_analyze", "embedded keyword rows need no extra input"
 
 
 def test_generation_tasks_when_routable_then_gen_or_midi_and_held_families_pending():
@@ -247,3 +247,19 @@ def test_tts_audiocpp_prep_when_fire_passes_deps_tuple_then_each_dep_installed(m
     monkeypatch.setattr(module, "_installed", lambda pkg: seen.append(pkg) or True)
     module.prep("auk_flash_q8_0", deps=("auk_qwen_q8_0", "auk_vae_f32"))
     assert seen == ["auk_qwen_q8_0", "auk_vae_f32", "auk_flash_q8_0"]
+
+
+def test_music_generators_when_inputs_known_then_routed_with_their_options(catalog):
+    fams = {f["family"]: f for f in catalog["families"]}
+    gen = lambda fam: next(r for r in fams[fam]["routes"] if r["route"] == "aud_generate")
+    ace = gen("ace_step")
+    assert ace["package"] == "ace_step_turbo_q8_0" and ace["params"]["task_route"] == "text2music"
+    assert ace["params"]["lyrics"] and ace["params"]["duration_seconds"] > 0
+    assert "lyrics=" in gen("minimax_music3")["params"]["request_options"]
+    kws = next(r for r in fams["sherpa_kws"]["routes"] if r["tasks"] == ["wake_word"])
+    assert kws["route"] == "aud_analyze" and kws["status"] == "verified"
+
+
+def test_aud_audiocpp_run_when_lyrics_and_duration_then_cli_flags_passed():
+    src = (TOOLS / "fx/tools/aud-audiocpp.py").read_text()
+    assert '["--lyrics", str(lyrics)]' in src and '"--duration-seconds"' in src

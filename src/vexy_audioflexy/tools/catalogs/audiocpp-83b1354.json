@@ -131,9 +131,21 @@
             "music"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "needs a --task-route the run command does not choose"
+          "status": "verified",
+          "route": "aud_generate",
+          "reason": "single-clip run command with a text prompt (midi: an audio input); no batch registry",
+          "package": "ace_step_turbo_q8_0",
+          "params": {
+            "task": "gen",
+            "task_route": "text2music",
+            "lyrics": "The river remembers our names",
+            "duration_seconds": 20
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "generation",
+            "result": "--task-route text2music, prompt 'acoustic folk ballad with a clear female vocal and guitar', lyrics 'The river remembers our names', 20 s 48 kHz stereo; AST Music 0.86, Music for children, Lullaby, Singing"
+          }
         },
         {
           "registry": null,
@@ -6615,8 +6627,13 @@
           ],
           "covered_by": [],
           "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "requires lyrics the run command does not supply by default"
+          "route": "aud_generate",
+          "reason": "single-clip run command with a text prompt (midi: an audio input); no batch registry",
+          "package": "minimax_music3_q4_0",
+          "params": {
+            "task": "gen",
+            "request_options": "lyrics=[verse] The morning light is on the hill;duration_sec=20"
+          }
         }
       ]
     },
@@ -11432,9 +11449,18 @@
             "wake_word"
           ],
           "covered_by": [],
-          "status": "pending runtime",
-          "route": "pending adapter",
-          "reason": "keyword spotting needs BPE-token keywords= rows the analyze command does not build"
+          "status": "verified",
+          "route": "aud_analyze",
+          "reason": "single-clip analyze command; no batch registry",
+          "package": "sherpa_kws_zipformer_zh_en_3m_f32",
+          "params": {
+            "task": "wake_word"
+          },
+          "verification": {
+            "date": "2026-11-16",
+            "check": "wake_word",
+            "result": "embedded keywords; Zonos2 clip 'Please light up the room for my lovely child.' gave LIGHT_UP 0.87 and LOVELY_CHILD 0.59; a clip without the keywords gave no detections; a custom keywords=L AY1 T AH1 P @LIGHT_UP row gave only LIGHT_UP"
+          }
         }
       ]
     },

@@ -6,6 +6,7 @@ this_file: CHANGELOG.md
 
 ## Unreleased
 
+- Route ACE-Step (text2music with lyrics and duration; `aud-audiocpp.py run` gained `--lyrics` and `--duration_seconds`), MiniMax Music 3 (lyrics request option) and sherpa_kws (embedded keywords) from the catalog. ACE-Step and sherpa_kws verified; MiniMax Music 3 q4_0 produced a gong-like clip, so it stays `pending runtime`. Wake-word analysis with no detections now writes an empty list instead of failing. 70 of 166 routes are verified.
 - Route VeVo2 (`zero_shot_tts` with `--voice-ref`, no reference transcript) and AuK Flash (instruction TTS with its Qwen2.5-Omni-3B and VAE packages, English only) into `tts_all`. Both verified on 83b1354 by an ASR round trip. AuK also speaks the first words of the voice description; its reference-conditioned TTS and `--task gen` editing abort in the Metal flow sampler, and AuK does not support the CPU backend. 68 of 166 routes are now verified.
 - `tts_all` catalog rows pass `deps`, `request_options`, `session_options` and `extra` as `--key=value`, so a value starting with `--` reaches the adapter intact. `tts-audiocpp.py prep` accepts the tuple Fire makes from a comma-separated `--deps`; before this, every multi-package call failed with "'tuple' object has no attribute 'split'".
 - VieNeu v3 Turbo runs from phoneme text with its packaged `minh_quan_pro` voice (OWSM transcribes it exactly). It stays out of the registries, which only feed en/pl text. SAM Audio stays pending: three different text prompts gave the same split.

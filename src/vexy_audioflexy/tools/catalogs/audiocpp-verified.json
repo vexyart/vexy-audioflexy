@@ -342,6 +342,16 @@
       "date": "2026-11-16",
       "check": "asr_roundtrip",
       "result": "instruction TTS on Metal; parakeet_tdt_q8_0: 'A warm adult. The weather is lovely today, so let us take a short walk by the river.' The sentence is complete but the first words of the voice description are spoken too. Reference-conditioned TTS and --task gen editing abort in the Metal flow sampler; CPU is unsupported"
+    },
+    "aud_generate:ace_step_turbo_q8_0:music": {
+      "date": "2026-11-16",
+      "check": "generation",
+      "result": "--task-route text2music, prompt 'acoustic folk ballad with a clear female vocal and guitar', lyrics 'The river remembers our names', 20 s 48 kHz stereo; AST Music 0.86, Music for children, Lullaby, Singing"
+    },
+    "aud_analyze:sherpa_kws_zipformer_zh_en_3m_f32": {
+      "date": "2026-11-16",
+      "check": "wake_word",
+      "result": "embedded keywords; Zonos2 clip 'Please light up the room for my lovely child.' gave LIGHT_UP 0.87 and LOVELY_CHILD 0.59; a clip without the keywords gave no detections; a custom keywords=L AY1 T AH1 P @LIGHT_UP row gave only LIGHT_UP"
     }
   }
 }
