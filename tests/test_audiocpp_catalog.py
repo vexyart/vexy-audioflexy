@@ -368,7 +368,6 @@ def test_aud_audiocpp_run_when_escaped_semicolon_then_one_request_option(monkeyp
     assert opts == ["tags=genre:[folk]; mood:[warm]", "seed=7"], opts
 
 
-@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="needs ffmpeg")
 def _vid_module():
     spec = importlib.util.spec_from_file_location("vid_audiocpp_mod", TOOLS / "vid/tools/vid-audiocpp.py")
     module = importlib.util.module_from_spec(spec)
@@ -389,6 +388,7 @@ def test_video_families_when_cataloged_then_routed_to_vid_generate(catalog):
             assert {r["route"] for r in fam["routes"] if r.get("package")} == {"vid_generate"}, fam["family"]
 
 
+@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="needs ffmpeg")
 def test_vid_audiocpp_encode_video_when_rgb24_chunks_then_mp4_with_all_frames(tmp_path):
     module = _vid_module()
     frames = tmp_path / "frames"

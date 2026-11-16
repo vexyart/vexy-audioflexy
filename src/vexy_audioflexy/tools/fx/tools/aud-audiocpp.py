@@ -92,7 +92,7 @@ DEFAULT_TASK = {
 # Packages that load a second package from the same model root (YuE2 reads its
 # VAE GGUF next to the main model), so `run` installs both.
 # Video families (talking head, lip sync) are driven by vid/tools/vid-audiocpp.py.
-VIDEO_FAMILIES = ("soulx_flashhead", "latentsync", "liveavatar")
+VIDEO_FAMILIES = ("soulx_flashhead", "latentsync")
 COMPANION_PACKAGES = {f"yue2_main_{q}": ("yue2_vae_f16",) for q in ("q8_0", "q4_0", "bf16")}
 
 
@@ -339,18 +339,19 @@ def run(
     # path handed to it must be absolute or the output lands in the wrong tree.
     out_path = Path(output).resolve()
 
+    entry = _resolve(package)
+    fam = family or entry["family"]
+    the_task = task or DEFAULT_TASK.get(fam, "vc")
+    if fam == "liveavatar":
+        raise SystemExit("liveavatar is not supported: video is out of scope")
+    if fam in VIDEO_FAMILIES:
+        raise SystemExit(f"{fam} writes video; use vid/tools/vid-audiocpp.py run")
+
     if not force and out_path.exists() and (out_path.is_dir() or out_path.stat().st_size > 0):
         console.print(
             f"[yellow]Skipped:[/yellow] {output} already exists (use --force to overwrite)"
         )
         return
-
-    entry = _resolve(package)
-    fam = family or entry["family"]
-    the_task = task or DEFAULT_TASK.get(fam, "vc")
-
-    if fam in VIDEO_FAMILIES:
-        raise SystemExit(f"{fam} writes video; use vid/tools/vid-audiocpp.py run")
     if not _installed(package):
         prep(package)
     model_arg = _model_path(package, fam)

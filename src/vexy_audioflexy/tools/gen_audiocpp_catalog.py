@@ -109,8 +109,8 @@ GENERATION_OPTIONS = {
     "yue2": {"lyrics": "[Verse]\nSoft morning light is touching the window.\n[Chorus]\nStay with the rhythm, let it carry us home.",
              "request_options": "style=English, indie pop, bright acoustic guitar, soft drums, warm lead vocal;cot=off"},
 }
-# Inputs the caller must supply; video families also need an .mp4 output path.
-GENERATION_INPUTS = {
+# Video families (vid_generate) and the inputs they need, including an .mp4 output path.
+VIDEO_INPUTS = {
     "soulx_flashhead": ["audio: speech WAV (mono 16 kHz)", "image: portrait PNG/JPG", "output: .mp4"],
     "latentsync": ["audio: new speech WAV (16 kHz)", "video: source face video", "output: .mp4"],
 }
@@ -129,9 +129,8 @@ def generation_route(spec: dict, task: str, package: str | None) -> dict:
     if not package_installable(spec, package):
         return {"reason": "every package needs a local conversion (download kind 'unsupported')"}
     params = {"task": "midi" if task == "midi" else "gen", **GENERATION_OPTIONS.get(family, {})}
-    if family in GENERATION_INPUTS:
-        params["requires"] = GENERATION_INPUTS[family]
-    if family in GENERATION_INPUTS:
+    if family in VIDEO_INPUTS:
+        params["requires"] = VIDEO_INPUTS[family]
         return {"route": VIDEO_ROUTE, "package": package, "params": params,
                 "reason": "video output; separate vid/tools/vid-audiocpp.py run command, no batch registry"}
     return {"route": GENERATION_ROUTE, "package": package, "params": params,

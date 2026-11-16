@@ -21,6 +21,7 @@ Requires ffmpeg on PATH.
 from __future__ import annotations
 
 import json
+import re
 import runpy
 import shutil
 import subprocess
@@ -130,7 +131,7 @@ def run(
     if video:
         cmd += ["--request-option", f"reference_video_file={Path(video).resolve()}"]
     for flag, blob in (("--request-option", request_options), ("--session-option", session_options)):
-        cmd += [x for part in blob.split(";") if part.strip() for x in (flag, part.strip())]
+        cmd += [x for part in re.split(r"(?<!\\);", blob) if part.strip() for x in (flag, part.strip())]
     if seed:
         cmd += ["--seed", str(seed)]
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(_AUD["ENGINE_ROOT"]), check=False)
