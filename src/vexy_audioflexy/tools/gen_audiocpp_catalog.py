@@ -104,7 +104,9 @@ GENERATION_PENDING = {
 # Inputs some generators cannot run without (aud-audiocpp.py run keyword arguments).
 GENERATION_OPTIONS = {
     "ace_step": {"task_route": "text2music", "lyrics": "The river remembers our names", "duration_seconds": 20},
-    "minimax_music3": {"request_options": "lyrics=[verse] The morning light is on the hill;duration_sec=20"},
+    # The docs pair the lyrics with a style caption in --text; without it q4_0 produced a gong.
+    "minimax_music3": {"text": "A bright pop rock song with clean drums, crisp rhythm guitars, a clear female vocal, an energetic chorus, and polished studio production.",
+                       "request_options": "lyrics=[verse] City lights are shining low. I keep moving with the glow. [chorus] Turn it up and let it fly. Sing the melody tonight.;duration_sec=20;num_inference_steps=30"},
     "yue2": {"lyrics": "[Verse]\nSoft morning light is touching the window.\n[Chorus]\nStay with the rhythm, let it carry us home.",
              "request_options": "style=English, indie pop, bright acoustic guitar, soft drums, warm lead vocal;cot=off"},
 }

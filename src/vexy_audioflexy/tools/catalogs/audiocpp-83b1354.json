@@ -6632,7 +6632,8 @@
           "package": "minimax_music3_q4_0",
           "params": {
             "task": "gen",
-            "request_options": "lyrics=[verse] The morning light is on the hill;duration_sec=20"
+            "text": "A bright pop rock song with clean drums, crisp rhythm guitars, a clear female vocal, an energetic chorus, and polished studio production.",
+            "request_options": "lyrics=[verse] City lights are shining low. I keep moving with the glow. [chorus] Turn it up and let it fly. Sing the melody tonight.;duration_sec=20;num_inference_steps=30"
           }
         }
       ]
