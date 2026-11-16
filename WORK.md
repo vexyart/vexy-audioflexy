@@ -16,7 +16,7 @@ this_file: WORK.md
 - YuE2 q8_0 + VAE f16: 56.7 s 48 kHz stereo from two lyric lines and an indie pop style (rtf 0.41). AST Music 0.88–0.95 with acoustic guitar; Whisper transcribed both lines. Verified. `run` now preps the VAE package alongside the main one. `stage` review fixes: in-place staging no longer deletes the source, the extension must match, hashing is streamed, the marker is written atomically, and `prep` on a licence-only package says to run `stage`.
 - VieNeu v3 Turbo q8_0 with phoneme text and `minh_quan_pro`: OWSM v4 gives "Xin chào thế giới, đây là bản thử nghiệm." Not registry-routed (Vietnamese only).
 - SAM Audio small q8_0: prompts "a man speaking", "a woman speaking" and "a ticking clock" gave near-identical target/residual levels. Pending.
-- Tests: 615 passed.
+- Tests: 621 passed (2026-11-16).
 
 ## audio.cpp 83b1354 catalog wiring (2026-11-15)
 

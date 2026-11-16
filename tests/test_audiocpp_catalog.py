@@ -339,13 +339,18 @@ def test_aud_audiocpp_stage_when_converted_file_then_linked_with_marker(monkeypa
         module.stage("fx_local", str(tmp_path / "missing.gguf"))
 
 
-def test_aud_audiocpp_run_when_yue2_then_vae_companion_prepped(monkeypatch, tmp_path):
+def test_aud_audiocpp_prep_when_yue2_main_then_vae_companion_prepped(monkeypatch, tmp_path):
     module = _aud_module(monkeypatch, tmp_path, [])
-    prepped = []
-    monkeypatch.setattr(module, "_installed", lambda pkg: False)
-    monkeypatch.setattr(module, "prep", prepped.append)
-    try:
-        module.run("in.wav", package="yue2_main_q8_0", task="gen", output=str(tmp_path / "o.wav"))
-    except SystemExit:
-        pass
-    assert prepped[:2] == ["yue2_main_q8_0", "yue2_vae_f16"]
+    installs = []
+    monkeypatch.setattr(module, "MODELS_ROOT", tmp_path)
+    monkeypatch.setattr(module, "_resolve", lambda pkg: {"family": "yue2", "target_directory": "Y", "download_kind": "huggingface_snapshot"})
+    state = {"yue2_vae_f16": True}
+    monkeypatch.setattr(module, "_installed", lambda pkg: state.get(pkg, False))
+    monkeypatch.setattr(module, "_install_package", lambda entry, root, pkg, force: (installs.append(pkg), state.__setitem__(pkg, True)))
+    module.prep("yue2_main_q8_0")
+    assert installs == ["yue2_main_q8_0"], "an installed companion is not reinstalled"
+    state["yue2_vae_f16"] = False
+    module.prep("yue2_main_q8_0")
+    assert installs == ["yue2_main_q8_0", "yue2_vae_f16"]
+    module.prep("ace_step_turbo_q8_0")
+    assert installs[-1] == "ace_step_turbo_q8_0" and installs.count("yue2_vae_f16") == 1, "other packages get no companion"

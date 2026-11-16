@@ -207,6 +207,8 @@ def prep(package: str = "meanvc2_120ms_40ms_f32", force: bool = False) -> None:
     # installed. model_manager_v2 drops a per-package marker; that is the test.
     if _installed(package) and not force:
         print(f"[prep] ready: {package} -> {target}")
+        for extra in COMPANION_PACKAGES.get(package, ()):
+            prep(extra)
         return
     if _resolve(package).get("download_kind") == "unsupported":
         raise SystemExit(f"[prep] {package} has no download (licence); convert it locally, then run: aud-audiocpp.py stage {package} <file>")
@@ -214,6 +216,8 @@ def prep(package: str = "meanvc2_120ms_40ms_f32", force: bool = False) -> None:
     if not _installed(package):
         raise SystemExit(f"[prep] {package}: installation remains incomplete; inspect existing files or use --force to replace them")
     print(f"[prep] ready: {package} -> {target}")
+    for extra in COMPANION_PACKAGES.get(package, ()):
+        prep(extra, force)
 
 
 def stage(package: str, source: str, force: bool = False) -> None:
@@ -344,9 +348,6 @@ def run(
 
     if not _installed(package):
         prep(package)
-    for extra in COMPANION_PACKAGES.get(package, ()):
-        if not _installed(extra):
-            prep(extra)
     model_arg = _model_path(package, fam)
 
     cmd = [
