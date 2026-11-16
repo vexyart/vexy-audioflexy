@@ -249,6 +249,7 @@ def test_tts_audiocpp_prep_when_fire_passes_deps_tuple_then_each_dep_installed(m
     seen = []
     monkeypatch.setattr(module, "_require_engine", lambda: None)
     monkeypatch.setattr(module, "_installed", lambda pkg: seen.append(pkg) or True)
+    monkeypatch.setattr(module, "_model_path", lambda pkg: Path("/models") / pkg)
     module.prep("auk_flash_q8_0", deps=("auk_qwen_q8_0", "auk_vae_f32"))
     assert seen == ["auk_qwen_q8_0", "auk_vae_f32", "auk_flash_q8_0"]
 

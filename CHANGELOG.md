@@ -6,6 +6,10 @@ this_file: CHANGELOG.md
 
 ## Unreleased
 
+## 1.1.1 (2026-11-16)
+
+- Test fix: the AuK deps test no longer needs the local audio.cpp specs, so it passes in CI. The v1.1.0 tag failed the release workflow on this test and has no GitHub release.
+
 ## 1.1.0 (2026-11-16)
 
 - Video moved out of the audio adapters: `fx/tools/aud-audiocpp.py` no longer takes `--image`/`--video` and refuses video families; the new `vid/tools/vid-audiocpp.py run` handles SoulX FlashHead and LatentSync (MP4 output). Catalog route `vid_generate` replaces `aud_generate` for those two. The package stays audio-only; LiveAvatar and MiniMax-H3 video are not planned.
