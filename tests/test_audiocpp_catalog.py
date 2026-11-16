@@ -50,7 +50,7 @@ def test_catalog_when_loaded_then_internally_consistent(catalog):
         for route in family["routes"]:
             assert route["status"] in {"pending runtime", "verified"}
             assert (route["status"] == "verified") == ("verification" in route), family["family"]
-            assert route["route"] in {"tts_all", "asr_all", "aud_all", "separate_all", "aud_analyze", "aud_generate", "covered", "pending adapter"}
+            assert route["route"] in {"tts_all", "asr_all", "aud_all", "separate_all", "aud_analyze", "aud_generate", "vid_generate", "covered", "pending adapter"}
             if route["route"] in REGISTRIES:
                 assert route["package"] in ids, family["family"]
                 assert set(route["langs"]) <= {"en", "pl"} and route["langs"]
@@ -369,9 +369,28 @@ def test_aud_audiocpp_run_when_escaped_semicolon_then_one_request_option(monkeyp
 
 
 @pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="needs ffmpeg")
-def test_aud_audiocpp_encode_video_when_rgb24_chunks_then_mp4_with_all_frames(monkeypatch, tmp_path):
+def _vid_module():
+    spec = importlib.util.spec_from_file_location("vid_audiocpp_mod", TOOLS / "vid/tools/vid-audiocpp.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_aud_audiocpp_run_when_video_family_then_points_to_vid_tool(monkeypatch, tmp_path):
     module = _aud_module(monkeypatch, tmp_path, [])
-    monkeypatch.undo()  # real subprocess for ffmpeg
+    monkeypatch.setattr(module, "_resolve", lambda pkg: {"family": "latentsync"})
+    with pytest.raises(SystemExit, match="vid-audiocpp"):
+        module.run("a.wav", package="latentsync_1_6_q8_0_f16", output=str(tmp_path / "o.mp4"))
+
+
+def test_video_families_when_cataloged_then_routed_to_vid_generate(catalog):
+    for fam in catalog["families"]:
+        if fam["family"] in ("soulx_flashhead", "latentsync"):
+            assert {r["route"] for r in fam["routes"] if r.get("package")} == {"vid_generate"}, fam["family"]
+
+
+def test_vid_audiocpp_encode_video_when_rgb24_chunks_then_mp4_with_all_frames(tmp_path):
+    module = _vid_module()
     frames = tmp_path / "frames"
     frames.mkdir()
     for index in range(2):  # chunk 10 sorts after chunk 2 only with a numeric key
@@ -385,8 +404,8 @@ def test_aud_audiocpp_encode_video_when_rgb24_chunks_then_mp4_with_all_frames(mo
     assert probe.stdout.strip() == "6", probe.stdout
 
 
-def test_aud_audiocpp_encode_video_when_chunk_size_wrong_then_exit(monkeypatch, tmp_path):
-    module = _aud_module(monkeypatch, tmp_path, [])
+def test_vid_audiocpp_encode_video_when_chunk_size_wrong_then_exit(tmp_path):
+    module = _vid_module()
     frames = tmp_path / "frames"
     frames.mkdir()
     meta = {"format": "rgb24", "fps": "25", "frames": "2", "height": "4", "width": "4"}
@@ -395,11 +414,10 @@ def test_aud_audiocpp_encode_video_when_chunk_size_wrong_then_exit(monkeypatch, 
         module._encode_video(frames, "soulx_flashhead_video_", "", tmp_path / "v.mp4")
 
 
-def test_aud_audiocpp_encode_video_when_single_raw_artifact_then_mp4(monkeypatch, tmp_path):
+def test_vid_audiocpp_encode_video_when_single_raw_artifact_then_mp4(tmp_path):
     if shutil.which("ffmpeg") is None:
         pytest.skip("ffmpeg not installed")
-    module = _aud_module(monkeypatch, tmp_path, [])
-    monkeypatch.undo()
+    module = _vid_module()
     frames = tmp_path / "f"
     frames.mkdir()
     meta = {"format": "rgb24", "width": 16, "height": 16, "frames": 5, "fps": 25, "file": "latentsync_video_rgb24.rgb"}
@@ -410,8 +428,8 @@ def test_aud_audiocpp_encode_video_when_single_raw_artifact_then_mp4(monkeypatch
     assert out.stat().st_size > 0, "single raw RGB24 artifact should encode to MP4"
 
 
-def test_aud_audiocpp_encode_video_when_raw_size_wrong_then_exit(monkeypatch, tmp_path):
-    module = _aud_module(monkeypatch, tmp_path, [])
+def test_vid_audiocpp_encode_video_when_raw_size_wrong_then_exit(tmp_path):
+    module = _vid_module()
     frames = tmp_path / "f"
     frames.mkdir()
     meta = {"format": "rgb24", "width": 16, "height": 16, "frames": 5, "fps": 25, "file": "x.rgb"}

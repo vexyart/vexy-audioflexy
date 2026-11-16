@@ -6,6 +6,11 @@ this_file: CHANGELOG.md
 
 ## Unreleased
 
+## 1.1.0 (2026-11-16)
+
+- Video moved out of the audio adapters: `fx/tools/aud-audiocpp.py` no longer takes `--image`/`--video` and refuses video families; the new `vid/tools/vid-audiocpp.py run` handles SoulX FlashHead and LatentSync (MP4 output). Catalog route `vid_generate` replaces `aud_generate` for those two. The package stays audio-only; LiveAvatar and MiniMax-H3 video are not planned.
+- MiniMax Music 3 checked on CPU as well as Metal: neither backend sings the prompted lyrics, so it stays pending. Whisper WER recorded for the standard-test rows; AuK Flash is reliable only on short prompts.
+
 - aud-audiocpp `run --video` for LatentSync lip-sync; single raw RGB24 video artifacts are encoded to MP4 like FlashHead chunks. LatentSync 1.6 q8_0 is verified (74/166).
 - Standard EN/PL TTS test results for the 25 verified audio.cpp catalog models are in the private rankings report. AuK TTS derives `duration_sec` from the text length instead of a fixed 6 s.
 - aud-audiocpp `run --image` and MP4 output for SoulX FlashHead: the engine's RGB24 chunk artifacts are encoded to H.264 with the input speech muxed. FlashHead Lite q8_0 is verified (73/166). `--request_options` accepts `\;` for a literal semicolon. MuLaCover stays pending: the engine asserts in ggml-alloc on Metal and CPU.

@@ -45,6 +45,10 @@ Batch aliases are `asr`, `diarize`, `translate`, `fx` (`aud` alias), `detect`, `
 `tts`. Supply your own inputs, text and output paths according to each command's
 help. Availability of an adapter does not establish every model's compatibility.
 
+The package is audio-only. The two verified audio.cpp talking-head and lip-sync
+families (SoulX FlashHead, LatentSync) live apart in `tools/vid/tools/vid-audiocpp.py`;
+no further video models are planned.
+
 ## Reusable speech APIs
 
 `vexy_audioflexy.speech` exposes validated `Word` and `Turn` dataclasses.

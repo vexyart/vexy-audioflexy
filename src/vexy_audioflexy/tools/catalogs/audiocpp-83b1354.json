@@ -5047,8 +5047,8 @@
           ],
           "covered_by": [],
           "status": "verified",
-          "route": "aud_generate",
-          "reason": "single-clip run command with a text prompt (midi: an audio input); no batch registry",
+          "route": "vid_generate",
+          "reason": "video output; separate vid/tools/vid-audiocpp.py run command, no batch registry",
           "package": "latentsync_1_6_q8_0_f16",
           "params": {
             "task": "gen",
@@ -11955,8 +11955,8 @@
           ],
           "covered_by": [],
           "status": "verified",
-          "route": "aud_generate",
-          "reason": "single-clip run command with a text prompt (midi: an audio input); no batch registry",
+          "route": "vid_generate",
+          "reason": "video output; separate vid/tools/vid-audiocpp.py run command, no batch registry",
           "package": "soulx_flashhead_lite_q8_0",
           "params": {
             "task": "gen",

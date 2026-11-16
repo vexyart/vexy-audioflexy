@@ -6,6 +6,7 @@ this_file: WORK.md
 
 ## Remaining audio.cpp adapters (2026-11-16)
 
+- 2026-11-16 wind-down: video split into `vid/tools/vid-audiocpp.py` (FlashHead, LatentSync); `aud-audiocpp` audio-only. Release v1.1.0 on GitHub (no PyPI). Drama-3: the cached Jmica Q4_K_S file is the audio.cpp `fish_drama3` package (speech.cpp rejects it as an audio.cpp file); both Drama-3 routes already have EN/PL ranking rows.
 - VeVo2 `zero_shot_tts`: with `--style_ref_text` the output also speaks the reference transcript; without it parakeet reads "Weather is lovely today, so let us take a short walk by the river." Verified.
 - AuK Flash q8_0 instruction TTS (Metal): "A warm adult. The weather is lovely today, …" (the start of the voice description leaks). In Polish it read the description and garbled the words, so the route is English only. Reference TTS and `--task gen` editing abort in `FlowRuntime::sample` on Metal; CPU reports "AuK native session does not support the CPU backend".
 - VieNeu v3 Turbo with plain text: built sea-g2p 0.10.0 (`cargo build --release --no-default-features --features capi`) and passed `vieneu_v3_turbo.g2p_library` plus `g2p_dict_file` (`python/sea_g2p/sea_g2p.bin`). "Tỉ lệ giải ngân đầu tư công đạt 68,5% kế hoạch năm." came back from OWSM as "lu lễ dành ngân đầu tư công đạt 68,5 phần trăm kế hoạch 5." The number and percent normalisation works; the first words are misheard. There is no Vietnamese registry, so the route stays `pending adapter`.

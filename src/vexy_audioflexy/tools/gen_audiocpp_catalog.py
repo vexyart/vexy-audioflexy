@@ -92,6 +92,7 @@ def analysis_route(spec: dict, task: str, package: str | None) -> dict:
 
 # Prompt-driven generation (`aud-audiocpp.py run --task gen|midi`), one clip per call.
 GENERATION_ROUTE = "aud_generate"
+VIDEO_ROUTE = "vid_generate"  # vid/tools/vid-audiocpp.py run: video output, kept out of the audio tools
 GENERATION_TASKS = {"music", "sfx", "midi"}
 GENERATION_PENDING = {
     "minimax_h3": "text-to-audio/video model; the run command handles audio only",
@@ -130,6 +131,9 @@ def generation_route(spec: dict, task: str, package: str | None) -> dict:
     params = {"task": "midi" if task == "midi" else "gen", **GENERATION_OPTIONS.get(family, {})}
     if family in GENERATION_INPUTS:
         params["requires"] = GENERATION_INPUTS[family]
+    if family in GENERATION_INPUTS:
+        return {"route": VIDEO_ROUTE, "package": package, "params": params,
+                "reason": "video output; separate vid/tools/vid-audiocpp.py run command, no batch registry"}
     return {"route": GENERATION_ROUTE, "package": package, "params": params,
             "reason": "single-clip run command with a text prompt (midi: an audio input); no batch registry"}
 
