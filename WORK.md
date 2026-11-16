@@ -6,6 +6,7 @@ this_file: WORK.md
 
 ## Remaining audio.cpp adapters (2026-11-16)
 
+- 2026-11-16 speech.cpp 0.11.0 + `drama-3:q6_k` (29.9 GB, SHA-256 checked by `speech pull`) verified: `tts-speechcpp.py say` gave a 4.6 s clip; Whisper transcript matches the prompt ("font lab 8 font editor for mac and windows").
 - 2026-11-16 wind-down: video split into `vid/tools/vid-audiocpp.py` (FlashHead, LatentSync); `aud-audiocpp` audio-only. Release v1.1.0 on GitHub (no PyPI). Drama-3: the cached Jmica Q4_K_S file is the audio.cpp `fish_drama3` package (speech.cpp rejects it as an audio.cpp file); both Drama-3 routes already have EN/PL ranking rows.
 - VeVo2 `zero_shot_tts`: with `--style_ref_text` the output also speaks the reference transcript; without it parakeet reads "Weather is lovely today, so let us take a short walk by the river." Verified.
 - AuK Flash q8_0 instruction TTS (Metal): "A warm adult. The weather is lovely today, …" (the start of the voice description leaks). In Polish it read the description and garbled the words, so the route is English only. Reference TTS and `--task gen` editing abort in `FlowRuntime::sample` on Metal; CPU reports "AuK native session does not support the CPU backend".
