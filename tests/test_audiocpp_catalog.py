@@ -260,6 +260,52 @@ def test_music_generators_when_inputs_known_then_routed_with_their_options(catal
     assert kws["route"] == "aud_analyze" and kws["status"] == "verified"
 
 
-def test_aud_audiocpp_run_when_lyrics_and_duration_then_cli_flags_passed():
-    src = (TOOLS / "fx/tools/aud-audiocpp.py").read_text()
-    assert '["--lyrics", str(lyrics)]' in src and '"--duration-seconds"' in src
+def _aud_module(monkeypatch, tmp_path, calls, writes=None):
+    spec = importlib.util.spec_from_file_location("aud_audiocpp_mod", TOOLS / "fx/tools/aud-audiocpp.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(module, "_require_engine", lambda: tmp_path / "audiocpp_cli")
+    monkeypatch.setattr(module, "_resolve", lambda pkg: {"family": "fx"})
+    monkeypatch.setattr(module, "_installed", lambda pkg: True)
+    monkeypatch.setattr(module, "_model_path", lambda pkg, fam="": tmp_path / "model.gguf")
+
+    class Done:
+        returncode, stdout, stderr = 0, "", ""
+
+    def fake_run(cmd, **kw):
+        calls.append(cmd)
+        if writes:
+            Path(cmd[cmd.index("--out") + 1]).write_bytes(b"RIFF")
+        return Done()
+
+    monkeypatch.setattr(module.subprocess, "run", fake_run)
+    return module
+
+
+def test_aud_audiocpp_run_when_lyrics_and_duration_then_cli_flags_passed(monkeypatch, tmp_path):
+    calls = []
+    module = _aud_module(monkeypatch, tmp_path, calls, writes=True)
+    module.run(package="p", task="gen", text="folk", lyrics="la la", duration_seconds=20, output=str(tmp_path / "a.wav"))
+    module.run(package="p", task="gen", text="folk", output=str(tmp_path / "b.wav"))
+    with_flags, plain = calls
+    assert with_flags[with_flags.index("--lyrics") + 1] == "la la"
+    assert with_flags[with_flags.index("--duration-seconds") + 1] == "20"
+    assert "--lyrics" not in plain and "--duration-seconds" not in plain
+
+
+def test_aud_audiocpp_analyze_when_no_output_then_empty_only_for_wake_word(monkeypatch, tmp_path):
+    module = _aud_module(monkeypatch, tmp_path, [])
+    module.analyze(str(tmp_path / "in.wav"), "p", "wake_word", output=str(tmp_path / "kws.json"))
+    assert json.loads((tmp_path / "kws.json").read_text()) == []
+    with pytest.raises(SystemExit):
+        module.analyze(str(tmp_path / "in.wav"), "p", "vad", output=str(tmp_path / "vad.json"))
+
+
+def test_generation_options_when_set_then_match_run_keywords():
+    import inspect
+    spec = importlib.util.spec_from_file_location("aud_audiocpp_sig", TOOLS / "fx/tools/aud-audiocpp.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    names = set(inspect.signature(module.run).parameters)
+    for family, options in GEN["GENERATION_OPTIONS"].items():
+        assert set(options) <= names, family

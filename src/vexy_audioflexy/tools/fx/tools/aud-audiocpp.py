@@ -510,7 +510,7 @@ def analyze(
         payload = next((line[len(prefix):] for line in result.stdout.splitlines() if line.startswith(prefix)), "")
         if payload:
             out_path.write_text(json.dumps(json.loads(payload), indent=2) + "\n")
-    if flag == "--segments-out" and result.returncode == 0 and not out_path.is_file():
+    if task == "wake_word" and result.returncode == 0 and not out_path.is_file():
         # The CLI writes no segments file when nothing is detected (e.g. no keyword spoken).
         out_path.write_text("[]\n")
     if result.returncode != 0 or not out_path.is_file() or out_path.stat().st_size == 0:
