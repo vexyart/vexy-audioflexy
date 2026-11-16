@@ -146,9 +146,9 @@ LANG_OVERRIDES = {("auk", "tts_all"): ["en"]}
 # Per-family tts_all parameters the spec JSON cannot express.
 TTS_OVERRIDES = {
     # zero_shot_tts conditions on --voice-ref; passing the reference transcript makes it speak that too.
-    "vevo2": {"mode": "tts", "task": "tts", "ref": True, "ref_text": False, "voice_id": None, "extra": "--task-route zero_shot_tts"},
+    ("vevo2", "tts_all"): {"mode": "tts", "task": "tts", "ref": True, "ref_text": False, "voice_id": None, "extra": "--task-route zero_shot_tts"},
     # Generator + Qwen conditioning + VAE in one directory; duration is required without reference audio.
-    "auk": {"mode": "tts", "task": "tts", "ref": False, "ref_text": False, "voice_id": None,
+    ("auk", "tts_all"): {"mode": "tts", "task": "tts", "ref": False, "ref_text": False, "voice_id": None,
             "deps": "auk_qwen_q8_0,auk_vae_f32",
             "session_options": "auk.variant=flash;auk.model_gguf=auk-flash-q8_0.gguf;auk.qwen_gguf=qwen2.5-omni-3b-q8_0.gguf",
             "request_options": "instruct=A warm adult voice speaking clear English.;duration_sec=6"},
@@ -287,7 +287,7 @@ def route_record(spec: dict, registry: str, tasks: set[str], covered: list[str],
     elif not langs:
         record.update(route=PENDING, reason="no en/pl support; the registries only benchmark en and pl text/audio")
     else:
-        params = {"tts_all": lambda: {**tts_params(spec, tasks, required), **TTS_OVERRIDES.get(spec["family"], {})}, "asr_all": lambda: asr_params(spec), "aud_all": lambda: aud_params(spec, tasks),
+        params = {"tts_all": lambda: {**tts_params(spec, tasks, required), **TTS_OVERRIDES.get((spec["family"], "tts_all"), {})}, "asr_all": lambda: asr_params(spec), "aud_all": lambda: aud_params(spec, tasks),
                   "separate_all": lambda: {"task": "sep"}}[registry]()
         record.update(route=registry, package=package, langs=langs, params=params)
     return record
