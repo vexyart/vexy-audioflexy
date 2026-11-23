@@ -4,6 +4,13 @@ this_file: WORK.md
 
 # Work
 
+## Documentation theme (2026-11-24)
+
+- Rebuilt `docs/` with ProperDocs on Python 3.13 and fly-january 0.1.1
+  (`chrome: none`). The strict build completed without warnings.
+- `./test.sh -q` passed all 629 tests and the basic example. The tests emitted
+  three `SyntaxWarning` messages from jieba 0.42.1.
+
 ## Remaining audio.cpp adapters (2026-11-16)
 
 - 2026-11-16 speech.cpp 0.11.0 + `drama-3:q6_k` (29.9 GB, SHA-256 checked by `speech pull`) verified: `tts-speechcpp.py say` gave a 4.6 s clip; Whisper transcript matches the prompt ("font lab 8 font editor for mac and windows").

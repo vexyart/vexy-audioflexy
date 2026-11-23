@@ -8,10 +8,11 @@ this_file: src_docs/md/development.md
 From the repository root:
 
 ```sh
-uv run --no-project --with-requirements requirements-docs.txt properdocs build --strict -f src_docs/mkdocs.yml
+uv run --no-project --python 3.13 --with-requirements requirements-docs.txt properdocs build --strict -f src_docs/mkdocs.yml
 ```
 
-The pinned stack uses ProperDocs as the builder and MaterialX as the theme.
+ProperDocs builds the site with fly-january 0.1.1. The `chrome: none`
+setting selects the native MaterialX header and footer.
 `docs_dir: md` and `site_dir: ../docs` resolve relative to
 `src_docs/mkdocs.yml`, producing the repository's `docs/` directory.
 

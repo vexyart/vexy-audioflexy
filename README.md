@@ -120,8 +120,15 @@ builds include the Git revision. Public archives select code, synthetic tests,
 examples and documentation source. Keep private inputs, outputs, machine paths
 and model weights outside this repository.
 
-See `PLAN.md` and `TODO.md` for remaining acceptance work. Documentation source
-is in `src_docs/`. Pushing a stable `vMAJOR.MINOR.PATCH` tag runs tests, builds
+See `PLAN.md` and `TODO.md` for remaining acceptance work. The documentation
+uses fly-january 0.1.1 with the native MaterialX header and footer. Rebuild
+the tracked `docs/` site from the repository root with:
+
+```sh
+uv run --no-project --python 3.13 --with-requirements requirements-docs.txt properdocs build --strict -f src_docs/mkdocs.yml
+```
+
+Pushing a stable `vMAJOR.MINOR.PATCH` tag runs tests, builds
 packages and strict docs, and creates a GitHub release. `./release.sh` and
 `./publish.sh` use `uvx gitnextver` to commit pending changes, create the next
 stable tag and push when HEAD is untagged or dirty. A clean tagged HEAD is reused.

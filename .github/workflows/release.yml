@@ -47,7 +47,7 @@ jobs:
           dist_dir=$(./build.sh)
           echo "DIST_DIR=$dist_dir" >> "$GITHUB_ENV"
       - name: Build documentation
-        run: uv run --no-project --with-requirements requirements-docs.txt properdocs build --strict -f src_docs/mkdocs.yml
+        run: uv run --no-project --python 3.13 --with-requirements requirements-docs.txt properdocs build --strict -f src_docs/mkdocs.yml
       - uses: actions/upload-artifact@v4
         with:
           name: dist

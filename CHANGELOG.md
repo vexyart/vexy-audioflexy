@@ -6,6 +6,8 @@ this_file: CHANGELOG.md
 
 ## Unreleased
 
+- Site now uses the fly-january 0.1.1 theme (chrome: none).
+
 ## 1.1.1 (2026-11-16)
 
 - Test fix: the AuK deps test no longer needs the local audio.cpp specs, so it passes in CI. The v1.1.0 tag failed the release workflow on this test and has no GitHub release.

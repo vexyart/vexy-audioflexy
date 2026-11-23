@@ -34,9 +34,14 @@
       
     
     
+  
       <link rel="stylesheet" href="../assets/stylesheets/main.314bbef5.min.css">
       
     
+  <link rel="stylesheet" data-fly-photoswipe href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.css"
+      integrity="sha384-IfxC36XL/toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx/1oA/0l8ysE" crossorigin="anonymous">
+  <link rel="stylesheet" href="../assets/fly/fly.css?v=24c03d88bb">
+
     
 
     
@@ -60,12 +65,25 @@
 
     
     
+  
+  <script>try{if(sessionStorage.getItem("fly-l2")==="in"){document.documentElement.dataset.flyL2="in";sessionStorage.removeItem("fly-l2")}}catch(e){}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0&icon_names=arrow_back,arrow_forward,dark_mode,light_mode&display=block">
+  <script>try{document.fonts.load('20px "Material Symbols Outlined"',"arrow_backarrow_forwarddark_modelight_mode").then(function(f){if(f.length)document.documentElement.classList.add("fly-msym")})}catch(e){}</script>
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+  <link rel="preconnect" href="https://p.typekit.net" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/cmv5add.css" data-fly-font>
+  <link rel="stylesheet" href="https://use.typekit.net/cna4jfp.css" data-fly-font>
+  <link rel="stylesheet" href="https://use.typekit.net/wck5koo.css" data-fly-font>
+
   </head>
   
   
   
   
-    <body dir="ltr" data-mx-topbar="glass">
+    <body dir="ltr" data-mx-topbar="glass" class="fly-margin-left fly-chrome-none">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -86,6 +104,7 @@
     </div>
     
     
+  
       
 
   
@@ -169,6 +188,7 @@
   
 </header>
     
+
     <div class="md-container" data-md-component="container">
       
       
@@ -207,12 +227,13 @@
   
   
   
+  
     <li class="md-nav__item">
       <a href=".." class="md-nav__link">
         
   
   
-  <span class="md-ellipsis">
+  <span class="md-ellipsis" title="Overview">
     
   
     Overview
@@ -234,12 +255,13 @@
   
   
   
+  
     <li class="md-nav__item">
       <a href="../cli/" class="md-nav__link">
         
   
   
-  <span class="md-ellipsis">
+  <span class="md-ellipsis" title="CLI">
     
   
     CLI
@@ -261,12 +283,13 @@
   
   
   
+  
     <li class="md-nav__item">
       <a href="../models/" class="md-nav__link">
         
   
   
-  <span class="md-ellipsis">
+  <span class="md-ellipsis" title="Models">
     
   
     Models
@@ -286,13 +309,13 @@
       
   
   
+  
     
   
   
   
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
         
@@ -302,7 +325,7 @@
           
   
   
-  <span class="md-ellipsis">
+  <span class="md-ellipsis" title="Development and releases">
     
   
     Development and releases
@@ -320,7 +343,7 @@
         
   
   
-  <span class="md-ellipsis">
+  <span class="md-ellipsis" title="Development and releases">
     
   
     Development and releases
@@ -339,12 +362,14 @@
   
   
   
+  
+    
     
   
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
-      Table of contents
+      Development and releases
     </label>
     <ul class="md-nav__list" data-md-component="toc">
       
@@ -406,12 +431,14 @@
   
   
   
+  
+    
     
   
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
-      Table of contents
+      Development and releases
     </label>
     <ul class="md-nav__list" data-md-component="toc">
       
@@ -466,9 +493,10 @@
 <h1 id="development-and-releases">Development and releases</h1>
 <h2 id="build-documentation">Build documentation</h2>
 <p>From the repository root:</p>
-<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>--with-requirements<span class="w"> </span>requirements-docs.txt<span class="w"> </span>properdocs<span class="w"> </span>build<span class="w"> </span>--strict<span class="w"> </span>-f<span class="w"> </span>src_docs/mkdocs.yml
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>--no-project<span class="w"> </span>--python<span class="w"> </span><span class="m">3</span>.13<span class="w"> </span>--with-requirements<span class="w"> </span>requirements-docs.txt<span class="w"> </span>properdocs<span class="w"> </span>build<span class="w"> </span>--strict<span class="w"> </span>-f<span class="w"> </span>src_docs/mkdocs.yml
 </code></pre></div>
-<p>The pinned stack uses ProperDocs as the builder and MaterialX as the theme.
+<p>ProperDocs builds the site with fly-january 0.1.1. The <code>chrome: none</code>
+setting selects the native MaterialX header and footer.
 <code>docs_dir: md</code> and <code>site_dir: ../docs</code> resolve relative to
 <code>src_docs/mkdocs.yml</code>, producing the repository's <code>docs/</code> directory.</p>
 <h2 id="build-install-release-and-publish">Build, install, release and publish</h2>
@@ -502,7 +530,15 @@ It creates the GitHub release when missing, uploads missing package assets, and
 compares existing assets byte for byte without replacing them. Publish uploads
 those verified GitHub assets with <code>uv publish --check-url</code>; it stops on any error,
 including rate limits. Existing matching files can be skipped on a later resume.
-Retain selected artifacts when investigating an uncertain upload.</p>
+Retain selected artifacts when investigating an uncertain upload. An explicit-tag
+script resume still rebuilds and reinstalls before checking GitHub asset bytes;
+build differences stop the chain. To resume an upload using already verified
+GitHub-downloaded archives, keep the exact files and run:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">UV_HTTP_RETRIES</span><span class="o">=</span><span class="m">0</span><span class="w"> </span>uv<span class="w"> </span>publish<span class="w"> </span>--check-url<span class="w"> </span>https://pypi.org/simple/<span class="w"> </span>dist/released.EXAMPLE/*.whl<span class="w"> </span>dist/released.EXAMPLE/*.tar.gz
+</code></pre></div>
+<p>Replace <code>dist/released.EXAMPLE</code> with the retained artifact directory. Stop on
+rate limits and retain those same files for the next attempt; do not change the
+version to work around an uncertain upload.</p>
 <p>Authenticate GitHub CLI with <code>gh auth login</code> or <code>GH_TOKEN</code>. Configure PyPI upload
 credentials through <code>UV_PUBLISH_TOKEN</code> or uv's supported credential store. Keep
 credentials outside the repository and out of shell command arguments and logs.
@@ -568,24 +604,13 @@ verify the Actions run, release assets and downloaded PyPI distributions afterwa
 </div>
       </main>
       
+  
         <footer class="md-footer">
   
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
   
-  
-    Made with
-    <a href="https://jaywhj.github.io/mkdocs-materialx/" target="_blank" rel="noopener">
-      MaterialX
-    </a>
-  
-</div>
-      
-    </div>
-  </div>
 </footer>
       
+
     </div>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
@@ -598,8 +623,12 @@ verify the Actions run, release assets and downloaded PyPI distributions afterwa
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
+  
       <script src="../assets/javascripts/bundle.fc193f93.min.js"></script>
       
     
+  <script src="../assets/fly/fly-bridge.js?v=86c9984233"></script>
+  <script type="module" src="../assets/fly/fly.js?v=f51ac22526"></script>
+
   </body>
 </html>

@@ -20,7 +20,7 @@ verified. Independent whole-scope acceptance is complete within the recorded fin
 - Reviewed model relocation, provider compatibility and runtime-path helper APIs.
   Finite mapped storage moves, provider placement and caller compatibility have
   separate independent acceptance; historical source and recovery evidence remain.
-- Documentation source built with pinned ProperDocs/MaterialX dependencies and a
+- Documentation source built with ProperDocs and the pinned fly-january theme, and a
   semantic-tag release workflow that builds docs and publishes through `uv publish`.
   Workflow configuration is distinct from an executed release.
 

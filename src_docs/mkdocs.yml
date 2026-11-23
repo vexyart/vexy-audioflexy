@@ -4,12 +4,16 @@ site_description: Audio tools with isolated model runtimes
 docs_dir: md
 site_dir: ../docs
 theme:
-  name: materialx
+  name: fly-january
   language: en
   features:
     - content.code.copy
 plugins:
+  - fly
   - search
+extra:
+  fly:
+    chrome: none
 markdown_extensions:
   - admonition
   - tables
