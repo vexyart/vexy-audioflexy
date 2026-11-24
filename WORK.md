@@ -6,7 +6,7 @@ this_file: WORK.md
 
 ## Documentation theme (2026-11-24)
 
-- Rebuilt `docs/` with ProperDocs on Python 3.13 and fly-january 0.1.1
+- Rebuilt `docs/` with ProperDocs on Python 3.13 and fly-january 0.2.1
   (`chrome: none`). The strict build completed without warnings.
 - `./test.sh -q` passed all 629 tests and the basic example. The tests emitted
   three `SyntaxWarning` messages from jieba 0.42.1.
