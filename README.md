@@ -132,6 +132,7 @@ Pushing a stable `vMAJOR.MINOR.PATCH` tag runs tests, builds
 packages and strict docs, and creates a GitHub release. `./release.sh` and
 `./publish.sh` use `uvx gitnextver` to commit pending changes, create the next
 stable tag and push when HEAD is untagged or dirty. A clean tagged HEAD is reused.
-Publish chains release → install → build, verifies GitHub assets, then runs
-`uv publish`. Pass an existing tag explicitly to resume a clean tagged release.
-See the release instructions in `src_docs/md/development.md` for authentication.
+Publish chains release → install → build, verifies GitHub assets, then dispatches
+the PyPI Trusted Publishing workflow. To retry existing GitHub assets without
+rebuilding, dispatch `pypi-upload.yml` with the release tag. See
+`src_docs/md/development.md` for setup and recovery.

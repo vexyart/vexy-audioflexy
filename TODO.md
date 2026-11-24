@@ -4,61 +4,13 @@ this_file: TODO.md
 
 # Acceptance tasks
 
-- [x] Implement and review packaging, installed CLI, tests and synthetic example.
-- [x] Implement and mount reviewed model configuration, discovery and registry commands.
-- [x] Consolidate all 168 mapped source tools/consumers and supporting resources.
-- [x] Verify raw CLI arguments, child status and isolated dependency contracts.
-- [x] Configure and review pinned documentation and semantic-tag release automation.
-- [x] Pass 510 source and isolated installed-wheel regression tests.
-- [x] Audit mapped resources, executable metadata and public distribution contents.
-- [x] Record bounded installed model/role acceptance separately from catalog declarations.
-- [x] Complete independently reviewed finite private storage, caller and reproduction closure.
-- [x] Reconcile final scope/evidence and obtain independent whole-scope verification.
-- [x] Obtain scoped independent rereview of the final batch/provider correction wave.
-- [x] Refresh public artifacts and retain unchanged-code test, strict-docs and offline CLI evidence.
-
-The initial implementation excluded publication. The subsequently authorized
-1.0.0 release status is recorded below; PyPI publication remains pending.
-
-- [x] Rename public namespaces to asr/fx/tts and update all current consumers.
-- [x] Verify namespace artifacts, regression suites and independent review.
-
-- [x] Add and verify chained build/install/GitHub release/PyPI scripts.
-- [x] Verify stable tag configuration and semver-tag GitHub release workflow; actual tagged version is checked before publication.
-- [x] Complete privacy audit, commit, tag v1.0.0, push and verify GitHub release.
-- [ ] Publish the preserved 1.0.0 assets to PyPI and verify hashes and installation.
-
-- [x] Use uvx gitnextver before automatic stable release/publish and ignore the hatch-vcs generated __version__.py.
-- [x] Test automatic release tagging, tagged resume and failure guards.
-- [x] Verify release repair with real isolated artifacts, installed version, full regression suite and independent review.
-
-- [x] Provide YAML structured CLI output and --json with source and installed-wheel verification.
-
-## Reusable speech integration
-
-- [x] Port reusable speech engines, neutral types and language/tagging APIs with lazy optional dependencies.
-- [x] Verify speech regressions, packaged workspace route, full suite and installable artifacts.
-
-## Version 1.0.3 integration release
-
-- [ ] Commit and tag the reviewed provider integration after registry/version checks.
-- [ ] Verify tagged CI, strict docs and exact public wheel/sdist contents.
-- [ ] Publish the verified stable assets and verify registry hashes and installation.
-
-- [x] Tag/push 1.0.3 and verify CI, exact GitHub assets and clean stable installation.
-- [ ] Resume preserved 1.0.3 assets after PyPI new-project HTTP 429 clears.
-
-## Upstream follow-ups
-
-- [x] Run audio.cpp 83b1354, speech.cpp 0.11.0 adapter and mlx-audio 0.6.5 with real smoke runs.
-- [x] Rebuild codec.cpp at upstream and reconvert Chatterbox multilingual weights (already at d5e3852; Polish fixed with the `[lang]` prefix).
-- [x] Generate the audio.cpp 83b1354 family catalog and wire uncovered routed families into tts/asr/aud registries.
-- [ ] Run the remaining `pending runtime` audio.cpp routes once each (68 verified so far) and record them in `catalogs/audiocpp-verified.json`.
-- [x] Route VeVo2 zero-shot TTS and AuK Flash instruction TTS into `tts_all` (verified, en).
-- [x] VieNeu plain-text input via sea-g2p (direct run; no vi registry yet).
-- [ ] AuK reference TTS/editing (Metal abort); SAM Audio prompt; MiniMax-H3 (`--task gen`).
-- [x] Add adapters for audio.cpp music, sfx, sep, align, diar, vad, wake-word and classify families.
-- [x] Route ACE-Step (verified) and MiniMax Music 3 (q4_0 output off-prompt; try q8_0) with lyrics inputs; route sherpa_kws (verified).
-- [ ] Add input-aware adapters for melody/reference music (MulaCover, VeVo2), and audio edit. Video families are out of scope (FlashHead and LatentSync kept in `vid/`).
-- [x] Recheck phonon-2 on transcribe.cpp 0.4.2 (byte-identical to 5700f12).
-- [ ] Run speech.cpp drama-3 after a deliberate weight pull.
+- [ ] Publish the preserved v1.0.0 GitHub release assets through Trusted Publishing and verify PyPI hashes and a clean install.
+- [ ] Publish the preserved v1.0.3 GitHub release assets through Trusted Publishing and verify PyPI hashes and a clean install.
+- [ ] Smoke-test remaining routable audio.cpp 83b1354 entries marked `pending runtime`, record usable runs in `catalogs/audiocpp-verified.json` and regenerate the catalog.
+- [ ] Recheck AuK reference TTS and audio editing after the Metal flow-sampler abort is fixed. Verify a reference-conditioned clip and an instruction edit.
+- [ ] Recheck SAM Audio on the same mix with distinct prompts and verify that target and residual tracks change with the prompt.
+- [ ] Verify MiniMax-H3 audio generation through `--task gen` and check where SamsOne captions belong in the audio analysis routes.
+- [ ] Add input-aware routes for melody and reference music (MuLaCover and VeVo2) and audio editing. Recheck MuLaCover with a reference clip once its allocation failure is fixed.
+- [ ] Compare MiniMax Music 3 against upstream example audio before retesting lyric intelligibility.
+- [ ] Decide whether the spoken-dialogue outputs from LFM2, LFM3 and Ming3 belong in the `aud_all` report.
+- [ ] Switch the default transcribe.cpp runtime link to v0.4.2 and confirm the default CLI route yields the verified Phonon-2 transcripts.

@@ -21,8 +21,12 @@ with open(os.environ["COMMAND_LOG"], "a") as log:
 store = Path(os.environ["REMOTE_ASSETS"])
 if name == "git":
     if args[0] == "describe":
-        if os.environ.get("FAKE_UNTAGGED"): sys.exit(128)
-        print(os.environ.get("FAKE_TAG", "v1.2.3"))
+        if (store.parent / "tagged").exists():
+            print(os.environ.get("FAKE_NEXT_TAG", "v1.2.3"))
+        elif os.environ.get("FAKE_UNTAGGED"):
+            sys.exit(128)
+        else:
+            print(os.environ.get("FAKE_TAG", "v1.2.3"))
     elif args[0] == "rev-parse": print("abc123")
     elif args[0] == "status":
         tagged = (store.parent / "tagged").exists()
@@ -46,11 +50,15 @@ elif name == "uv":
             info.size = len(metadata)
             info.mtime = 0
             archive.addfile(info, io.BytesIO(metadata))
-    elif args[0] == "publish":
-        assert os.environ.get("UV_HTTP_RETRIES") == "0"
-        sys.exit(int(os.environ.get("PUBLISH_EXIT", "0")))
 elif name == "gh":
     command = args[1]
+    if args[:2] == ["workflow", "run"]:
+        assert args[2:4] == ["pypi-upload.yml", "-f"]
+        print(os.environ.get("RUN_URL", "https://github.com/vexyart/vexy-audioflexy/actions/runs/123"))
+        sys.exit(0)
+    if args[:2] == ["run", "watch"]:
+        assert args[2:] == ["123", "--exit-status"]
+        sys.exit(int(os.environ.get("PUBLISH_EXIT", "0")))
     if command == "view":
         if not store.exists(): sys.exit(1)
         if "--jq" in args:
@@ -95,17 +103,22 @@ def run_script(tree, script="publish", *args, **overrides):
     return result, commands
 
 
-def test_publish_when_clean_tag_then_build_install_release_publish_exact_artifacts(release_tree):
+def test_publish_when_clean_tag_then_verify_release_assets_and_watch_oidc_run(release_tree):
     result, commands = run_script(release_tree, "publish", "v1.2.3")
     assert result.returncode == 0, result.stderr
     uv_commands = [row for row in commands if row[0] == "uv"]
-    assert [row[1] for row in uv_commands] == ["build", "tool", "publish"]
+    assert [row[1] for row in uv_commands] == ["build", "tool"]
     assert uv_commands[1][2:5] == ["install", "--force", "--reinstall"]
     release = next(row for row in commands if row[:3] == ["gh", "release", "create"])
     assert "--verify-tag" in release
     selected = Path(result.stdout.strip())
     assert selected.is_dir() and selected.name.startswith("released.")
-    assert set(uv_commands[-1][-2:]) == {str(p) for p in selected.iterdir()}
+    downloads = [row for row in commands if row[:3] == ["gh", "release", "download"]]
+    assert {row[-3] for row in downloads} == {p.name for p in selected.iterdir()}
+    assert commands[-2:] == [
+        ["gh", "workflow", "run", "pypi-upload.yml", "-f", "tag=v1.2.3"],
+        ["gh", "run", "watch", "123", "--exit-status"],
+    ]
 
 
 @pytest.mark.parametrize("tag", ["v01.2.3", "1.2.3", "v1.2.3rc1", "v1.2.3.4"])
@@ -140,14 +153,23 @@ def test_publish_when_existing_asset_differs_then_preserves_remote_and_stops(rel
     assert result.returncode != 0
     assert "refusing replacement" in result.stderr
     assert wheel.read_bytes() == b"existing different release"
-    assert not any(row[:2] == ["uv", "publish"] for row in commands)
+    assert not any(row[:3] == ["gh", "workflow", "run"] for row in commands)
     assert all("--clobber" not in row for row in commands)
 
 
 def test_publish_when_upload_fails_then_does_not_retry(release_tree):
     result, commands = run_script(release_tree, "publish", "v1.2.3", PUBLISH_EXIT="43")
     assert result.returncode == 43
-    assert sum(row[:2] == ["uv", "publish"] for row in commands) == 1
+    assert sum(row[:3] == ["gh", "workflow", "run"] for row in commands) == 1
+    assert sum(row[:3] == ["gh", "run", "watch"] for row in commands) == 1
+
+
+def test_publish_when_dispatch_returns_no_run_url_then_stops_without_retry(release_tree):
+    result, commands = run_script(release_tree, "publish", "v1.2.3", RUN_URL="")
+    assert result.returncode == 1
+    assert "before dispatching again" in result.stderr
+    assert sum(row[:3] == ["gh", "workflow", "run"] for row in commands) == 1
+    assert not any(row[:3] == ["gh", "run", "watch"] for row in commands)
 
 
 def test_build_when_no_release_tag_then_allows_development_version(release_tree):

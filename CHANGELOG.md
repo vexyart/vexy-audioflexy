@@ -7,6 +7,8 @@ this_file: CHANGELOG.md
 ## Unreleased
 
 - Site now uses the fly-january 0.2.1 theme (chrome: none).
+- Publish to PyPI from the existing GitHub release assets through Trusted Publishing. The owner must register a trusted publisher for `vexyart/vexy-audioflexy`, workflow `pypi-upload.yml`, and environment `pypi`. Use a pending publisher for the first upload if the project does not exist.
+- Verified speech.cpp 0.11.0 with `drama-3:q6_k` after a SHA-256-checked weight pull. The 4.6-second sample matched the prompt in Whisper (`7fbcca0`).
 
 ## 1.1.1 (2026-11-16)
 
@@ -50,6 +52,10 @@ this_file: CHANGELOG.md
 
 ## 1.0.3
 
+- Tagged and pushed the provider integration as v1.0.3 (`12f674b`).
+- Verified tagged CI, strict docs, byte-identical public wheel and sdist, metadata and privacy checks, and a clean install from the wheel (`0f043bb`). The PyPI upload hit the new-project quota and the exact GitHub assets remain available for retry.
+- Provider and subtitle integration passed 586 and 149 tests respectively, with installed subtitle export, resume and legacy-cache offline NLTK checks (`0f043bb:WORK.md`).
+
 - Reuse existing vexy-subs NLTK cache weights for offline English tagging; keep new downloads in the Audioflexy cache.
 
 - Add reusable lazy speech APIs for Qwen/Whisper, native audio.cpp, alignment, diarization, punctuation, langid and NLTK, with shared validated Word/Turn types and packaged workspace execution.
@@ -59,6 +65,9 @@ this_file: CHANGELOG.md
 - Generate an ignored `__version__.py` through hatch-vcs and retain exact stable wheel/sdist version checks before release or publication.
 
 ## 1.0.0
+
+- Verified the v1.0.0 GitHub release and exact assets (`fa700ce`, `b050d70`). Tagged CI passed 522 tests and strict docs. The PyPI upload hit the new-project quota and the exact GitHub assets remain available for retry.
+- Consolidation and namespace acceptance passed the source and isolated-wheel suites, resource and archive audits, independent review and bounded native checks (`b050d70:WORK.md`).
 
 - Add chained build, uv tool installation, GitHub release and uv publication scripts.
 - Build tagged releases and strict documentation in GitHub Actions, with version checks and immutable asset verification.

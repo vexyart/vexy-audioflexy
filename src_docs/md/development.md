@@ -29,14 +29,14 @@ Run these executable scripts from any working directory:
 ./install.sh
 ./release.sh
 ./publish.sh
-# Resume an existing release from its clean tagged checkout:
+# Build and verify a specific release from its clean tagged checkout
 ./publish.sh v1.0.0
 ```
 
 The chain is `publish → release → install → build`. Build creates a fresh ignored
 `dist/build.*` directory and checks wheel/sdist metadata. Install replaces the
 installed `vafx` uv tool with that exact wheel. Each script prints its selected
-artifact directory on stdout; command progress goes to stderr.
+artifact directory on stdout. Command progress goes to stderr.
 
 Without a tag argument, release reuses a clean stable tag at HEAD. Otherwise it
 runs `uvx gitnextver --pull=False`, which commits all pending changes, creates the
@@ -50,30 +50,28 @@ Before building, release requires a clean checkout at the selected stable tag.
 The wheel and sdist must both have exactly the selected stable version; development
 or dirty versions stop the chain before installation or publication.
 It creates the GitHub release when missing, uploads missing package assets, and
-compares existing assets byte for byte without replacing them. Publish uploads
-those verified GitHub assets with `uv publish --check-url`; it stops on any error,
-including rate limits. Existing matching files can be skipped on a later resume.
-Retain selected artifacts when investigating an uncertain upload. An explicit-tag
-script resume still rebuilds and reinstalls before checking GitHub asset bytes;
-build differences stop the chain. To resume an upload using already verified
-GitHub-downloaded archives, keep the exact files and run:
+compares existing assets byte for byte. `./publish.sh` dispatches the PyPI upload
+workflow for that release and waits for the result. The workflow downloads the
+GitHub release assets and publishes with PyPI Trusted Publishing (OIDC).
+
+Use GitHub CLI 2.105.0 or a release that returns the workflow run URL from
+`gh workflow run`. Authenticate with `gh auth login`. Set the GitHub `pypi`
+environment's deployment branch policy to allow only the protected default
+branch. Configure the PyPI project
+`vexy-audioflexy` with GitHub repository `vexyart/vexy-audioflexy`,
+workflow `pypi-upload.yml`, and environment `pypi`. Use a pending publisher
+for the first upload if the project does not exist. [PyPI setup](https://docs.pypi.org/trusted-publishers/)
+
+For a CI-built release or to retry an upload of the same GitHub assets, dispatch
+the workflow from the default branch with the existing release tag:
 
 ```sh
-UV_HTTP_RETRIES=0 uv publish --check-url https://pypi.org/simple/ dist/released.EXAMPLE/*.whl dist/released.EXAMPLE/*.tar.gz
+gh workflow run pypi-upload.yml -f tag=v1.0.3
 ```
 
-Replace `dist/released.EXAMPLE` with the retained artifact directory. Stop on
-rate limits and retain those same files for the next attempt; do not change the
-version to work around an uncertain upload.
-
-Authenticate GitHub CLI with `gh auth login` or `GH_TOKEN`. Configure PyPI upload
-credentials through `UV_PUBLISH_TOKEN` or uv's supported credential store. Keep
-credentials outside the repository and out of shell command arguments and logs.
-For CI-first releases, run `uvx gitnextver --pull=False` after validation (add
-`--commit=False` when there are no pending changes), wait for the tag workflow,
-then run `./publish.sh` from the clean tagged checkout. Direct
-release/publish invocations can race CI to create GitHub assets; immutable asset
-comparisons stop on a mismatch and reruns resume the same clean tagged version.
+Wait for the Actions run, then compare the PyPI file hashes with the GitHub
+release assets. If PyPI rate-limits the upload, keep the same tag and assets for
+the next attempt.
 
 ## Tag workflow
 
@@ -82,10 +80,6 @@ stable semantic form. It fetches full history for hatch-vcs, runs locked tests,
 builds the packages with `build.sh` and strict ProperDocs documentation, and
 creates the GitHub release with package assets. Documentation and packages are
 also retained as workflow artifacts. Existing release assets must match on rerun.
-
-PyPI upload is performed by `publish.sh`, separately from CI, so the tag workflow
-and local publication cannot race to upload the same distribution. No PyPI token
-or trusted-publisher configuration is required by the build/release workflow.
 
 Before releasing, inspect source files, both distribution contents and generated
 documentation for private data, credentials, identifying metadata, local paths
