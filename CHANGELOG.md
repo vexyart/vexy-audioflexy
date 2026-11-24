@@ -6,6 +6,7 @@ this_file: CHANGELOG.md
 
 ## Unreleased
 
+- The documentation build now accepts fly-january 0.3.0 or later.
 - Site now uses the fly-january 0.2.1 theme (chrome: none).
 - Publish to PyPI from the existing GitHub release assets through Trusted Publishing. The owner must register a trusted publisher for `vexyart/vexy-audioflexy`, workflow `pypi-upload.yml`, and environment `pypi`. Use a pending publisher for the first upload if the project does not exist.
 - Verified speech.cpp 0.11.0 with `drama-3:q6_k` after a SHA-256-checked weight pull. The 4.6-second sample matched the prompt in Whisper (`7fbcca0`).

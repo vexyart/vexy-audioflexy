@@ -121,7 +121,7 @@ examples and documentation source. Keep private inputs, outputs, machine paths
 and model weights outside this repository.
 
 See `PLAN.md` and `TODO.md` for remaining acceptance work. The documentation
-uses fly-january 0.2.1 with the native MaterialX header and footer. Rebuild
+uses fly-january 0.3.0 or later with the native MaterialX header and footer. Rebuild
 the tracked `docs/` site from the repository root with:
 
 ```sh
