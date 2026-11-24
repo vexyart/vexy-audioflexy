@@ -6,6 +6,7 @@ this_file: CHANGELOG.md
 
 ## Unreleased
 
+- Docs: use fly-january 0.4.0 or later (remote theme assets).
 - The documentation build now accepts fly-january 0.3.0 or later.
 - Site now uses the fly-january 0.2.1 theme (chrome: none).
 - Publish to PyPI from the existing GitHub release assets through Trusted Publishing. The owner must register a trusted publisher for `vexyart/vexy-audioflexy`, workflow `pypi-upload.yml`, and environment `pypi`. Use a pending publisher for the first upload if the project does not exist.

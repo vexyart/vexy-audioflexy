@@ -11,7 +11,7 @@ From the repository root:
 uv run --no-project --python 3.13 --with-requirements requirements-docs.txt properdocs build --strict -f src_docs/mkdocs.yml
 ```
 
-ProperDocs builds the site with fly-january 0.3.0 or later. The `chrome: none`
+ProperDocs builds the site with fly-january 0.4.0 or later (remote theme assets). The `chrome: none`
 setting selects the native MaterialX header and footer.
 `docs_dir: md` and `site_dir: ../docs` resolve relative to
 `src_docs/mkdocs.yml`, producing the repository's `docs/` directory.

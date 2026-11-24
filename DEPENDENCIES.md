@@ -12,7 +12,7 @@ this_file: DEPENDENCIES.md
 - `hatch-vcs`: derive versions from Git tags without a hand-maintained version.
 - `pytest` (development): synthetic functional tests.
 - `uv` (development tool): dependency resolution, execution, builds, installation.
-- fly-january 0.3.0 or later (documentation): theme and plugin for the ProperDocs build.
+- fly-january 0.4.0 or later (remote theme assets) provides the theme and plugin for the ProperDocs build.
 
 Model runtimes remain isolated rather than becoming mandatory package dependencies.
 The audio.cpp audio/TTS adapters declare `huggingface-hub` in their own inline
